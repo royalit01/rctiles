@@ -1,0 +1,7 @@
+{
+    "name": "lenovo/rc_tile_crm_agrima",
+    "license": "proprietary",
+    "require": {
+        "phpoffice/phpspreadsheet": "^3.3"
+    }
+}
