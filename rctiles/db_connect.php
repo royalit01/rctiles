@@ -1,8 +1,8 @@
 <?php
-$servername = "localhost";  // Replace with your server name
-$username = "u997998014_rc_ceramic";         // Replace with your database username
-$password = "";             // Replace with your database password
-$dbname = "u997998014_rc_ceramic";       // Your database name
+$servername = "localhost";
+$username = "root";         // Use the new user
+$password = "";    // Use the correct password
+$dbname = "u997998014_rc_ceramic";
 
 // Create connection
 $mysqli = new mysqli($servername, $username, $password, $dbname);
@@ -10,8 +10,7 @@ $mysqli = new mysqli($servername, $username, $password, $dbname);
 // Check connection
 if ($mysqli->connect_error) {
     die("Connection failed: " . $mysqli->connect_error);
-}
-else{
+} else {
     // echo "Connection Done";
 }
 ?>
