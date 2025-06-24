@@ -41,7 +41,7 @@ $result = $mysqli->query($query);
             <div id="layoutSidenav_content">
                 <main>
                 <div class="container-fluid mt-3">
-                        <h1 class="mt-4">Low Stock Report</h1>
+                        <h1 class="mt-4 text-center mb-3 fw-bold">Low Stock Report</h1>
                             <div class="card-body">
                                 <form action="" method="POST" class="mb-3">
                                     <label for="storageAreaSelect" class="form-label">Storage Area:</label>

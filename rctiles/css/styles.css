@@ -3782,6 +3782,35 @@ textarea.form-control-lg {
   align-items: center;
   justify-content: space-between;
 }
+
+.sb-sidenav {
+    scrollbar-width: thin; 
+    scrollbar-color: #495057 #343a40; 
+}
+
+
+.sb-sidenav::-webkit-scrollbar {
+    width: 2px; 
+}
+
+.sb-sidenav::-webkit-scrollbar-track {
+    background: #343a40; 
+}
+
+.sb-sidenav::-webkit-scrollbar-thumb {
+    background: #495057; 
+    border-radius: 2px;
+}
+
+.sb-sidenav::-webkit-scrollbar-thumb:hover {
+    background: #6c757d; 
+}
+
+
+.sb-sidenav {
+    height: calc(100vh - 56px); 
+    overflow-y: auto;
+}
 .navbar-brand {
   padding-top: var(--bs-navbar-brand-padding-y);
   padding-bottom: var(--bs-navbar-brand-padding-y);

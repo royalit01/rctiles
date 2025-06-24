@@ -129,7 +129,7 @@ $mysqli->close();
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid">
-                        <h1 class="mb-4 mt-3">Edit Product</h1>
+                        <h1 class="m-4 text-center">Edit Product</h1>
                         <form action="" method="post">
                             <div class="row mb-3">
                                 <div class="col-md-4">

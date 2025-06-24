@@ -76,7 +76,7 @@ $mysqli->close();
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid">
-                        <h1 class="mb-4 mt-3">Storage Dashboard </h1>
+                        <h1 class="mb-4 mt-3 text-center">Storage Dashboard </h1>
                         <form action="" method="post">
                             <div class="row mb-3">
                                 <div class="col-md-4">

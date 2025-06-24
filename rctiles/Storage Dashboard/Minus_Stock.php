@@ -293,8 +293,8 @@ function fetchCategoriesAndProducts($mysqli, $selectedStorageArea, $selectedCate
             <!-- ---------------------------- -->
             <div id="layoutSidenav_content">
                 <main>
-                <div class="container-fluid px-4">
-                    <h2 class="mb-2"><b>Minus Stock</b></h2>
+                <div class="container-fluid  px-4  p-2">
+                    <h2 class="mb-4 text-center m-4  fw-"><b>Minus Stock</b></h2>
                     <form action="" method="post">
                         <div class="row mb-3">
                             <div class="col-md-4">

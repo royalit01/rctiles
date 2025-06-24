@@ -1589,6 +1589,7 @@ document.addEventListener("DOMContentLoaded", () => {
 <!-- Full-Screen Bill Modal -->
 
 <!-- ✅ Ensure the modal is placed before closing body tag -->
+  <script src="../js/scripts.js"></script>
 </body>
 </html>
 

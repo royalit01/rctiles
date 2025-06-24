@@ -55,7 +55,7 @@ if (isset($_POST['updateStorage'])) {
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid px-4">
-                <h1 class="mt-4">Manage Storage Areas</h1>
+                <h1 class="mt-4 text-center mb-4">Manage Storage Areas</h1>
 
                 <!-- Add Storage Area Button -->
                 <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addStorageModal">Add New Storage Area</button>
@@ -106,12 +106,14 @@ if (isset($_POST['updateStorage'])) {
                             echo "<td>" . $row['storage_area_name'] . "</td>";
                             echo "<td>" . $row['location'] . "</td>";
                             echo "<td>
+                            <div class='d-flex gap-2'>
                                     <form method='POST' style='display:inline;'>
                                         <input type='hidden' name='storage_id' value='" . $row['storage_area_id'] . "' />
-                                         <button type='button' class='btn btn-primary' onclick='editStorage(" . $row['storage_area_id'] . ", \"" . htmlspecialchars($row['storage_area_name']) . "\", \"" 
+                                         <button type='button' class='btn btn-primary mb-2 mb-md-0 flex-fill' onclick='editStorage(" . $row['storage_area_id'] . ", \"" . htmlspecialchars($row['storage_area_name']) . "\", \"" 
                                         . htmlspecialchars($row['location']) . "\")'>Edit</button>
-                                        <button type='button' class='btn btn-danger' onclick='confirmDelete(" . $row['storage_area_id'] . ", \"" . $row['storage_area_name'] . "\")'>Delete</button>
+                                        <button type='button' class='btn btn-danger ' onclick='confirmDelete(" . $row['storage_area_id'] . ", \"" . $row['storage_area_name'] . "\")'>Delete</button>
                                     </form>
+                            </div>
                                   </td>";
                             echo "</tr>";
                         }

@@ -274,7 +274,7 @@ $successMessage = "Stock transferred successfully!";
                         <i class="fas fa-minus"></i>
                     </span>
                     </label>
-                    <select id="source_area" name="source_area" class="form-select shadow" onchange="this.form.submit()">
+                    <select id="source_area" name="source_area" class="form-select   " onchange="this.form.submit()">
                         <option value="">Select Area</option>
                         <?php foreach ($storageAreas as $area): ?>
                             <option value="<?= $area['storage_area_id']; ?>" <?= $selectedSource == $area['storage_area_id'] ? 'selected' : ''; ?>>
@@ -285,7 +285,7 @@ $successMessage = "Stock transferred successfully!";
                 </div>
                 <div class="mb-3">
                     <label for="product_id" class="form-label">Product:</label>
-                    <select id="product_id" name="product_id" class="form-select shadow" onchange="this.form.submit()" <?= empty($products) ? 'disabled' : ''; ?>>
+                    <select id="product_id" name="product_id" class="form-select   " onchange="this.form.submit()" <?= empty($products) ? 'disabled' : ''; ?>>
                         <option value="">Select Product</option>
                         <?php foreach ($products as $product): ?>
                             <option value="<?= $product['product_id']; ?>" <?= $selectedProduct == $product['product_id'] ? 'selected' : ''; ?>>
@@ -301,7 +301,7 @@ $successMessage = "Stock transferred successfully!";
                             <i class="fas fa-plus"></i>
                         </span>
                     </label>
-                    <select id="destination_area" name="destination_area" class="form-select shadow" <?= empty($selectedSource) ? 'disabled' : ''; ?>>
+                    <select id="destination_area" name="destination_area" class="form-select   " <?= empty($selectedSource) ? 'disabled' : ''; ?>>
                         <option value="">Select Destination Area</option>
                         <?php foreach ($storageAreas as $area): ?>
                             <option value="<?= $area['storage_area_id']; ?>">
@@ -313,16 +313,16 @@ $successMessage = "Stock transferred successfully!";
                 
                 <div class="mb-3">
                     <label class="form-label">Current Stock:</label>
-                    <input type="text" class="form-control shadow" value="<?= isset($productDetails['quantity']) ? intdiv($productDetails['quantity'], $productDetails['pieces_per_packet']) . ' packets / ' . ($productDetails['quantity'] % $productDetails['pieces_per_packet']) . ' pieces' : ''; ?>" disabled>
+                    <input type="text" class="form-control   " value="<?= isset($productDetails['quantity']) ? intdiv($productDetails['quantity'], $productDetails['pieces_per_packet']) . ' packets / ' . ($productDetails['quantity'] % $productDetails['pieces_per_packet']) . ' pieces' : ''; ?>" disabled>
                 </div>
             
             <div class="mb-3">
                     <label for="packets" class="form-label">Packets:</label>
-                    <input type="number" class="form-control shadow" id="packets" name="packets" required min="0">
+                    <input type="number" class="form-control   " id="packets" name="packets" required min="0">
                 </div>
                 <div class="mb-3">
                     <label for="pieces" class="form-label">Pieces:</label>
-                    <input type="number" class="form-control shadow" id="pieces" name="pieces" required min="0">
+                    <input type="number" class="form-control   " id="pieces" name="pieces" required min="0">
                 </div>
                
             <div class="text-center">
@@ -387,8 +387,6 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-        <script src="../js/scripts.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="../js/scripts.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
         <script src="../assets/demo/chart-area-demo.js"></script>

@@ -59,7 +59,7 @@ if (isset($_POST['updateSupplier'])) {
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid">
-                <h1 class="mt-4">Manage Suppliers</h1>
+                <h1 class="mt-4 text-center mb-4">Manage Suppliers</h1>
 
                 <!-- Add Supplier Button -->
                 <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addSupplierModal">Add New Supplier</button>
@@ -112,7 +112,7 @@ if (isset($_POST['updateSupplier'])) {
                             echo "<td>
                                     <form method='POST' style='display:inline;'>
                                         <input type='hidden' name='supplier_id' value='" . $row['supplier_id'] . "' />
-                                        <button type='button' class='btn btn-primary' onclick='editSupplier(" . $row['supplier_id'] . ", \"" . htmlspecialchars($row['supplier_name']) . "\", \"" 
+                                        <button type='button' class='btn btn-primary mb-2 mb-md-0 ' onclick='editSupplier(" . $row['supplier_id'] . ", \"" . htmlspecialchars($row['supplier_name']) . "\", \"" 
                                         . htmlspecialchars($row['supplier_details']) . "\")'>Edit</button> 
                                         <button type='button' class='btn btn-danger' onclick='confirmDelete(" . $row['supplier_id'] . ", \"" . $row['supplier_name'] . "\")'>Delete</button>
                                     </form>

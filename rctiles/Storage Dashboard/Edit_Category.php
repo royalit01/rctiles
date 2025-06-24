@@ -58,7 +58,7 @@ if (isset($_POST['updateCategory'])) {
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid ">
-                        <h1 class="mb-4">Edit Category</h1>
+                        <h1 class="mb-4 text-center mt-4">Edit Category</h1>
 
                         <!-- Add Category Button -->
                         <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addCategoryModal">Add New Category</button>

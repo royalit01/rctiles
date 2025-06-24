@@ -53,7 +53,7 @@ $result = $mysqli->query($query);
                 <div id="layoutSidenav_content">
                     <main>
                     <div class="container-fluid mt-3">
-        <h2 class="mt-4">Stock Report</h2>
+        <h2 class="mt-4 fw-bold text-center mb-3">Stock Report</h2>
         <form method="POST" id="filterForm">
             <!-- Storage Area Dropdown -->
             <div class="mb-3">
@@ -117,7 +117,7 @@ $result = $mysqli->query($query);
         </table>
     </div>
     <div class="text-center">
-    <button class="btn btn-primary " onclick="downloadPDF()">Download PDF</button>
+    <button class="btn btn-primary mb-3" onclick="downloadPDF()">Download PDF</button>
    </div>
                     </main> 
                     <footer class="py-4 bg-light mt-auto">
