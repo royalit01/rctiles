@@ -255,7 +255,7 @@ $successMessage = "Stock transferred successfully!";
         <link href="../css/styles.css" rel="stylesheet" />
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.3.0/css/all.css">
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
- 
+
     </head>
     <body class="sb-nav-fixed">
     <?php  include 'navbar.php'; ?>
@@ -265,16 +265,18 @@ $successMessage = "Stock transferred successfully!";
             <div id="layoutSidenav_content">
                 <main>
                 <div class="container-fluid px-4">
-                    <h1 class="mt-2 mb-4 text-center">Stock Transfer</h1>
+                    
+                      <div class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width: 950px;">
+                        <h1 class="my-4 fw-bold fs-2 text-center">Stock Transfer</h1>
                     <form action="" method="post">
-                    <div class="mb-3">
-                    <label for="source_area" class="form-label">
+                    <div class="mb-3 mt-2">
+                    <label for="source_area" class="form-label  text-secondary "style="  font-weight: 550;">
                     Source Storage Area:
                     <span class="badge rounded-circle bg-danger text-white">
                         <i class="fas fa-minus"></i>
                     </span>
                     </label>
-                    <select id="source_area" name="source_area" class="form-select   " onchange="this.form.submit()">
+                    <select id="source_area" name="source_area" class="form-select rounded-3 py-2" onchange="this.form.submit()">
                         <option value="">Select Area</option>
                         <?php foreach ($storageAreas as $area): ?>
                             <option value="<?= $area['storage_area_id']; ?>" <?= $selectedSource == $area['storage_area_id'] ? 'selected' : ''; ?>>
@@ -283,9 +285,9 @@ $successMessage = "Stock transferred successfully!";
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="mb-3">
-                    <label for="product_id" class="form-label">Product:</label>
-                    <select id="product_id" name="product_id" class="form-select   " onchange="this.form.submit()" <?= empty($products) ? 'disabled' : ''; ?>>
+                <div class="mb-3 mt-3">
+                    <label for="product_id" class="form-label  text-secondary"style="  font-weight: 550;">Product:</label>
+                    <select id="product_id" name="product_id" class="form-select rounded-3 py-2" onchange="this.form.submit()" <?= empty($products) ? 'disabled' : ''; ?>>
                         <option value="">Select Product</option>
                         <?php foreach ($products as $product): ?>
                             <option value="<?= $product['product_id']; ?>" <?= $selectedProduct == $product['product_id'] ? 'selected' : ''; ?>>
@@ -294,14 +296,14 @@ $successMessage = "Stock transferred successfully!";
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="mb-3">
-                    <label for="destination_area" class="form-label">
+                <div class="mb-3 mt-3">
+                    <label for="destination_area" class="form-label  text-secondary"style="  font-weight: 550;">
                         Destination Storage Area:
                         <span class="badge rounded-circle bg-success text-white">
                             <i class="fas fa-plus"></i>
                         </span>
                     </label>
-                    <select id="destination_area" name="destination_area" class="form-select   " <?= empty($selectedSource) ? 'disabled' : ''; ?>>
+                    <select id="destination_area" name="destination_area" class="form-select rounded-3 py-2" <?= empty($selectedSource) ? 'disabled' : ''; ?>>
                         <option value="">Select Destination Area</option>
                         <?php foreach ($storageAreas as $area): ?>
                             <option value="<?= $area['storage_area_id']; ?>">
@@ -311,24 +313,25 @@ $successMessage = "Stock transferred successfully!";
                     </select>
                 </div>
                 
-                <div class="mb-3">
-                    <label class="form-label">Current Stock:</label>
-                    <input type="text" class="form-control   " value="<?= isset($productDetails['quantity']) ? intdiv($productDetails['quantity'], $productDetails['pieces_per_packet']) . ' packets / ' . ($productDetails['quantity'] % $productDetails['pieces_per_packet']) . ' pieces' : ''; ?>" disabled>
+                <div class="mb-3 mt-3">
+                    <label class="form-label  text-secondary"style="  font-weight: 550;">Current Stock:</label>
+                    <input type="text" class="form-control  rounded-3 py-2 " value="<?= isset($productDetails['quantity']) ? intdiv($productDetails['quantity'], $productDetails['pieces_per_packet']) . ' packets / ' . ($productDetails['quantity'] % $productDetails['pieces_per_packet']) . ' pieces' : ''; ?>" disabled>
                 </div>
             
-            <div class="mb-3">
-                    <label for="packets" class="form-label">Packets:</label>
-                    <input type="number" class="form-control   " id="packets" name="packets" required min="0">
+            <div class="mb-3 mt-3">
+                    <label for="packets" class="form-label  text-secondary"style="  font-weight: 550;">Packets:</label>
+                    <input type="number" class="form-control  rounded-3 py-2 " id="packets" name="packets" required min="0">
                 </div>
-                <div class="mb-3">
-                    <label for="pieces" class="form-label">Pieces:</label>
-                    <input type="number" class="form-control   " id="pieces" name="pieces" required min="0">
+                <div class="mb-3 mt-3">
+                    <label for="pieces" class="form-label  text-secondary"style="  font-weight: 550;">Pieces:</label>
+                    <input type="number" class="form-control rounded-3 py-2  " id="pieces" name="pieces" required min="0">
                 </div>
                
-            <div class="text-center">
-                <button type="submit" name="transfer" class="btn btn-primary mt-4">Transfer Stock</button>
+            <div class="text-center mt-4">
+                <button type="submit" name="transfer" class="btn btn-primary rounded-2 py-2 px-4 fw-medium">Transfer Stock</button>
             </div>
                     </form>
+                        </div>
                 </div>
 
                 </main> 
