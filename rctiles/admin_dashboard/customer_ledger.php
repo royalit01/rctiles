@@ -39,8 +39,7 @@ $sumTotal = $sumPaid = $sumPend = 0;
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<main >
 <title>Customer Ledger</title>
 
 <link href="../css/styles.css" rel="stylesheet">
@@ -48,17 +47,133 @@ $sumTotal = $sumPaid = $sumPend = 0;
 <style>
 /* ---------- mobile card layout (< 576 px) ---------- */
 @media (max-width:575.98px){
-  table{border:0;}
-  table thead{display:none;}
-  table tbody tr{display:block;margin-bottom:1rem;
-                 border:1px solid #dee2e6;border-radius:.5rem;
-                 background:#fff;box-shadow:0 .25rem .5rem rgba(0,0,0,.05);}
-  table tbody td{display:flex;justify-content:space-between;
-                 padding:.65rem 1rem;font-size:.95rem;border-top:1px solid #dee2e6}
-  table tbody td:first-child{border-top:0;}
-  table tbody td::before{
-        content:attr(data-label);
-        font-weight:600;color:#6c757d;margin-right:.5rem;
+  body {
+    background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%);
+  }
+  .card {
+    border-radius: 1.1rem !important;
+    box-shadow: 0 8px 32px rgba(13,110,253,0.10), 0 1.5px 8px rgba(0,0,0,0.04);
+    padding: 1.1rem 0.1rem !important;
+    margin: 0 !important;
+    max-width: 100vw !important;
+    width: 100vw !important;
+  }
+  h2 {
+    text-align: center;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #2563eb;
+    margin-bottom: 1.2rem;
+    letter-spacing: 0.5px;
+  }
+  .table-responsive { box-shadow: none !important; }
+  table { border: 0; width: 100%; background: #fff; }
+  table thead { display: none; }
+  table tfoot { display: none; }
+  table tbody tr {
+    display: block;
+    margin-bottom: 1.1rem;
+    border: 1px solid #e0e7ff;
+    border-radius: .8rem;
+    background: #fff;
+    box-shadow: 0 2px 12px rgba(13,110,253,0.10);
+    padding: 0.7rem 0.7rem 0.7rem 0.9rem;
+    position: relative;
+    overflow: hidden;
+  }
+  table tbody tr::before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 5px;
+    background: linear-gradient(180deg,#2563eb 60%,#60a5fa 100%);
+    border-radius: .8rem 0 0 .8rem;
+  }
+  table tbody td {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: .55rem 0.2rem .55rem .7rem;
+    font-size: 1.07rem;
+    border: none !important;
+    border-bottom: 1px solid #f1f3f4 !important;
+    background: #fff;
+    width: 100%;
+    margin-bottom: 0.08rem;
+    position: relative;
+    min-width: 0;
+    word-break: break-word;
+  }
+  table tbody td:last-child { border-bottom: none !important; }
+  table tbody td:first-child { border-top: 0; }
+  table tbody td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #2563eb;
+    min-width: 120px;
+    display: inline-block;
+    font-size: 1.01rem;
+    letter-spacing: 0.2px;
+    font-family: 'Segoe UI',sans-serif;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+  }
+  /* Bold and blue for counting */
+  table tbody td[data-label="#"] {
+    font-weight: 700 !important;
+    color: #2563eb !important;
+    font-size: 1.15rem !important;
+    letter-spacing: 1px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    background: #f1f5ff;
+    border-radius: 0.7rem;
+    margin-bottom: 0.5rem;
+  }
+  /* Customer cell center and bold */
+  td[data-label="Customer"] {
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+    font-weight: 600;
+    color: #22223b;
+    flex-direction: column;
+    padding-top: 0.7rem;
+    padding-bottom: 0.7rem;
+  }
+  /* Value styling for clarity */
+  table tbody td span.value,
+  table tbody td strong,
+  table tbody td .value {
+    font-weight: 600;
+    color: #22223b;
+    font-size: 1.07rem;
+    margin-bottom: 0.1rem;
+  }
+  .badge {
+    font-size: 1.01rem;
+    padding: 0.4em 0.7em;
+    border-radius: 0.5em;
+  }
+  .alert {
+    font-size: 1.05rem;
+    border-radius: 0.7em;
+    margin-left: 0.2em;
+    margin-right: 0.2em;
+  }
+  /* Delivery Person(s) label blue, value below */
+  td[data-label="Delivery Person(s)"] {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  td[data-label="Delivery Person(s)"]::before {
+    margin-bottom: 0.2rem;
   }
 }
 </style>
@@ -67,9 +182,9 @@ $sumTotal = $sumPaid = $sumPend = 0;
 <?php include "admin_header.php"; ?>
 
 <div id="layoutSidenav_content">
-<main class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width:100%;width:100%;">
 
-<h2>Customer Cash Ledger</h2>
+<main class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width: 1200px;">
+<center><h2>Customer Cash Ledger</h2></center>
 
 <!-- date filter -->
 <form class="row g-2 mb-4" method="get">

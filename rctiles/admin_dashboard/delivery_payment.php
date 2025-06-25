@@ -63,18 +63,118 @@ $rows = $mysqli->query($q);
 <link href="../css/styles.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-@media (max-width:575.98px){
-  table thead{display:none}
-  table tbody tr{display:block;margin-bottom:1rem;border:1px solid #dee2e6;border-radius:.5rem}
-  table tbody td{display:flex;justify-content:space-between;padding:.55rem .9rem;font-size:1rem}
-  table tbody td:first-child{font-weight:600}
+/* Mobile responsive table */
+@media (max-width: 575.98px) {
+  .card {
+    padding: 0.7rem 0.2rem !important;
+    border-radius: 1rem !important;
+    box-shadow: 0 4px 18px rgba(13,110,253,0.13), 0 1.5px 8px rgba(0,0,0,0.06);
+  }
+  .table-responsive { box-shadow: none !important; }
+  table { border: 0; width: 100%; }
+  table thead { display: none; }
+  table tbody tr {
+    display: block;
+    margin-bottom: 1.2rem;
+    border: none;
+    border-radius: 1.1rem;
+    background: #fff;
+    box-shadow: 0 4px 18px rgba(13,110,253,0.10);
+    padding: 0.7rem 0.7rem 0.7rem 0.9rem;
+    position: relative;
+    overflow: hidden;
+  }
+  table tbody tr::before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 5px;
+    background: linear-gradient(180deg,#2563eb 60%,#60a5fa 100%);
+    border-radius: 1.1rem 0 0 1.1rem;
+  }
+  table tbody td {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: .55rem 0.2rem .55rem .7rem;
+    font-size: 1.08rem;
+    border: none !important;
+    border-bottom: 1px solid #f1f3f4 !important;
+    background: #fff;
+    width: 100%;
+    margin-bottom: 0.18rem;
+    position: relative;
+  }
+  table tbody td:last-child { border-bottom: none !important; }
+  table tbody td:first-child { border-top: 0; }
+  table tbody td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #2563eb;
+    margin-bottom: .18rem;
+    min-width: 120px;
+    display: block;
+    font-size: 1.01rem;
+    letter-spacing: 0.2px;
+    font-family: 'Segoe UI',sans-serif;
+    margin-right: 0;
+  }
+  table tbody td strong,
+  table tbody td .value {
+    font-weight: 600;
+    color: #22223b;
+    font-size: 1.09rem;
+    margin-bottom: 0.1rem;
+  }
+  table tbody td a {
+    color: #64748b;
+    font-size: 0.97rem;
+    text-decoration: none;
+    word-break: break-all;
+  }
+  .input-group.input-group-sm {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 0.3rem;
+    margin-top: 0.2rem;
+  }
+  .input-group.input-group-sm input,
+  .input-group.input-group-sm button {
+    width: 100% !important;
+    margin-bottom: 0 !important;
+    font-size: 1.09rem;
+    border-radius: 0.5rem !important;
+  }
+  .form-control.form-control-sm.mt-1 {
+    margin-top: 0.3rem !important;
+    font-size: 1.04rem;
+    border-radius: 0.5rem !important;
+  }
+  .text-end, .text-center {
+    text-align: left !important;
+    width: 100%;
+  }
+  .btn-primary, .btn {
+    font-size: 1.09rem !important;
+    padding: 0.5rem 1.1rem !important;
+    border-radius: 0.7rem !important;
+    box-shadow: 0 2px 8px rgba(13,110,253,0.10);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .table-responsive {
+    overflow-x: visible !important;
+  }
+  .table tbody tr + tr { margin-top: 1.2rem; }
 }
 </style>
 </head>
 <body class="sb-nav-fixed">
 <?php include "admin_header.php"; ?>
 <div id="layoutSidenav_content">
-<main class="container-fluid px-4 py-4">
+<main class="container-fluid px-2 px-md-4 py-3">
 <main class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width: 1200px;">
 <center><h2 class="mb-4">Delivery Charge / Incentive Payments</h2></center>
 
@@ -82,7 +182,9 @@ $rows = $mysqli->query($q);
 <table class="table table-bordered align-middle">
  <thead class="table-dark">
   <tr>
-    <th>#</th><th>Customer / Phone</th><th>Order&nbsp;ID</th>
+    <th></th>
+    <th>Customer / Phone</th>
+    <th>Order&nbsp;ID</th>
     <th class="text-end">Total&nbsp;(₹)</th>
     <th class="text-end">Paid&nbsp;(₹)</th>
     <th class="text-end">Remain&nbsp;(₹)</th>
@@ -94,23 +196,25 @@ $rows = $mysqli->query($q);
  <tbody>
  <?php $i=1; while($r=$rows->fetch_assoc()): ?>
   <tr>
-    <td><?= $i++ ?></td>
-    <td>
+    <td data-label="" class="fw-bold" style="font-weight:700;">
+      <span class="count-number"><?= $i++ ?></span>
+    </td>
+    <td data-label="Customer / Phone">
         <strong><?= htmlspecialchars($r['customer']) ?></strong><br>
         <a class="small text-muted" href="tel:<?= $r['phone_no'] ?>">
             <?= htmlspecialchars($r['phone_no']) ?>
         </a>
     </td>
-    <td><?= $r['order_id'] ?></td>
+    <td data-label="Order ID"><?= $r['order_id'] ?></td>
     <?php $grand = $r['amount_paid'] + $r['amount_remaining']; ?>
-    <td class="text-end"><?= number_format($grand, 2) ?></td>
-    <td class="text-end"><?= number_format($r['amount_paid'], 2) ?></td>
-    <td class="text-end"><?= number_format($r['amount_remaining'], 2) ?></td>
-    <td><?= htmlspecialchars($r['rider']) ?></td>
-    <td class="text-end"><?= number_format($r['rider_paid'], 2) ?></td>
+    <td data-label="Total (₹)" class="text-end"><?= number_format($grand, 2) ?></td>
+    <td data-label="Paid (₹)" class="text-end"><?= number_format($r['amount_paid'], 2) ?></td>
+    <td data-label="Remain (₹)" class="text-end"><?= number_format($r['amount_remaining'], 2) ?></td>
+    <td data-label="Rider"><?= htmlspecialchars($r['rider']) ?></td>
+    <td data-label="Already Given (₹)" class="text-end"><?= number_format($r['rider_paid'], 2) ?></td>
 
     <!-- quick-pay form -->
-    <td class="text-center">
+    <td data-label="Pay Now (₹)" class="text-center">
       <form class="d-inline" method="post">
         <input type="hidden" name="delivery_id" value="<?= $r['delivery_id'] ?>">
         <input type="hidden" name="rider_id"    value="<?= $r['user_id'] ?>">
@@ -130,6 +234,7 @@ $rows = $mysqli->query($q);
 </table>
 </div>
 
+</main>
 </main>
 </div><!-- /layout -->
 
