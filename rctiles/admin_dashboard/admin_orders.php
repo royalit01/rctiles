@@ -143,6 +143,13 @@ $result = $mysqli->query($sql);
             max-height: 400px;
             overflow-y: auto;
         }
+        #productModal .table th, #productModal .table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+        #productModal .modal-body {
+            padding: 1.5rem 1.5rem 1rem 1.5rem;
+        }
     </style>
 </head>
 <body class="sb-nav-fixed">
@@ -282,26 +289,31 @@ $result = $mysqli->query($sql);
 
     <!-- Modal for Viewing Products -->
     <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Order Products</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content shadow">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="productModalLabel">Order Products</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <thead>
+                        <table class="table table-striped table-bordered align-middle mb-0">
+                            <thead class="table-dark">
                                 <tr>
                                     <th>Product Name</th>
                                     <th>Quantity</th>
-                                    <th>Original Price</th>
-                                    <th>Custom Price</th>
+                                    <th>Original Price (₹)</th>
+                                    <th>Custom Price (₹)</th>
                                 </tr>
                             </thead>
-                            <tbody id="productDetails"></tbody>
+                            <tbody id="productDetails">
+                                <!-- Products will be loaded here via AJAX -->
+                            </tbody>
                         </table>
                     </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
