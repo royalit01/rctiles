@@ -77,8 +77,8 @@ $riders = $mysqli->query("
 
 <div id="layoutSidenav_content">
 <main class="container-fluid px-4 py-4">
-
-<h2 class="mb-4">Delivery Riders – Cash Ledger</h2>
+<main class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width: 1200px;">
+<center><h2 class="mb-4">Delivery Riders – Cash Ledger</h2></center>
 
 <div class="table-responsive">
 <table class="table table-bordered align-middle" id="riderTable">

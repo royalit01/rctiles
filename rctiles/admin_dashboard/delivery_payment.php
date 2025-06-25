@@ -57,6 +57,7 @@ $rows = $mysqli->query($q);
 <head>
 <meta charset="utf-8">
 <meta name="viewport"  content="width=device-width,initial-scale=1">
+
 <title>Pay Delivery Charges</title>
 
 <link href="../css/styles.css" rel="stylesheet">
@@ -74,8 +75,8 @@ $rows = $mysqli->query($q);
 <?php include "admin_header.php"; ?>
 <div id="layoutSidenav_content">
 <main class="container-fluid px-4 py-4">
-
-<h2 class="mb-4">Delivery Charge / Incentive Payments</h2>
+<main class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width: 1200px;">
+<center><h2 class="mb-4">Delivery Charge / Incentive Payments</h2></center>
 
 <div class="table-responsive">
 <table class="table table-bordered align-middle">

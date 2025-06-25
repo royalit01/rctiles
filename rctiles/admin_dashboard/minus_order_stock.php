@@ -113,7 +113,9 @@ $result = $stmt->get_result();
     <body class="sb-nav-fixed">
         <?php include "admin_header.php";  ?>
             <div id="layoutSidenav_content">
+                
                 <main>
+                    <div class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width: 1200px;">
                     <br>
             <h2 class="mb-4"><center>Orders Waiting for Stock Deduction</center></h2>
 

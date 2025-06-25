@@ -67,9 +67,9 @@ $sumTotal = $sumPaid = $sumPend = 0;
 <?php include "admin_header.php"; ?>
 
 <div id="layoutSidenav_content">
-<main class="container-fluid px-4 py-4">
+<main class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width:100%;width:100%;">
 
-<h2 class="mb-3">Customer Cash Ledger</h2>
+<h2>Customer Cash Ledger</h2>
 
 <!-- date filter -->
 <form class="row g-2 mb-4" method="get">

@@ -108,7 +108,8 @@ $sql = "SELECT o.order_id, c.name customer, c.phone_no, o.discounted_amount, o.t
  
 
 <main class="py-4 container-fluid">
-    <h2 class="mb-4">Assign Orders to Delivery Personnel</h2>
+    <div class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width: 1200px;">
+     <center><h2 class="mb-4">Assign Orders to Delivery Personnel</h2></center>
 
     <?php if(!empty($error)): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">

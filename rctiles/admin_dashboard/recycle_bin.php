@@ -24,6 +24,7 @@ $result = $mysqli->query($sql);
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container my-4">
+                        <div class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width: 1200px;">
                         <h3 class="text-center mb-4">Recycle Bin</h3>
                         <div class="table-responsive">
                             <table class="table table-bordered table-hover table-striped text-center">

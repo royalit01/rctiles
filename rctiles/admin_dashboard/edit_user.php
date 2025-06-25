@@ -163,7 +163,7 @@ if (!empty($password)) {
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <div class="container mt-3">
+                        <div class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width: 1200px;">
                             <h2 class="text-center mb-3">Edit User Details</h2>
                             <div class="table-responsive">
                             <table class="table">
