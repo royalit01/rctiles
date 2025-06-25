@@ -94,8 +94,8 @@
                 </select>
             </div>
 
-            <button type="button" class="btn btn-primary mt-2" onclick="openProductModal(this, 'wall')">Choose Wall Tile</button>
-            <button type="button" class="btn btn-warning mt-2" onclick="enableEditSelection(this)">Edit Selection</button>
+            <button type="button" class="btn btn-primary mt-2" onclick="openProductModal(this, 'wall')">Choose Wall Tile / Edit</button>
+            <!-- <button type="button" class="btn btn-warning mt-2" onclick="enableEditSelection(this)">Edit Selection</button> -->
 
             <!-- ✅ Separate div for wall tile selection -->
             <div class="selected-products-wall mt-2 text-muted"><p>No wall tiles selected yet.</p></div>
@@ -127,8 +127,8 @@
 
             <p class="mt-2"><strong>Floor Area:</strong> <span class="floor-area">0.00 m²</span></p>
 
-            <button type="button" class="btn btn-primary mt-2" onclick="openProductModal(this, 'floor')">Choose Floor Tile</button>
-            <button type="button" class="btn btn-warning mt-2" onclick="enableEditSelection(this)">Edit Selection</button>
+            <button type="button" class="btn btn-primary mt-2" onclick="openProductModal(this, 'floor')">Choose Floor Tile / Edit</button>
+            <!-- <button type="button" class="btn btn-warning mt-2" onclick="enableEditSelection(this)">Edit Selection</button> -->
 
             <!-- ✅ Separate div for floor tile selection -->
             <div class="selected-products-floor mt-2 text-muted"><p>No floor tiles selected yet.</p></div>
@@ -285,7 +285,7 @@
                         </td>
                         <td>
                             <input type="checkbox" class="product-checkbox" data-product-id="${product.id}"
-                            onchange="toggleProductSelection(this, ${product.id}, '${product.name.replace(/'/g, "\\'")}', ${product.price !== 'N/A' ? parseFloat(product.price) : 0})"                               ${isSelected ? "checked" : ""}>
+                            onchange="toggleProductSelection(this, ${product.id}, '${product.name.replace(/'/g, "\\'")}', ${product.price !== 'N/A' ? parseFloat(product.price) : 0})"                          
                         </td>
                     `;
                     tbody.appendChild(row);
@@ -837,15 +837,18 @@ function updateSummary() {
             let adjustedTotalPrice = product.totalPrice * multiplier;
 
             if (!allProductsSummary[product.id]) {
+                console.log(`Adding new product to summary: ${product.name} (ID: ${product.id})`);
+                 // Initialize the product in the summary
                 allProductsSummary[product.id] = {
                     ...product,
                     quantity: adjustedQuantity,
                     totalPrice: adjustedTotalPrice,
                     unitPrice: product.unitPrice,
                     originalUnitPrice: product.unitPrice,
-                    originalTotalPrice: adjustedTotalPrice,
+                    // originalTotalPrice: adjustedTotalPrice,
                     currentTotalPrice: adjustedTotalPrice // Initialize current price same as original
                 };
+                console.log(`Initialized product summary for ${product.name}:`, allProductsSummary[product.id]);
             } else {
                 allProductsSummary[product.id].quantity += adjustedQuantity;
                 allProductsSummary[product.id].totalPrice += adjustedTotalPrice;
