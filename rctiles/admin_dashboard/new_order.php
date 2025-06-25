@@ -731,7 +731,7 @@ function updateProductPrice(input) {
         [...section.wall, ...section.floor].forEach(product => {
             if (product.id === productId) {
                 product.unitPrice = newUnitPrice;
-                product.totalPrice = quantity * newUnitPrice;
+                product.totalPrice = `${quantity * newUnitPrice}`;
                 product.currentTotalPrice = product.totalPrice;
                 product.originalTotalPrice = product.totalPrice;
             }
@@ -756,9 +756,9 @@ function updateTotalAmount() {
         // Extract the price from the text content (removing the ₹ symbol)
         total += parseFloat(cell.getAttribute("data-current-price")) || 0;
     });
-    document.getElementById("totalAmount").textContent = `₹${total.toFixed(2)}`;
+    document.getElementById("totalAmount").value = `₹${total.toFixed(2)}`;
     document.getElementById("finalAmountPaid").value = total.toFixed(2);
-    document.getElementById("final_price").value = total.toFixed(2);
+    document.getElementById("final_price").textContent = total.toFixed(2);
 }
 
 function applyFinalPrice() {
@@ -789,32 +789,32 @@ function applyFinalPrice() {
     let remainingDiscount = discount;
     let lastIndex = allProducts.length - 1;
 
-    allProducts.forEach((row, index) => {
-        let originalPrice = parseFloat(row.getAttribute("data-original-price")) || 0;
-        let discountShare = (originalPrice / totalOriginalAmount) * discount;
+    // allProducts.forEach((row, index) => {
+    //     let originalPrice = parseFloat(row.getAttribute("data-original-price")) || 0;
+    //     let discountShare = (originalPrice / totalOriginalAmount) * discount;
 
-        if (index === lastIndex) {
-            discountShare = remainingDiscount;
-        }
+    //     if (index === lastIndex) {
+    //         discountShare = remainingDiscount;
+    //     }
 
-        let newPrice = Math.max(originalPrice - discountShare, 0);
-        row.textContent = `₹${newPrice.toFixed(2)}`;
-        row.setAttribute("data-current-price", newPrice.toFixed(2));
+    //     let newPrice = Math.max(originalPrice - discountShare, 0);
+    //     row.textContent = `₹${newPrice.toFixed(2)}`;
+    //     row.setAttribute("data-current-price", newPrice.toFixed(2));
 
-        // Update product data in the data structure if needed
-        const productId = row.getAttribute("data-id");
-        if (productId) {
-            Object.values(selectedProductsData).forEach(section => {
-                [...section.wall, ...section.floor].forEach(product => {
-                    if (product.id == productId) {
-                        product.currentTotalPrice = newPrice;
-                    }
-                });
-            });
-        }
+    //     // Update product data in the data structure if needed
+    //     const productId = row.getAttribute("data-id");
+    //     if (productId) {
+    //         Object.values(selectedProductsData).forEach(section => {
+    //             [...section.wall, ...section.floor].forEach(product => {
+    //                 if (product.id == productId) {
+    //                     product.currentTotalPrice = newPrice;
+    //                 }
+    //             });
+    //         });
+    //     }
 
-        remainingDiscount -= discountShare;
-    });
+    //     remainingDiscount -= discountShare;
+    // });
 
     // Don't update the finalAmountPaid input, but do update the hidden field
     document.getElementById("final_price").value = finalAmount;
