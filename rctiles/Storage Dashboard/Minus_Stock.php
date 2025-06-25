@@ -284,7 +284,32 @@ function fetchCategoriesAndProducts($mysqli, $selectedStorageArea, $selectedCate
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="../css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
- 
+  <style>
+        .card-form {
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+        }
+        .form-control, .form-select {
+            border-radius: 0.75rem;
+            min-height: 40px;
+            margin-top: 0.3rem;
+        }
+        .search-box {
+            max-width: 410px;
+            margin-bottom: 1.5rem;
+        }
+        .stock-input {
+            width: 100px !important;
+            display: inline-block !important;
+        }
+        .action-btn {
+            border-radius: 0.6rem;
+            padding: 0.6rem 1.5rem;
+            font-weight: 500;
+        }
+    </style>
     </head>
     <body class="sb-nav-fixed">
     <?php  include 'navbar.php'; ?>
@@ -294,7 +319,9 @@ function fetchCategoriesAndProducts($mysqli, $selectedStorageArea, $selectedCate
             <div id="layoutSidenav_content">
                 <main>
                 <div class="container-fluid  px-4  p-2">
-                    <h2 class="mb-4 text-center m-4  fw-"><b>Minus Stock</b></h2>
+   <div class="card border-0 shadow my-3 rounded-3 p-4 bg-white mx-auto" style="max-width: 950px; min-height: 560px;">
+
+                    <h2 class="mb-4 text-center m-4 "><b>Minus Stock</b></h2>
                     <form action="" method="post">
                         <div class="row mb-3">
                             <div class="col-md-4">
@@ -369,6 +396,7 @@ function fetchCategoriesAndProducts($mysqli, $selectedStorageArea, $selectedCate
                             </div>
                         </div>
                     </div>
+                </div>
                 </div>
                     </div>
                 </main> 

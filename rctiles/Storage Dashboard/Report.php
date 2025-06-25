@@ -44,7 +44,28 @@ $result = $mysqli->query($query);
             <link href="../css/styles.css" rel="stylesheet" />
             <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-
+<style>
+  .rounded-table {
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid #dee2e6; /* Add outer border */
+    border-bottom: 1px solidrgb(74, 76, 77); 
+  }
+  .rounded-table thead th:first-child {
+    border-top-left-radius: 0.75rem;
+  }
+  .rounded-table thead th:last-child {
+    border-top-right-radius: 0.75rem;
+  }
+  .rounded-table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 0.75rem;
+  }
+  .rounded-table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 0.75rem;
+  }
+</style>
         </head>
         <body class="sb-nav-fixed">
         <?php  include 'navbar.php'; ?>
@@ -53,6 +74,7 @@ $result = $mysqli->query($query);
                 <div id="layoutSidenav_content">
                     <main>
                     <div class="container-fluid mt-3">
+                            <div class="card border-0 shadow my-4 rounded-3 p-4 bg-white mx-auto" style="max-width: 950px;">
         <h2 class="mt-4 fw-bold text-center mb-3">Stock Report</h2>
         <form method="POST" id="filterForm">
             <!-- Storage Area Dropdown -->
@@ -87,7 +109,7 @@ $result = $mysqli->query($query);
             </div>
         </form>
         <!-- Table for Stock Report -->
-        <table class="table table-striped table-bordered mt-3" id="stockTable">
+        <table class="table table-striped table-bordered mt-3 rounded-table" id="stockTable">
             <thead class="table-dark">
                 <tr>
                     <th>Product Name</th>
@@ -118,6 +140,7 @@ $result = $mysqli->query($query);
     </div>
     <div class="text-center">
     <button class="btn btn-primary mb-3" onclick="downloadPDF()">Download PDF</button>
+            </div>
    </div>
                     </main> 
                     <footer class="py-4 bg-light mt-auto">

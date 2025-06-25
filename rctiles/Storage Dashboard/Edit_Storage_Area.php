@@ -55,10 +55,12 @@ if (isset($_POST['updateStorage'])) {
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid px-4">
-                <h1 class="mt-4 text-center mb-4">Manage Storage Areas</h1>
+                   <div class="card border-0 shadow my-4 rounded-3 p-4 bg-white mx-auto" style="max-width: 950px;min-height: 550px;">
+
+                <h1 class="mt-2 fw-bold text-center mb-4 ">Manage Storage Areas</h1>
 
                 <!-- Add Storage Area Button -->
-                <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addStorageModal">Add New Storage Area</button>
+                <button class="btn btn-primary btn-sm mb-3" style="max-width: 200px; min-height:40px" data-bs-toggle="modal" data-bs-target="#addStorageModal"><i class="fas fa-plus me-1"></i>Add New Storage Area</button>
 
                 <!-- Add Storage Area Modal -->
                 <div class="modal fade" id="addStorageModal" tabindex="-1" aria-labelledby="addStorageModalLabel" aria-hidden="true">
@@ -182,6 +184,7 @@ if (isset($_POST['updateStorage'])) {
               <div class="modal-body">
               <p id="successMessage"></p>
            </div>
+                    </div>
         </div>
         </main>
     </div>

@@ -129,7 +129,9 @@ $mysqli->close();
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid">
-                        <h1 class="m-4 text-center">Edit Product</h1>
+  <div class="card border-0 shadow my-3 rounded-3 p-4 bg-white mx-auto" style="max-width: 950px;">
+
+                        <h1 class="fw-bold text-center m-2 mb-4">Edit Product</h1>
                         <form action="" method="post">
                             <div class="row mb-3">
                                 <div class="col-md-4">
@@ -168,7 +170,7 @@ $mysqli->close();
                 <thead>
                     <tr>
                          <th>Image</th>
-                        <th onclick="sortTable(1)">Product<span class="sort-icon" style="float:right;">⬍</span></th>
+                        <th onclick="sortTable(1)">Product<span class="sort-icon pe-auto" style="float:right;cursor: pointer;">⬍</span></th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -224,6 +226,7 @@ $mysqli->close();
 
 
                         <?php endif; ?>
+                    </div>
                     </div>  
                 </main> 
                 <!-- Bootstrap Modal -->

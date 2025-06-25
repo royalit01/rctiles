@@ -106,6 +106,8 @@ $result = $stmt->get_result();
   <?php include 'navbar.php'; ?>
   <div id="layoutSidenav_content">
     <main class="container-fluid">
+   <div class="card border-0 shadow my-4 rounded-3 p-4 bg-white mx-auto" style="max-width: 950px;">
+
       <h2 class="m-4 fw-bold text-center">Transaction Records</h2>
 
       <!-- Filters Form -->
@@ -205,6 +207,7 @@ $result = $stmt->get_result();
           </tbody>
         </table>
       </div>
+            </div>
     </main>
   </div>
    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>

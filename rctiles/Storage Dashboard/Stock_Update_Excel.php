@@ -129,8 +129,10 @@ function insertDataIntoTables($rowData) {
     <?php  include 'navbar.php'; ?>
 <div id="layoutSidenav_content">
                     <main>
-                    <div class="container-fluid mt-5">
-                    <div class="container-fluid mt-5">
+                    <div class="container-fluid mt-1">
+    <div class="card border-0 shadow my-4 rounded-3 p-4 bg-white mx-auto" style="max-width: 950px;">
+                    <div class="container-fluid mt-3">
+                        
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card shadow">
@@ -275,7 +277,7 @@ if ($mysqli->error) {
             </tbody>
         </table>
 </div>
-
+            </div>
                     </main> 
                     
                 </div>

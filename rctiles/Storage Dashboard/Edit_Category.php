@@ -58,11 +58,13 @@ if (isset($_POST['updateCategory'])) {
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid ">
-                        <h1 class="mb-4 text-center mt-4">Edit Category</h1>
+                          <div class="card border-0 shadow my-3 rounded-3 p-4 bg-white mx-auto" style="max-width: 950px; min-height: 550px;">
 
-                        <!-- Add Category Button -->
-                        <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addCategoryModal">Add New Category</button>
+                        <h1 class="fw-bold text-center m-2 mb-4">Edit Category</h1>
 
+                        <button class="btn btn-primary btn-sm mb-3" style="max-width: 200px;min-height:40px" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+  <i class="fas fa-plus me-1"></i> Add New Category
+</button>
                         <!-- Add Category Modal -->
                         <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
@@ -172,6 +174,7 @@ if (isset($_POST['updateCategory'])) {
                             <div class="modal-body">
                             <p id="successMessage"></p>
                         </div>
+                            </div>
                     </div>
                 </main> 
 
