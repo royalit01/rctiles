@@ -266,11 +266,11 @@ $mysqli->close();
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="price" class="form-label">Price</label>
+                                <label for="price" class="form-label">Selling price</label>
                                 <input type="number" step="0.01" class="form-control " id="price" name="price" required>
                             </div>
                             <div class="mb-3">
-                                <label for="costPrice" class="form-label">Cost Price</label>
+                                <label for="costPrice" class="form-label">Purchase Price</label>
                                 <input type="number" step="0.01" class="form-control " id="costPrice" name="costPrice" required>
                             </div>
                             
