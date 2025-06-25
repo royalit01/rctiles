@@ -135,31 +135,6 @@ $mysqli->close();
         <link href="../css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
          <style>
- 
-.form-container {
-    background-color: #ffffff;
-    border-radius: 1rem;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-    padding: 2rem;
-    max-width: 700px;
-    margin: 40px auto;
-  }
-
-  .form-label {
-    font-weight: 500;
-  }
-
-  .form-control,
-  .form-select {
-    border-radius: 0.75rem;
-    min-height: 48px;
-  }
-
-  h2 {
-    font-weight: 600;
-    font-size: 1.95rem;
-  }
-
   .btn-primary {
     border-radius: 0.6rem;
     font-weight: 500;
@@ -230,9 +205,10 @@ $mysqli->close();
             <main>
                     <div class="container-fluid px-4">
                         <!-- ---------------------------------------->
-                        <h2 class="text-center m-4  fw-bold">Add New Product</h2>
+                         <div class="card border-0 shadow rounded-3 p-4 bg-white mx-auto mt-4" style="max-width: 950px;">
+                        <h2 class="my-4 fw-bold fs-2 text-center">Add New Product</h2>
                         <?php if ($message): ?>
-                        <div class="alert alert-info" id="successAlert"><?= $message ?></div>
+                        <div class="alert alert-info  mx-auto mb-3"  style="max-width: 700px;" id="successAlert"><?= $message ?></div>
                         <?php endif; ?>
                         <script>
                             setTimeout(function() {
@@ -241,24 +217,24 @@ $mysqli->close();
                         </script>
                         <form action="" method="post"  enctype="multipart/form-data">
                             <div class="mb-3">
-                                <label for="productName" class="form-label">Product Name</label>
-                                <input type="text" class="form-control " id="productName" name="productName" required>
+                                <label for="productName" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Product Name</label>
+                                <input type="text" class="form-control rounded-3 py-2" id="productName" name="productName" required>
                             </div>
                             <div class="mb-3">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea class="form-control " id="description" name="description" required></textarea>
+                                <label for="description" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Description</label>
+                                <textarea class="form-control rounded-3 py-2" id="description" name="description" required></textarea>
                             </div>
                             
                             <div class="mb-3">
-                                <label for="category" class="form-label">Category</label>
-                                <select class="form-select " id="category" name="category" required>
+                                <label for="category" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Category</label>
+                                <select class="form-select rounded-3 py-2" id="category" name="category" required>
                                     <?php foreach ($categories as $category): ?>
                                     <option value="<?= $category['category_id'] ?>"><?= $category['category_name'] ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="supplier" class="form-label">Supplier</label>
+                                <label for="supplier" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Supplier</label>
                                 <select class="form-select " id="supplier" name="supplier" required>
                                     <?php foreach ($suppliers as $supplier): ?>
                                     <option value="<?= $supplier['supplier_id'] ?>"><?= $supplier['supplier_name'] ?></option>
@@ -266,16 +242,16 @@ $mysqli->close();
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="price" class="form-label">Selling price</label>
-                                <input type="number" step="0.01" class="form-control " id="price" name="price" required>
+                                <label for="price" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Selling price</label>
+                                <input type="number" step="0.01" class="form-control rounded-3 py-2" id="price" name="price" required>
                             </div>
                             <div class="mb-3">
-                                <label for="costPrice" class="form-label">Purchase Price</label>
-                                <input type="number" step="0.01" class="form-control " id="costPrice" name="costPrice" required>
+                                <label for="costPrice" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Purchase Price</label>
+                                <input type="number" step="0.01" class="form-control rounded-3 py-2" id="costPrice" name="costPrice" required>
                             </div>
                             
                             <div class="mb-3">
-                                <label for="status" class="form-label">Status</label>
+                                <label for="status" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Status</label>
                                 <select class="form-select " id="status" name="status" required>
                                     <option value="Active">Active</option>
                                     <option value="Inactive">Inactive</option>
@@ -283,19 +259,19 @@ $mysqli->close();
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="totalPackets" class="form-label">Total Packets</label>
-                                <input type="number" class="form-control " id="totalPackets" name="totalPackets" required onchange="calculateTotalPieces()">
+                                <label for="totalPackets" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Total Packets</label>
+                                <input type="number" class="form-control rounded-3 py-2" id="totalPackets" name="totalPackets" required onchange="calculateTotalPieces()">
                             </div>
                             <div class="mb-3">
-                                <label for="piecesPerPacket" class="form-label">Pieces Per Packet</label>
-                                <input type="number" class="form-control " id="piecesPerPacket" name="piecesPerPacket" required onchange="calculateTotalPieces()">
+                                <label for="piecesPerPacket" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Pieces Per Packet</label>
+                                <input type="number" class="form-control rounded-3 py-2" id="piecesPerPacket" name="piecesPerPacket" required onchange="calculateTotalPieces()">
                             </div>
                             <div class="mb-3">
-                                <label for="quantity" class="form-label">Total Pieces</label>
-                                <input type="number" class="form-control " id="quantity" name="quantity" required readonly>
+                                <label for="quantity" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Total Pieces</label>
+                                <input type="number" class="form-control rounded-3 py-2" id="quantity" name="quantity" required readonly>
                             </div>
                             <div class="mb-3">
-                                <label for="storageArea" class="form-label">Storage Area</label>
+                                <label for="storageArea" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Storage Area</label>
                                 <select class="form-select " id="storageArea" name="storageArea" required>
                                     <?php foreach ($storage_areas as $area): ?>
                                     <option value="<?= $area['storage_area_id'] ?>"><?= $area['storage_area_name'] ?></option>
@@ -303,11 +279,11 @@ $mysqli->close();
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="minStockLevel" class="form-label">Minimum Stock Level</label>
-                                <input type="number" class="form-control " id="minStockLevel" name="minStockLevel" value="7" required>
+                                <label for="minStockLevel" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Minimum Stock Level</label>
+                                <input type="number" class="form-control rounded-3 py-2" id="minStockLevel" name="minStockLevel" value="7" required>
                             </div>
                             <div class="mb-3">
-                                <label for="productImage" class="form-label">Product Image</label>
+                                <label for="productImage" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Product Image</label>
                                 <input type="file" class="form-control custom-file-input" id="productImage" name="productImage">
                             </div>
                             <div class="text-center">
@@ -315,6 +291,7 @@ $mysqli->close();
                             </div>
                         </form>
                         <!-- ---------------------------------------->
+                                    </div>
                     </div>
                 </main>
 

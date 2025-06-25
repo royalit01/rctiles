@@ -82,40 +82,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_stock'])) {
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
  <style>
-
-  .card-form {
-    background-color: #fff;
-    border-radius: 1rem;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
-    padding: 2rem;
-    max-width: 600px;
-    margin: auto;
-  }
-
-  .form-label {
-    font-weight: 500;
-    margin-bottom: 0.3rem;
-  }
-
-  h2 {
-    font-weight: 600;
-    font-size: 1.95rem;
-  }
-
-  .form-control, .form-select {
-    border-radius: 0.75rem;
-    min-height: 48px;
-  }
-
-  .btn-primary {
-    border-radius: 0.9rem;
-    font-weight: 500;
-    font-size: 1rem;
-  }
-
-  .modal-content {
-    border-radius: 1rem;
-  }
   .gradient-btn {
     background: linear-gradient(135deg,rgb(92, 140, 212) 0%,rgb(31, 106, 218) 100%);
     border: none;
@@ -145,16 +111,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_stock'])) {
 
                 <main>
 
-    <div class="container">
-        <br>
-        
-        <h2 class="mb-4 text-center fw-bold">Add Stock</h2>
+    <div class="container-fluid mt-4">
+        <div class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width: 950px;">
+        <h2 class="mt-1 mb-2 fw-bold fs-2 text-center">Add Stock</h2>
 
         <form class="p-2" method="POST" action="">
             <div class="mb-3">
-                <label class="form-label">Select Product:</label>
-                <select class="form-select" name="product_id" id="productDropdown" required onchange="fetchStock()">
-                    <option value="">-- Choose Product --</option>
+                <label class="form-label fw-medium text-secondary"style="  font-weight: 550;"">Select Product:</label>
+                <select class="form-select rounded-3 py-2" name="product_id" id="productDropdown" required onchange="fetchStock()">
+                    <option value=""> Choose Product </option>
                     <?php while ($row = $productResult->fetch_assoc()): ?>
                         <option value="<?= $row['product_id'] ?>"><?= $row['product_name'] ?></option>
                     <?php endwhile; ?>
@@ -162,9 +127,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_stock'])) {
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Select Storage Area:</label>
+                <label class="form-label fw-medium text-secondary"style="  font-weight: 550;"">Select Storage Area:</label>
                 <select class="form-select" name="storage_area_id" id="storageDropdown" required onchange="fetchStock()">
-                    <option value="">-- Choose Storage --</option>
+                    <option value=""> Choose Storage </option>
                     <?php while ($row = $storageResult->fetch_assoc()): ?>
                         <option value="<?= $row['storage_area_id'] ?>"><?= $row['storage_area_name'] ?></option>
                     <?php endwhile; ?>
@@ -172,7 +137,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_stock'])) {
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Current Stock:</label>
+                <label class="form-label fw-medium text-secondary"style="  font-weight: 550;"">Current Stock:</label>
                 <input type="text" class="form-control" id="currentStock" readonly>
             </div>
 
@@ -192,6 +157,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_stock'])) {
     </button>
 </div>
         </form>
+                    </div>
     </div>
 
     <!-- Success Modal -->
