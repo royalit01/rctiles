@@ -19,18 +19,94 @@
     <!-- Bootstrap Bundle (with Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-    function nextStep() {
-        let currentStep = document.querySelector('.form-step.active-step');
-        if (!currentStep) return console.warn("⚠️ No active step found!");
 
+   function nextStep() {
+    let currentStep = document.querySelector('.form-step.active-step');
+    if (!currentStep) return console.warn("⚠️ No active step found!");
+
+    // Step 1: Customer Details validation
+    if (currentStep.id === 'step1') {
+        let isValid = true;
+        const requiredInputs = currentStep.querySelectorAll('input[required]');
+        requiredInputs.forEach(input => {
+            if (!input.value.trim()) {
+                input.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                input.classList.remove('is-invalid');
+            }
+            // Special validation for phone number
+            if (input.name === 'phone_no' && input.value.length !== 10) {
+                input.classList.add('is-invalid');
+                isValid = false;
+            }
+        });
+        if (!isValid) {
+            alert("Please fill all customer details correctly before proceeding.");
+            return;
+        }
+        // Move to next step if valid
         let nextStep = currentStep.nextElementSibling;
         if (nextStep && nextStep.classList.contains('form-step')) {
             currentStep.classList.remove('active-step');
             nextStep.classList.add('active-step');
+        }
+        return;
+    }
 
+    // Step 2: Order Details validation
+    if (currentStep.id === 'step2') {
+        let allValid = true;
+        document.querySelectorAll('.dimension-group').forEach(group => {
+            // --- Wall area fields ---
+            const wallLength = parseFloat(group.querySelector('input[name="wall_lengths[]"]').value) || 0;
+            const wallWidth = parseFloat(group.querySelector('input[name="wall_widths[]"]').value) || 0;
+            const wallHeight = parseFloat(group.querySelector('input[name="wall_heights[]"]').value) || 0;
+            const wallCategory = group.querySelector('.wall-category-select').value;
+
+            // --- Floor area fields ---
+            const floorLength = parseFloat(group.querySelector('input[name="floor_lengths[]"]').value) || 0;
+            const floorWidth = parseFloat(group.querySelector('input[name="floor_widths[]"]').value) || 0;
+            const floorCategory = group.querySelector('.floor-category-select').value;
+
+            // --- Check if wall area is filled properly ---
+            const wallFilled = (wallLength > 0 && wallWidth > 0 && wallHeight > 0 && wallCategory);
+
+            // --- Check if floor area is filled properly ---
+            const floorFilled = (floorLength > 0 && floorWidth > 0 && floorCategory);
+
+            // --- At least one (wall or floor) must be filled properly ---
+            if (!wallFilled && !floorFilled) {
+                allValid = false;
+                // Highlight missing fields (optional)
+                if (!wallFilled) {
+                    group.querySelectorAll('input[name="wall_lengths[]"], input[name="wall_widths[]"], input[name="wall_heights[]"]').forEach(inp => inp.classList.add('is-invalid'));
+                    group.querySelector('.wall-category-select').classList.add('is-invalid');
+                }
+                if (!floorFilled) {
+                    group.querySelectorAll('input[name="floor_lengths[]"], input[name="floor_widths[]"]').forEach(inp => inp.classList.add('is-invalid'));
+                    group.querySelector('.floor-category-select').classList.add('is-invalid');
+                }
+            } else {
+                // Remove highlights if valid
+                group.querySelectorAll('input, select').forEach(inp => inp.classList.remove('is-invalid'));
+            }
+        });
+
+        if (!allValid) {
+            alert("(Items must have complete wall OR floor specifications with their category.");
+            return;
+        }
+
+        // Move to next step if valid
+        let nextStep = currentStep.nextElementSibling;
+        if (nextStep && nextStep.classList.contains('form-step')) {
+            currentStep.classList.remove('active-step');
+            nextStep.classList.add('active-step');
             if (nextStep.id === 'step3') updateSummary();
         }
     }
+}
 
     function prevStep() {
         let currentStep = document.querySelector('.form-step.active-step');
@@ -56,29 +132,29 @@
             
             
             <div class="mb-2">
-                <label class="form-label">Title (e.g., Washroom 1, Kitchen, etc.)</label>
+                <label class="form-label">Title (e.g., Washroom 1, Kitchen, etc.) </label>
                 <input type="text" class="form-control" name="titles[]" placeholder="Enter location name" required>
             </div>
 
             <div class="row">
                 <div class="col-md-4">
-                    <label class="form-label">Wall Length (m)</label>
+                    <label class="form-label">Wall Length (m) </label>
                     <input type="number" class="form-control" name="wall_lengths[]" step="0.1" min="0" oninput="calculateAreas(this)">
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Wall Width (m)</label>
+                    <label class="form-label">Wall Width (m) </label>
                     <input type="number" class="form-control" name="wall_widths[]" step="0.1" min="0" oninput="calculateAreas(this)">
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Wall Height (m)</label>
+                    <label class="form-label">Wall Height (m) </label>
                     <input type="number" class="form-control" name="wall_heights[]" step="0.1" min="0" oninput="calculateAreas(this)">
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Door Area (m²)</label>
+                    <label class="form-label">Door Area (m²) </label>
                     <input type="number" class="form-control" name="door_areas[]" step="0.1" min="0" oninput="calculateAreas(this)">
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Window Area (m²)</label>
+                    <label class="form-label">Window Area (m²) </label>
                     <input type="number" class="form-control" name="window_areas[]" step="0.1" min="0" oninput="calculateAreas(this)">
                 </div>
             
@@ -1463,20 +1539,20 @@ document.addEventListener("DOMContentLoaded", () => {
                             <div class="form-step active-step" id="step1">
                                 <h5>Customer Details</h5>
                                 <div class="mb-3">
-                                    <label class="form-label">Customer Name</label>
+                                    <label class="form-label">Customer Name <span style="color:red">*</span> </label>
                                     <input type="text" class="form-control" name="customer_name" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Phone Number</label>
+                                    <label class="form-label">Phone Number <span style="color:red">*</span> </label>
                                     <!-- <input type="tel" class="form-control" name="phone_no" pattern="\d{10}" title="Please enter exactly 10 digits" required> -->
                                     <input type="tel" class="form-control" name="phone_no" pattern="\d{10}" title="Please enter exactly 10 digits" required oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Address</label>
+                                    <label class="form-label">Address <span style="color:red">*</span> </label>
                                     <input type="text" class="form-control" name="address" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">City</label>
+                                    <label class="form-label">City <span style="color:red">*</span> </label>
                                     <input type="text" class="form-control" name="city" required>
                                 </div>
                                 <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
