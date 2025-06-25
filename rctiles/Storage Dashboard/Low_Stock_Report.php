@@ -42,10 +42,10 @@ $result = $mysqli->query($query);
     border-collapse: separate;
     border-spacing: 0;
     border: 1px solid #dee2e6;
-    border-bottom: 1px solidrgb(78, 82, 86); /* Thicker dark bottom border */
+    border-bottom: 1px solidrgb(78, 82, 86); 
   }
   .rounded-table thead th {
-    border-bottom: 2px solid #495057 !important; /* Match header bottom border */
+    border-bottom: 2px solid #495057 !important; 
   }
   .rounded-table thead th:first-child {
     border-top-left-radius: 0.75rem;
