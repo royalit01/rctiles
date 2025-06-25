@@ -123,12 +123,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_stock'])) {
             </div>
 
             <div class="mb-3">
-                <label>Packets to Add:</label>
+                <label>Packets to Add: <span style="color: red;">*</span> </label>
                 <input type="number" name="packets" class="form-control" min="0" required value="0">
             </div>
 
             <div class="mb-3">
-                <label>Pieces to Add:</label>
+                <label>Pieces to Add: <span style="color: red;">*</span> </label>
                 <input type="number" name="pieces" class="form-control" min="0" required value="0">
             </div>
 
@@ -184,5 +184,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_stock'])) {
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+document.querySelector('form').addEventListener('submit', function(e) {
+    const packets = document.querySelector('input[name="packets"]').value;
+    const pieces = document.querySelector('input[name="pieces"]').value;
+    if (!packets || !pieces || Number(packets) === 0 && Number(pieces) === 0) {
+        alert(Enter amount to add (packets or pieces)');
+        e.preventDefault();
+    }
+});
+</script>
+
 </body>
 </html>

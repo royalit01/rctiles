@@ -47,6 +47,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $mysqli->begin_transaction();
 
     try {
+
+        // Require product image upload
+    if (!isset($_FILES['productImage']) || $_FILES['productImage']['error'] != 0) {
+        throw new Exception("Product image is required.");
+    }
+
+    // Handle file upload if an image is provided
+    if (isset($_FILES['productImage']) && $_FILES['productImage']['error'] == 0) {
+        // ...existing file upload code...
+    }
+
         // Handle file upload if an image is provided
         if (isset($_FILES['productImage']) && $_FILES['productImage']['error'] == 0) {
             $allowed = ['jpg' => 'image/jpg','jpeg' => 'image/jpeg', 'png' => 'image/png', 'gif' => 'image/gif'];
@@ -221,8 +232,8 @@ $mysqli->close();
                                 <input type="number" class="form-control shadow" id="minStockLevel" name="minStockLevel" value="7" required>
                             </div>
                             <div class="mb-3">
-                                <label for="productImage" class="form-label">Product Image</label>
-                                <input type="file" class="form-control shadow" id="productImage" name="productImage">
+                                <label for="productImage" class="form-label">Product Image <span style="color:red">*</span> </label>
+                                <input type="file" class="form-control shadow" id="productImage" name="productImage" required >
                             </div>
                             <div class="text-center">
                             <button type="submit" class="btn btn-primary">Add Product</button>
@@ -261,5 +272,17 @@ $mysqli->close();
         <script src="../assets/demo/chart-bar-demo.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
         <script src="../js/datatables-simple-demo.js"></script>
+
+        <script>
+document.querySelector('form').addEventListener('submit', function(e) {
+    var imageInput = document.getElementById('productImage');
+    if (!imageInput.value) {
+        alert('Please upload a product image.');
+        imageInput.focus();
+        e.preventDefault();
+    }
+});
+</script>
+
     </body>
 </html>
