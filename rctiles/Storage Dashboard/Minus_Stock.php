@@ -43,9 +43,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (isset($_POST['minus_stock'])) {
         $message = handleStockMinus($mysqli, $_POST, $selectedStorageArea);
-        // Redirect to prevent form resubmission
-        header('Location: ' . $_SERVER['PHP_SELF'] . "?success=1&area=" . urlencode($selectedStorageArea) . "&category=" . urlencode($selectedCategory));
-        exit();
+        if (trim($message) !== "") {
+            $_SESSION['last_stock_message'] = $message;
+            header('Location: ' . $_SERVER['PHP_SELF'] . "?success=1&area=" . urlencode($selectedStorageArea) . "&category=" . urlencode($selectedCategory));
+            exit();
+        } else {
+            // No stock updated, don't show modal
+            $_SESSION['no_stock_alert'] = "Please enter packets or pieces for at least one product to update stock.";
+
+            header('Location: ' . $_SERVER['PHP_SELF'] . "?area=" . urlencode($selectedStorageArea) . "&category=" . urlencode($selectedCategory));
+            exit();
+        }
     }
 }
 
@@ -397,6 +405,20 @@ function fetchCategoriesAndProducts($mysqli, $selectedStorageArea, $selectedCate
                         </div>
                     </div>
                 </div>
+                <!-- Fail Modal -->
+                <div class="modal fade" id="failModal" tabindex="-1" aria-labelledby="failModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-warning">
+                                <h5 class="modal-title" id="failModalLabel">Alert</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p id="failMessage"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 </div>
                     </div>
                 </main> 
@@ -459,5 +481,18 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
     </script>
+   
+    <script>
+<?php if (!empty($_SESSION['no_stock_alert'])) { ?>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("failMessage").textContent = "<?php echo addslashes($_SESSION['no_stock_alert']); ?>";
+        const failModal = new bootstrap.Modal(document.getElementById("failModal"));
+        failModal.show();
+        setTimeout(function() {
+            failModal.hide();
+        }, 3000);
+    });
+<?php unset($_SESSION['no_stock_alert']); } ?>
+</script>
     </body>
 </html>
