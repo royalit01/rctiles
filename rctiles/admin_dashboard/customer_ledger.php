@@ -183,7 +183,7 @@ $sumTotal = $sumPaid = $sumPend = 0;
 
 <div id="layoutSidenav_content">
 
-<main class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width: 1200px;">
+<main class="card border-0 my-4 shadow rounded-3 p-4 bg-white mx-auto" style="min-width: 980px;">
 <center><h2>Customer Cash Ledger</h2></center>
 
 <!-- date filter -->
