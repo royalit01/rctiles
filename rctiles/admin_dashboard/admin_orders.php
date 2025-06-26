@@ -195,8 +195,9 @@ $result = $mysqli->query($sql);
                                     <tr id="orderRow-<?= $row['order_id'] ?>">
                                         <td><?= htmlspecialchars($row['customer_name']) ?></td>
                                         <td><?= htmlspecialchars($row['phone_no']) ?></td>
-                                        <td>₹<?= number_format($row['custom_total'], 2) ?></td>
                                         <td>₹<?= number_format($row['total_amount'], 2) ?></td>
+                                                                                <td>₹<?= number_format($row['custom_total'], 2) ?></td>
+
                                         <td>
                                             <?php if ($row['approved'] == 0): ?>
                                                 <span class="badge bg-warning">Pending</span>

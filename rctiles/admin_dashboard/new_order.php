@@ -193,6 +193,7 @@
                 
             
 
+            
                 <div class="mb-2">
                     <label class="form-label">Select Floor Category</label>
                     <select class="form-control floor-category-select" name="floor_category_ids[]" >
@@ -933,6 +934,11 @@ function updateSummary() {
 
     let allProducts = Object.values(allProductsSummary);
     totalAmount = allProducts.reduce((sum, product) => sum + product.currentTotalPrice, 0);
+
+    console.log("🔄 Summary Data:", allProducts);
+    console.log("🔄 Total Amount:", 
+        
+    );
 
     allProducts.forEach(product => {
         summaryBody.insertAdjacentHTML("beforeend", `

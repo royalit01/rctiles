@@ -25,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['assign_order'])) {
 
         $rent = (float)$ord['transport_rent'];
         $amt  = (float)$ord['discounted_amount'];
+        
         $remaining = $amt + $rent;
 
         // Insert delivery record
@@ -60,7 +61,8 @@ if (!empty($_GET['search'])) {
     $types   .= 's';
 }
 
-$sql = "SELECT o.order_id, c.name customer, c.phone_no, o.discounted_amount, o.transport_rent,
+$sql = "SELECT o.order_id, c.name customer, c.phone_no,  o.transport_rent,
+   (SELECT SUM(custom_price) FROM pending_orders WHERE order_id = o.order_id) AS discounted_amount,
                IFNULL(d.delivery_id,0) AS delivery_id,
                d.delivery_user_id, d.status, d.amount_paid, d.amount_remaining
         FROM orders o
