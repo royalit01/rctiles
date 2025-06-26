@@ -170,8 +170,8 @@
                 </select>
             </div>
 
-            <button type="button" class="btn btn-primary mt-2" onclick="openProductModal(this, 'wall')">Choose Wall Tile</button>
-            <button type="button" class="btn btn-warning mt-2" onclick="enableEditSelection(this)">Edit Selection</button>
+            <button type="button" class="btn btn-primary mt-2" onclick="openProductModal(this, 'wall')">Choose Wall Tile / Edit</button>
+            <!-- <button type="button" class="btn btn-warning mt-2" onclick="enableEditSelection(this)">Edit Selection</button> -->
 
             <!-- ✅ Separate div for wall tile selection -->
             <div class="selected-products-wall mt-2 text-muted"><p>No wall tiles selected yet.</p></div>
@@ -203,8 +203,8 @@
 
             <p class="mt-2"><strong>Floor Area:</strong> <span class="floor-area">0.00 m²</span></p>
 
-            <button type="button" class="btn btn-primary mt-2" onclick="openProductModal(this, 'floor')">Choose Floor Tile</button>
-            <button type="button" class="btn btn-warning mt-2" onclick="enableEditSelection(this)">Edit Selection</button>
+            <button type="button" class="btn btn-primary mt-2" onclick="openProductModal(this, 'floor')">Choose Floor Tile / Edit</button>
+            <!-- <button type="button" class="btn btn-warning mt-2" onclick="enableEditSelection(this)">Edit Selection</button> -->
 
             <!-- ✅ Separate div for floor tile selection -->
             <div class="selected-products-floor mt-2 text-muted"><p>No floor tiles selected yet.</p></div>
@@ -361,7 +361,7 @@
                         </td>
                         <td>
                             <input type="checkbox" class="product-checkbox" data-product-id="${product.id}"
-                            onchange="toggleProductSelection(this, ${product.id}, '${product.name.replace(/'/g, "\\'")}', ${product.price !== 'N/A' ? parseFloat(product.price) : 0})"                               ${isSelected ? "checked" : ""}>
+                            onchange="toggleProductSelection(this, ${product.id}, '${product.name.replace(/'/g, "\\'")}', ${product.price !== 'N/A' ? parseFloat(product.price) : 0})"                          
                         </td>
                     `;
                     tbody.appendChild(row);
@@ -807,7 +807,7 @@ function updateProductPrice(input) {
         [...section.wall, ...section.floor].forEach(product => {
             if (product.id === productId) {
                 product.unitPrice = newUnitPrice;
-                product.totalPrice = quantity * newUnitPrice;
+                product.totalPrice = `${quantity * newUnitPrice}`;
                 product.currentTotalPrice = product.totalPrice;
                 product.originalTotalPrice = product.totalPrice;
             }
@@ -832,9 +832,9 @@ function updateTotalAmount() {
         // Extract the price from the text content (removing the ₹ symbol)
         total += parseFloat(cell.getAttribute("data-current-price")) || 0;
     });
-    document.getElementById("totalAmount").textContent = `₹${total.toFixed(2)}`;
+    document.getElementById("totalAmount").value = `₹${total.toFixed(2)}`;
     document.getElementById("finalAmountPaid").value = total.toFixed(2);
-    document.getElementById("final_price").value = total.toFixed(2);
+    document.getElementById("final_price").textContent = total.toFixed(2);
 }
 
 function applyFinalPrice() {
@@ -865,32 +865,32 @@ function applyFinalPrice() {
     let remainingDiscount = discount;
     let lastIndex = allProducts.length - 1;
 
-    allProducts.forEach((row, index) => {
-        let originalPrice = parseFloat(row.getAttribute("data-original-price")) || 0;
-        let discountShare = (originalPrice / totalOriginalAmount) * discount;
+    // allProducts.forEach((row, index) => {
+    //     let originalPrice = parseFloat(row.getAttribute("data-original-price")) || 0;
+    //     let discountShare = (originalPrice / totalOriginalAmount) * discount;
 
-        if (index === lastIndex) {
-            discountShare = remainingDiscount;
-        }
+    //     if (index === lastIndex) {
+    //         discountShare = remainingDiscount;
+    //     }
 
-        let newPrice = Math.max(originalPrice - discountShare, 0);
-        row.textContent = `₹${newPrice.toFixed(2)}`;
-        row.setAttribute("data-current-price", newPrice.toFixed(2));
+    //     let newPrice = Math.max(originalPrice - discountShare, 0);
+    //     row.textContent = `₹${newPrice.toFixed(2)}`;
+    //     row.setAttribute("data-current-price", newPrice.toFixed(2));
 
-        // Update product data in the data structure if needed
-        const productId = row.getAttribute("data-id");
-        if (productId) {
-            Object.values(selectedProductsData).forEach(section => {
-                [...section.wall, ...section.floor].forEach(product => {
-                    if (product.id == productId) {
-                        product.currentTotalPrice = newPrice;
-                    }
-                });
-            });
-        }
+    //     // Update product data in the data structure if needed
+    //     const productId = row.getAttribute("data-id");
+    //     if (productId) {
+    //         Object.values(selectedProductsData).forEach(section => {
+    //             [...section.wall, ...section.floor].forEach(product => {
+    //                 if (product.id == productId) {
+    //                     product.currentTotalPrice = newPrice;
+    //                 }
+    //             });
+    //         });
+    //     }
 
-        remainingDiscount -= discountShare;
-    });
+    //     remainingDiscount -= discountShare;
+    // });
 
     // Don't update the finalAmountPaid input, but do update the hidden field
     document.getElementById("final_price").value = finalAmount;
@@ -913,15 +913,18 @@ function updateSummary() {
             let adjustedTotalPrice = product.totalPrice * multiplier;
 
             if (!allProductsSummary[product.id]) {
+                console.log(`Adding new product to summary: ${product.name} (ID: ${product.id})`);
+                 // Initialize the product in the summary
                 allProductsSummary[product.id] = {
                     ...product,
                     quantity: adjustedQuantity,
                     totalPrice: adjustedTotalPrice,
                     unitPrice: product.unitPrice,
                     originalUnitPrice: product.unitPrice,
-                    originalTotalPrice: adjustedTotalPrice,
+                    // originalTotalPrice: adjustedTotalPrice,
                     currentTotalPrice: adjustedTotalPrice // Initialize current price same as original
                 };
+                console.log(`Initialized product summary for ${product.name}:`, allProductsSummary[product.id]);
             } else {
                 allProductsSummary[product.id].quantity += adjustedQuantity;
                 allProductsSummary[product.id].totalPrice += adjustedTotalPrice;

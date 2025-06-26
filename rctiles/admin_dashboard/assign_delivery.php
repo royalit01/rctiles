@@ -60,7 +60,7 @@ if (!empty($_GET['search'])) {
     $types   .= 's';
 }
 
-$sql = "SELECT o.order_id, c.name customer, c.phone_no, o.discounted_amount, o.transport_rent,
+$sql = "SELECT o.order_id, c.name customer, c.phone_no, o.discounted_amount, o.total_amount, o.transport_rent,
                IFNULL(d.delivery_id,0) AS delivery_id,
                d.delivery_user_id, d.status, d.amount_paid, d.amount_remaining
         FROM orders o
@@ -147,7 +147,12 @@ $sql = "SELECT o.order_id, c.name customer, c.phone_no, o.discounted_amount, o.t
             </thead>
             <tbody>
             <?php $i=1; while($row=$result->fetch_assoc()):
-                $grand = (float)$row['discounted_amount'] + (float)$row['transport_rent'];
+            // Calculate total amount including transport rent it fetches discounted_amount if available
+            // otherwise it uses total_amount
+                $amt = isset($row['discounted_amount']) && $row['discounted_amount'] !== null
+                    ? (float)$row['discounted_amount']
+                    : (float)$row['total_amount'];
+                $grand = $amt + (float)$row['transport_rent'];
             ?>
                 <tr>
                     <td><?= $i++ ?></td>
