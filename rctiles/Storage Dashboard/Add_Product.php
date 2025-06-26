@@ -338,14 +338,16 @@ $mysqli->close();
 
         <script>
 document.querySelector('form').addEventListener('submit', function(e) {
-    var imageInput = document.getElementById('productImage');
-    if (!imageInput.value) {
-        alert('Please upload a product image.');
-        imageInput.focus();
+    const packets = document.querySelector('input[name="packets"]').value;
+    const pieces = document.querySelector('input[name="pieces"]').value;
+    if (!packets || !pieces || Number(packets) === 0 && Number(pieces) === 0) {
+        alert('Enter amount to add (packets or pieces)');
         e.preventDefault();
     }
 });
 </script>
+
+
 
     </body>
 </html>

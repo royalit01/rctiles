@@ -1,16 +1,9 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1:3306
--- Generation Time: Jun 23, 2025 at 08:10 AM
--- Server version: 10.11.10-MariaDB-log
--- PHP Version: 7.2.34
-
+CREATE DATABASE IF NOT EXISTS `u997998014_rc_ceramic`;
+USE `u997998014_rc_ceramic`;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-
+ 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;

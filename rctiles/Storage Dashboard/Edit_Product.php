@@ -1,13 +1,12 @@
-
 <?php
 session_start();
 include "../db_connect.php";
 
 // Handle Delete Request with logging
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_product_id'])) {
-    $productId = $mysqli->real_escape_string($_POST['delete_product_id']);
+    $productId = (int)$_POST['delete_product_id'];
 
-    // === Fetch product name BEFORE deleting it ===
+    // Fetch product name BEFORE deleting it
     $stmtProd = $mysqli->prepare("SELECT product_name FROM products WHERE product_id = ?");
     $stmtProd->bind_param("i", $productId);
     $stmtProd->execute();
@@ -15,42 +14,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_product_id']))
     $stmtProd->fetch();
     $stmtProd->close();
 
-    // Perform delete
+    // Delete from referencing tables first
+    $mysqli->query("DELETE FROM product_stock WHERE product_id = $productId");
+    $mysqli->query("DELETE FROM transactions WHERE product_id = $productId"); // <-- Add this line
+
+    // Now delete from products
     $sql = "DELETE FROM products WHERE product_id = $productId";
     if ($mysqli->query($sql)) {
-        // === Log the deletion ===
-        if (isset($_SESSION['user_id'])) {
-            $user_id = (int)$_SESSION['user_id'];
-
-            // Fetch user name
-            $stmtUser = $mysqli->prepare("SELECT name FROM users WHERE user_id = ?");
-            $stmtUser->bind_param("i", $user_id);
-            $stmtUser->execute();
-            $stmtUser->bind_result($user_name);
-            $stmtUser->fetch();
-            $stmtUser->close();
-
-            // Prepare and execute log insert
-            $desc = "Product '$product_name' deleted by $user_name";
-            $stmtLog = $mysqli->prepare(
-                "INSERT INTO transactions 
-                   (user_id, product_id, storage_area_id, transaction_type, quantity_changed, transaction_date, description)
-                 VALUES (?, ?, NULL, 'Delete', 0, NOW(), ?)"
-            );
-            $stmtLog->bind_param("iis", $user_id, $productId, $desc);
-
-            if (! $stmtLog->execute()) {
-                // Log the error so you can inspect it
-                error_log("🚨 transactions INSERT failed: " . $stmtLog->error);
-                // Optionally, display it (in dev only!)
-                echo "<pre>Log Error: " . $stmtLog->error . "</pre>";
-            }
-            $stmtLog->close();
-        }
-
-        $deleteMessage = 'Product deleted successfully!';
+        // Log the deletion (optional, since you just deleted from transactions)
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'message' => 'Product deleted successfully!']);
+        exit;
     } else {
-        $deleteMessage = 'Failed to delete the product: ' . $mysqli->error;
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'Failed to delete the product: ' . $mysqli->error]);
+        exit;
     }
 }
 
@@ -391,14 +369,24 @@ $mysqli->close();
                 const formData = new FormData();
                 formData.append('delete_product_id', productId);
                 fetch('', { method: 'POST', body: formData })
-                    .then(response => response.text())
-                    .then(() => {
-                        document.getElementById('successMessage').textContent = 'Product deleted successfully!';
-                        new bootstrap.Modal(document.getElementById('successModal')).show();
-                        setTimeout(() => window.location.reload(), 2000); // Refresh after 2 seconds
+                    .then(async response => {
+                        const text = await response.text();
+                        try {
+                            const data = JSON.parse(text);
+                            document.getElementById('successMessage').textContent = data.message;
+                            new bootstrap.Modal(document.getElementById('successModal')).show();
+                            if (data.success) {
+                                setTimeout(() => window.location.reload(), 2000);
+                            }
+                        } catch (e) {
+                            // Log the raw response and the error
+                            console.error('Server response was not valid JSON:', text);
+                            document.getElementById('successMessage').textContent = 'Server error: ' + text;
+                            new bootstrap.Modal(document.getElementById('successModal')).show();
+                        }
                     })
                     .catch(error => {
-                        console.error('Error:', error);
+                        console.error('Fetch/network error:', error);
                         document.getElementById('successMessage').textContent = 'Failed to delete the product.';
                         new bootstrap.Modal(document.getElementById('successModal')).show();
                     });

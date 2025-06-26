@@ -5,7 +5,7 @@ include '../db_connect.php';
 // Initialize filter variables
 $status_filter = isset($_GET['status']) ? $_GET['status'] : 'all';
 $date_filter = isset($_GET['date']) ? $_GET['date'] : '';
-$limit = 10;
+$limit = 500;
 
 // Base SQL query
 $sql = "SELECT DISTINCT o.order_id, c.name AS customer_name, c.phone_no, o.total_amount, 
