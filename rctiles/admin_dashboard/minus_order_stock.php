@@ -226,6 +226,6 @@ new simpleDatatables.DataTable(document.querySelector('table.table'), {
     fixedHeight: true
 });
 </script>
-<script src="../js/scripts.js"></script>
+ <script src="../js/scripts.js"></script>
 </body>
 </html>

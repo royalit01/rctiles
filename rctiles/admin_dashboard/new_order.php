@@ -1460,42 +1460,41 @@ document.addEventListener("DOMContentLoaded", () => {
                         <form id="orderForm" action="submit_order.php" method="post">
 
                             <!-- Step 1: Customer Details -->
-                            <div class="form-step active-step" id="step1">
-                                <h5>Customer Details</h5>
-                                <div class="mb-3">
-                                    <label class="form-label">Customer Name</label>
-                                    <input type="text" class="form-control" name="customer_name" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Phone Number</label>
-                                    <!-- <input type="tel" class="form-control" name="phone_no" pattern="\d{10}" title="Please enter exactly 10 digits" required> -->
-                                    <input type="tel" class="form-control" name="phone_no" pattern="\d{10}" title="Please enter exactly 10 digits" required oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Address</label>
-                                    <input type="text" class="form-control" name="address" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">City</label>
-                                    <input type="text" class="form-control" name="city" required>
-                                </div>
-                                <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
-                            </div>
+<div class="form-step active-step" id="step1">
+    <h5>Customer Details</h5>
+    <div class="mb-3">
+        <label class="form-label">Customer Name <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="customer_name" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Phone Number <span class="text-danger">*</span></label>
+        <input type="tel" class="form-control" name="phone_no" pattern="\d{10}" 
+               title="Please enter exactly 10 digits" required 
+               oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Address <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="address" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">City <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="city" required>
+    </div>
+    <button type="button" class="btn btn-primary" onclick="validateCustomerDetails()">Next</button>
+</div>
 
-                            <!-- Step 2: Order Details -->
-                            <div class="form-step" id="step2">
-                                <h5>Order Details</h5>
-                                <!-- ✅ This will contain dynamically added sections -->
-                                <div id="orderDetailsContainer"></div>
-                                    <!-- ✅ Keep the buttons outside this container -->
-                                    <div class="d-flex justify-content-between align-items-center mt-3">
-                                        <button type="button" class="btn btn-success" onclick="addDetail()">Add New</button>
-                                        <div>
-                                            <button type="button" class="btn btn-secondary" onclick="prevStep()">Previous</button>
-                                            <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
-                                        </div>
-                                    </div>
-                                </div>
+<!-- Step 2: Order Details -->
+<div class="form-step" id="step2">
+    <h5>Order Details</h5>
+    <div id="orderDetailsContainer"></div>
+    <div class="d-flex justify-content-between align-items-center mt-3">
+        <button type="button" class="btn btn-success" onclick="addDetail()">Add New</button>
+        <div>
+            <button type="button" class="btn btn-secondary" onclick="prevStep()">Previous</button>
+            <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
+        </div>
+    </div>
+</div>
 
                                 <!-- Step 3: Confirmation -->
                                 <!-- Step 3: Summary Page -->
@@ -1589,6 +1588,7 @@ document.addEventListener("DOMContentLoaded", () => {
 <!-- Full-Screen Bill Modal -->
 
 <!-- ✅ Ensure the modal is placed before closing body tag -->
+  <script src="../js/scripts.js"></script>
 </body>
 </html>
 

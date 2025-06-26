@@ -106,7 +106,9 @@ $result = $stmt->get_result();
   <?php include 'navbar.php'; ?>
   <div id="layoutSidenav_content">
     <main class="container-fluid">
-      <h2 class="mt-3 mb-4 text-center">Transaction Records</h2>
+   <div class="card border-0 shadow my-4 rounded-3 p-4 bg-white mx-auto" style="max-width: 950px;">
+
+      <h2 class="m-4 fw-bold text-center">Transaction Records</h2>
 
       <!-- Filters Form -->
       <form method="GET" class="mb-4">
@@ -131,7 +133,7 @@ $result = $stmt->get_result();
               <?php endforeach; ?>
             </select>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-3 mb-3 mb-md-0">
             <label class="form-label">Search</label>
             <input type="text" name="search" class="form-control" placeholder="Product, desc, user..." value="<?= htmlspecialchars($search_text) ?>">
           </div>
@@ -205,6 +207,7 @@ $result = $stmt->get_result();
           </tbody>
         </table>
       </div>
+            </div>
     </main>
   </div>
    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
