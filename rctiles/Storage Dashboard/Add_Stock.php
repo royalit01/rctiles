@@ -142,12 +142,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_stock'])) {
             </div>
 
             <div class="mb-3">
-                <label>Packets to Add:</label>
+                <label>Packets to Add: <span style="color: red;">*</span> </label>
                 <input type="number" name="packets" class="form-control" min="0" required value="0">
             </div>
 
             <div class="mb-3">
-                <label>Pieces to Add:</label>
+                <label>Pieces to Add: <span style="color: red;">*</span> </label>
                 <input type="number" name="pieces" class="form-control" min="0" required value="0">
             </div>
 
