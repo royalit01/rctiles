@@ -64,6 +64,9 @@ $mysqli->close();
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.3.0/css/all.css">
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
         <style>
+            html {
+    overflow-y: scroll;
+}
         .product-image {
             max-width: 100px;
             height: auto;
