@@ -15,6 +15,8 @@ $to_date     = $_GET['to_date']     ?? '';
 $search_text = trim($_GET['search'] ?? '');
 $filter_user = $_GET['user_id']     ?? '';
 $limit       = 10;
+$page        = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset      = ($page - 1) * $limit;
 
 // ── Build base query with LEFT JOINs ──
 $query = "
@@ -74,9 +76,25 @@ if ($conditions) {
     $query .= ' WHERE ' . implode(' AND ', $conditions);
 }
 
-$query .= " ORDER BY t.transaction_date DESC LIMIT ?";
+// For pagination: get total count
+$count_query = "SELECT COUNT(*) as total FROM transactions t ";
+if ($conditions) {
+    $count_query .= ' WHERE ' . implode(' AND ', $conditions);
+}
+$count_stmt = $mysqli->prepare($count_query);
+if ($count_stmt && $params) {
+    $count_stmt->bind_param($types, ...$params);
+}
+$count_stmt->execute();
+$count_result = $count_stmt->get_result();
+$total_items = $count_result ? $count_result->fetch_assoc()['total'] : 0;
+$total_pages = $total_items > 0 ? ceil($total_items / $limit) : 1;
+$count_stmt->close();
+
+$query .= " ORDER BY t.transaction_date DESC LIMIT ? OFFSET ?";
 $params[] = $limit;
-$types   .= 'i';
+$params[] = $offset;
+$types   .= 'ii';
 
 // ── Prepare & execute ──
 $stmt = $mysqli->prepare($query);
@@ -204,6 +222,31 @@ $result = $stmt->get_result();
             <?php endif; ?>
           </tbody>
         </table>
+        <!-- Pagination controls -->
+        <nav aria-label="Page navigation">
+          <ul class="pagination justify-content-center mt-3">
+            <?php if ($page > 1): ?>
+              <li class="page-item">
+                <a class="page-link" href="<?= htmlspecialchars(preg_replace('/([&?])page=\\d+/', '$1', $_SERVER['REQUEST_URI'])) . (strpos($_SERVER['REQUEST_URI'], '?') !== false ? '&' : '?') . 'page=' . ($page - 1) ?>" aria-label="Previous">
+                  <span aria-hidden="true">&laquo; Prev</span>
+                </a>
+              </li>
+            <?php endif; ?>
+            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+              <li class="page-item <?= $i == $page ? 'active' : '' ?>">
+                <a class="page-link" href="<?= htmlspecialchars(preg_replace('/([&?])page=\\d+/', '$1', $_SERVER['REQUEST_URI'])) . (strpos($_SERVER['REQUEST_URI'], '?') !== false ? '&' : '?') . 'page=' . $i ?>"><?= $i ?></a>
+              </li>
+            <?php endfor; ?>
+            <?php if ($page < $total_pages): ?>
+              <li class="page-item">
+                <a class="page-link" href="<?= htmlspecialchars(preg_replace('/([&?])page=\\d+/', '$1', $_SERVER['REQUEST_URI'])) . (strpos($_SERVER['REQUEST_URI'], '?') !== false ? '&' : '?') . 'page=' . ($page + 1) ?>" aria-label="Next">
+                  <span aria-hidden="true">Next &raquo;</span>
+                </a>
+              </li>
+            <?php endif; ?>
+          </ul>
+        </nav>
+        <!-- End Pagination controls -->
       </div>
     </main>
   </div>

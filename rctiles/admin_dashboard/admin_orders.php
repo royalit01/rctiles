@@ -6,8 +6,26 @@ include '../db_connect.php';
 $status_filter = isset($_GET['status']) ? $_GET['status'] : 'all';
 $date_filter = isset($_GET['date']) ? $_GET['date'] : '';
 $limit = 10;
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($page - 1) * $limit;
 
-// Base SQL query
+// Base SQL query for count
+$count_sql = "SELECT COUNT(DISTINCT o.order_id) as total
+        FROM orders o
+        JOIN customers c ON o.customer_id = c.customer_id
+        JOIN pending_orders po ON o.order_id = po.order_id
+        WHERE 1=1";
+if ($status_filter !== 'all') {
+    $count_sql .= " AND po.approved = " . ($status_filter === 'approved' ? 1 : ($status_filter === 'rejected' ? -1 : 0));
+}
+if (!empty($date_filter)) {
+    $count_sql .= " AND DATE(o.order_date) = '$date_filter'";
+}
+$count_result = $mysqli->query($count_sql);
+$total_items = $count_result ? $count_result->fetch_assoc()['total'] : 0;
+$total_pages = $total_items > 0 ? ceil($total_items / $limit) : 1;
+
+// Base SQL query for data
 $sql = "SELECT DISTINCT o.order_id, c.name AS customer_name, c.phone_no, o.total_amount, 
                 (SELECT SUM(custom_price) FROM pending_orders WHERE order_id = o.order_id) AS custom_total,
                 po.approved, o.order_date
@@ -15,16 +33,13 @@ $sql = "SELECT DISTINCT o.order_id, c.name AS customer_name, c.phone_no, o.total
         JOIN customers c ON o.customer_id = c.customer_id
         JOIN pending_orders po ON o.order_id = po.order_id
         WHERE 1=1";
-
-// Add filters
 if ($status_filter !== 'all') {
     $sql .= " AND po.approved = " . ($status_filter === 'approved' ? 1 : ($status_filter === 'rejected' ? -1 : 0));
 }
 if (!empty($date_filter)) {
     $sql .= " AND DATE(o.order_date) = '$date_filter'";
 }
-
-$sql .= " ORDER BY o.order_date DESC LIMIT $limit";
+$sql .= " ORDER BY o.order_date DESC LIMIT $limit OFFSET $offset";
 $result = $mysqli->query($sql);
 ?>
 
@@ -226,6 +241,38 @@ $result = $mysqli->query($sql);
                                 <?php endwhile; ?>
                             </tbody>
                         </table>
+                        <!-- Pagination controls -->
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center mt-3">
+                                <?php 
+                                $queryString = $_GET;
+                                unset($queryString['page']);
+                                $baseUrl = strtok($_SERVER["REQUEST_URI"], '?');
+                                $queryStr = http_build_query($queryString);
+                                $pageUrl = $baseUrl . ($queryStr ? '?' . $queryStr . '&' : '?') . 'page=';
+                                ?>
+                                <?php if ($page > 1): ?>
+                                    <li class="page-item">
+                                        <a class="page-link" href="<?= $pageUrl . ($page - 1) ?>" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo; Prev</span>
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
+                                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                                    <li class="page-item <?= $i == $page ? 'active' : '' ?>">
+                                        <a class="page-link" href="<?= $pageUrl . $i ?>"><?= $i ?></a>
+                                    </li>
+                                <?php endfor; ?>
+                                <?php if ($page < $total_pages): ?>
+                                    <li class="page-item">
+                                        <a class="page-link" href="<?= $pageUrl . ($page + 1) ?>" aria-label="Next">
+                                            <span aria-hidden="true">Next &raquo;</span>
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
+                            </ul>
+                        </nav>
+                        <!-- End Pagination controls -->
                     </div>
 
                     <!-- Mobile Card View -->

@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 ini_set('display_errors', 1);
@@ -99,7 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_stock'])) {
         <form method="POST" action="">
             <div class="mb-3">
                 <label class="form-label">Select Product:</label>
-                <select class="form-select" name="product_id" id="productDropdown" required onchange="fetchStock()">
+                <select class="form-select" name="product_id" id="productDropdown" required data-live-search="true" style="width:100%" onchange="fetchStock()">
                     <option value="">-- Choose Product --</option>
                     <?php while ($row = $productResult->fetch_assoc()): ?>
                         <option value="<?= $row['product_id'] ?>"><?= $row['product_name'] ?></option>
@@ -109,7 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_stock'])) {
 
             <div class="mb-3">
                 <label class="form-label">Select Storage Area:</label>
-                <select class="form-select" name="storage_area_id" id="storageDropdown" required onchange="fetchStock()">
+                <select class="form-select" name="storage_area_id" id="storageDropdown" required data-live-search="true" style="width:100%" onchange="fetchStock()">
                     <option value="">-- Choose Storage --</option>
                     <?php while ($row = $storageResult->fetch_assoc()): ?>
                         <option value="<?= $row['storage_area_id'] ?>"><?= $row['storage_area_name'] ?></option>
@@ -194,6 +193,43 @@ document.querySelector('form').addEventListener('submit', function(e) {
     }
 });
 </script>
+
+<!-- Add Select2 for searchable dropdowns -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#productDropdown').select2({
+        dropdownParent: $('#productDropdown').parent(),
+        width: '100%',
+        placeholder: '-- Choose Product --',
+        allowClear: true,
+        minimumResultsForSearch: 0 // always show search
+    });
+    $('#storageDropdown').select2({
+        dropdownParent: $('#storageDropdown').parent(),
+        width: '100%',
+        placeholder: '-- Choose Storage --',
+        allowClear: true,
+        minimumResultsForSearch: 0 // always show search
+    });
+});
+</script>
+<style>
+.select2-container .select2-search--dropdown .select2-search__field {
+    width: 100% !important;
+}
+@media (max-width: 600px) {
+    .select2-container {
+        width: 100% !important;
+    }
+    .select2-dropdown {
+        left: 0 !important;
+        width: 100vw !important;
+        min-width: 100vw !important;
+    }
+}
+</style>
 
 </body>
 </html>
