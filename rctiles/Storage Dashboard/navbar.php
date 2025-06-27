@@ -90,14 +90,14 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
                                 Total Stock Report
                             </a>
-                            <a class="nav-link collapsed" href="Add_Report.php"  >
+                            <!-- <a class="nav-link collapsed" href="Add_Report.php"  >
                                 <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
                                 Add Stock Report
                             </a>
                             <a class="nav-link collapsed" href="Minus_Report.php"  >
                                 <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
                                 Minus Stock Report
-                            </a>
+                            </a> -->
                             <a class="nav-link collapsed" href="Low_Stock_Report.php"  >
                                 <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
                                 Low Stock Report
