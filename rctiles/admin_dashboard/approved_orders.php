@@ -3,7 +3,8 @@ include '../db_connect.php';
 
 // Fetch approved orders with total amount and custom price
 $sql = "SELECT po.order_id, c.name AS customer_name, c.phone_no, 
-               o.total_amount, SUM(po.custom_price) AS custom_total
+                               (SELECT SUM(custom_price) FROM pending_orders WHERE order_id = o.order_id)  AS 
+ total_amount, SUM(po.custom_price) AS custom_total
         FROM pending_orders po
         JOIN customers c ON po.customer_id = c.customer_id
         JOIN orders o ON po.order_id = o.order_id

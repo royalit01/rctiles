@@ -5,7 +5,7 @@ include '../db_connect.php';
 // Initialize filter variables
 $status_filter = isset($_GET['status']) ? $_GET['status'] : 'all';
 $date_filter = isset($_GET['date']) ? $_GET['date'] : '';
-$limit = 10;
+$limit =20;
 $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $offset = ($page - 1) * $limit;
 

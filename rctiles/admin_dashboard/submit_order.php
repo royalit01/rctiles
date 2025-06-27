@@ -44,10 +44,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // echo "</pre>";
 
     // Get final price
-    $final_price = isset($_POST['final_price']) ? floatval($_POST['final_price']) : 0;
-    if ($final_price <= 0) {
-        die("Error: Invalid final price.");
-    }
+    // $final_price = isset($_POST['final_price']) ? floatval($_POST['final_price']) : 0;
+    // if ($final_price <= 0) {
+    //     die("Error: Invalid final price.");
+    // }
 
     // Start transaction
     $mysqli->begin_transaction();
@@ -79,9 +79,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Now insert order
-        $sql = "INSERT INTO orders (customer_id, total_amount, final_amount, order_date) VALUES (?, ?, ?, NOW())";
+        $sql = "INSERT INTO orders (customer_id, total_amount, order_date) VALUES (?, ?, NOW())";
         $stmt = $mysqli->prepare($sql);
-        $stmt->bind_param("idd", $customer_id, $total_amount, $final_amount);
+        $stmt->bind_param("id", $customer_id, $total_amount);
         $stmt->execute();
         $order_id = $stmt->insert_id;
         $stmt->close();

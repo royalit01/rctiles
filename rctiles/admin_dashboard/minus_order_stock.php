@@ -2,8 +2,11 @@
 // include "admin_header.php";
 require '../db_connect.php';
 
-/* ——— all fully‑approved orders that still need stock subtraction ——— */
-// $where  = ["po.approved = 1"];
+// Pagination setup
+$itemsPerPage = 20;
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($page - 1) * $itemsPerPage;
+
 $where  = ["po.approved = 1", "o.stock_done = 0"];
 $params = [];
 $types  = '';
@@ -24,17 +27,15 @@ if (!empty($_GET['to'])) {
     $types   .= 's';
 }
 
-// $sql = "SELECT o.order_id,
-//                c.name   AS customer,
-//                c.phone_no,
-//                SUM(po.custom_price) AS total_price,
-//                o.stock_done
-//         FROM orders o
-//         JOIN customers c  ON c.customer_id = o.customer_id
-//         JOIN pending_orders po ON po.order_id = o.order_id
-//         WHERE " . implode(' AND ', $where) . "
-//         GROUP BY o.order_id
-//         ORDER BY o.order_date DESC";
+// Count total for pagination
+$count_sql = "SELECT COUNT(DISTINCT o.order_id) as total FROM orders o JOIN customers c ON c.customer_id = o.customer_id JOIN pending_orders po ON po.order_id = o.order_id WHERE " . implode(' AND ', $where);
+$count_stmt = $mysqli->prepare($count_sql);
+if ($types) $count_stmt->bind_param($types, ...$params);
+$count_stmt->execute();
+$count_result = $count_stmt->get_result();
+$total_items = $count_result ? $count_result->fetch_assoc()['total'] : 0;
+$total_pages = $total_items > 0 ? ceil($total_items / $itemsPerPage) : 1;
+$count_stmt->close();
 
 $sql = "SELECT o.order_id,
                c.name AS customer,
@@ -52,8 +53,8 @@ $sql = "SELECT o.order_id,
         LEFT JOIN minus_stock ms ON ms.order_id = o.order_id AND ms.product_id = po.product_id
         WHERE " . implode(' AND ', $where) . "
         GROUP BY o.order_id
-        ORDER BY o.order_date DESC";
-
+        ORDER BY o.order_date DESC
+        LIMIT $itemsPerPage OFFSET $offset";
 
 $stmt = $mysqli->prepare($sql);
 if ($types) $stmt->bind_param($types, ...$params);
@@ -152,7 +153,7 @@ $result = $stmt->get_result();
                     </tr>
                     </thead>
                     <tbody>
-                    <?php $i = 1; while ($row = $result->fetch_assoc()): ?>
+                    <?php $i = 1 + $offset; while ($row = $result->fetch_assoc()): ?>
                         <tr>
                             <td><?= $i++ ?></td>
                             <td><?= htmlspecialchars($row['customer']) ?></td>
@@ -184,6 +185,38 @@ $result = $stmt->get_result();
                     <?php endwhile; ?>
                     </tbody>
                 </table>
+                <!-- Pagination controls -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mt-3">
+                        <?php 
+                        $queryString = $_GET;
+                        unset($queryString['page']);
+                        $baseUrl = strtok($_SERVER["REQUEST_URI"], '?');
+                        $queryStr = http_build_query($queryString);
+                        $pageUrl = $baseUrl . ($queryStr ? '?' . $queryStr . '&' : '?') . 'page=';
+                        ?>
+                        <?php if ($page > 1): ?>
+                            <li class="page-item">
+                                <a class="page-link" href="<?= $pageUrl . ($page - 1) ?>" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo; Prev</span>
+                                </a>
+                            </li>
+                        <?php endif; ?>
+                        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                            <li class="page-item <?= $i == $page ? 'active' : '' ?>">
+                                <a class="page-link" href="<?= $pageUrl . $i ?>"><?= $i ?></a>
+                            </li>
+                        <?php endfor; ?>
+                        <?php if ($page < $total_pages): ?>
+                            <li class="page-item">
+                                <a class="page-link" href="<?= $pageUrl . ($page + 1) ?>" aria-label="Next">
+                                    <span aria-hidden="true">Next &raquo;</span>
+                                </a>
+                            </li>
+                        <?php endif; ?>
+                    </ul>
+                </nav>
+                <!-- End Pagination controls -->
             </div>
 
             <!-- fullscreen‑on‑mobile modal -->

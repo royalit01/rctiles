@@ -14,7 +14,7 @@ $from_date   = $_GET['from_date']   ?? '';
 $to_date     = $_GET['to_date']     ?? '';
 $search_text = trim($_GET['search'] ?? '');
 $filter_user = $_GET['user_id']     ?? '';
-$limit       = 10;
+$limit       = 20;
 $page        = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $offset      = ($page - 1) * $limit;
 
