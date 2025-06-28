@@ -63,6 +63,8 @@ $riders = $mysqli->query("
 
 <link href="../css/styles.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.3.0/css/all.css">
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 <style>
 @media (max-width:575.98px){
  table thead{display:none}
@@ -77,8 +79,8 @@ $riders = $mysqli->query("
 
 <div id="layoutSidenav_content">
 <main class="container-fluid px-4 py-4">
-
-<h2 class="mb-4">Delivery Riders – Cash Ledger</h2>
+<main class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width: 1200px;">
+<center><h2 class="mb-4">Delivery Riders – Cash Ledger</h2></center>
 
 <div class="table-responsive">
 <table class="table table-bordered align-middle" id="riderTable">
@@ -152,5 +154,8 @@ $(document).on('click','.rider-row',function(e){
 });
 
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+ <script src="../js/scripts.js"></script>
 </body>
 </html>

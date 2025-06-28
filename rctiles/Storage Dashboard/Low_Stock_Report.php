@@ -31,7 +31,41 @@ $result = $mysqli->query($query);
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="../css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-         
+       <table class="table table-striped table-bordered mt-3 rounded-table" id="stockTable">
+  <!-- Table content same as before -->
+</table>
+
+<style>
+  .rounded-table {
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid #dee2e6;
+    border-bottom: 1px solidrgb(78, 82, 86); 
+  }
+  .rounded-table thead th {
+    border-bottom: 2px solid #495057 !important; 
+  }
+  .rounded-table thead th:first-child {
+    border-top-left-radius: 0.75rem;
+  }
+  .rounded-table thead th:last-child {
+    border-top-right-radius: 0.75rem;
+  }
+  .rounded-table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 0.75rem;
+  }
+  .rounded-table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 0.75rem;
+  }
+  /* Fix for internal borders */
+  .rounded-table th, 
+  .rounded-table td {
+    border-left: 1px solid #dee2e6 !important;
+    border-right: 1px solid #dee2e6 !important;
+  }
+</style>
     </head>
     <body class="sb-nav-fixed">
     <?php  include 'navbar.php'; ?>
@@ -41,7 +75,8 @@ $result = $mysqli->query($query);
             <div id="layoutSidenav_content">
                 <main>
                 <div class="container-fluid mt-3">
-                        <h1 class="mt-4">Low Stock Report</h1>
+                                                <div class="card border-0 shadow my-4 rounded-3 p-4 bg-white mx-auto" style="max-width: 950px; ">
+                        <h1 class="mt-4 text-center mb-3 fw-bold">Low Stock Report</h1>
                             <div class="card-body">
                                 <form action="" method="POST" class="mb-3">
                                     <label for="storageAreaSelect" class="form-label">Storage Area:</label>
@@ -59,7 +94,7 @@ $result = $mysqli->query($query);
                                 <?php
                                 if ($result && $result->num_rows > 0) {
                                     echo '<div class="table-responsive">
-                                            <table class="table table-striped table-bordered mt-3" id="stockTable" >
+                                            <table class="table table-striped table-bordered mt-3 rounded-table" id="stockTable" >
                                                 <thead class="table-dark">
                                                     <tr>
                                                         <th>Product Name</th>
@@ -85,9 +120,10 @@ $result = $mysqli->query($query);
                                 }
                                 ?>
                                 <div class="text-center">
-                                    <button class="btn btn-primary " onclick="downloadPDF()">Download PDF</button>
+                                    <button class="btn btn-primary mt-4 " onclick="downloadPDF()">Download PDF</button>
                                 </div>
-                            </div>   
+                            </div>  
+                            </div> 
                     </div>
                 </main> 
 

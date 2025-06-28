@@ -117,14 +117,20 @@ $result = $stmt->get_result();
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="../css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
- 
+ <style>
+  html {
+    overflow-y: scroll;
+}
+ </style>
     </head>
 
 <body class="sb-nav-fixed">
   <?php include 'navbar.php'; ?>
   <div id="layoutSidenav_content">
     <main class="container-fluid">
-      <h2 class="mt-3 mb-4 text-center">Transaction Records</h2>
+   <div class="card border-0 shadow my-4 rounded-3 p-4 bg-white mx-auto" style="max-width: 950px;">
+
+      <h2 class="m-4 fw-bold text-center">Transaction Records</h2>
 
       <!-- Filters Form -->
       <form method="GET" class="mb-4">
@@ -149,7 +155,7 @@ $result = $stmt->get_result();
               <?php endforeach; ?>
             </select>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-3 mb-3 mb-md-0">
             <label class="form-label">Search</label>
             <input type="text" name="search" class="form-control" placeholder="Product, desc, user..." value="<?= htmlspecialchars($search_text) ?>">
           </div>
@@ -248,6 +254,7 @@ $result = $stmt->get_result();
         </nav>
         <!-- End Pagination controls -->
       </div>
+            </div>
     </main>
   </div>
    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>

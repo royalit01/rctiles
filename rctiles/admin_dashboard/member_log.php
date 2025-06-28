@@ -105,6 +105,7 @@ $result = $stmt->get_result();
                 <main>
                     <div class="container-fluid">
                         <br>
+                        <div class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width: 1200px;">
                         <center>
                         <h2 class="mb-4"><b>Stock Subtraction Log</b></h2>
                         </center>

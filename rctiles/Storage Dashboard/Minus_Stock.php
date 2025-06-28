@@ -43,9 +43,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (isset($_POST['minus_stock'])) {
         $message = handleStockMinus($mysqli, $_POST, $selectedStorageArea);
-        // Redirect to prevent form resubmission
-        header('Location: ' . $_SERVER['PHP_SELF'] . "?success=1&area=" . urlencode($selectedStorageArea) . "&category=" . urlencode($selectedCategory));
-        exit();
+        if (trim($message) !== "") {
+            $_SESSION['last_stock_message'] = $message;
+            header('Location: ' . $_SERVER['PHP_SELF'] . "?success=1&area=" . urlencode($selectedStorageArea) . "&category=" . urlencode($selectedCategory));
+            exit();
+        } else {
+            // No stock updated, don't show modal
+            $_SESSION['no_stock_alert'] = "Please enter packets or pieces for at least one product to update stock.";
+
+            header('Location: ' . $_SERVER['PHP_SELF'] . "?area=" . urlencode($selectedStorageArea) . "&category=" . urlencode($selectedCategory));
+            exit();
+        }
     }
 }
 
@@ -284,7 +292,32 @@ function fetchCategoriesAndProducts($mysqli, $selectedStorageArea, $selectedCate
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="../css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
- 
+  <style>
+        .card-form {
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+        }
+        .form-control, .form-select {
+            border-radius: 0.75rem;
+            min-height: 40px;
+            margin-top: 0.3rem;
+        }
+        .search-box {
+            max-width: 410px;
+            margin-bottom: 1.5rem;
+        }
+        .stock-input {
+            width: 100px !important;
+            display: inline-block !important;
+        }
+        .action-btn {
+            border-radius: 0.6rem;
+            padding: 0.6rem 1.5rem;
+            font-weight: 500;
+        }
+    </style>
     </head>
     <body class="sb-nav-fixed">
     <?php  include 'navbar.php'; ?>
@@ -293,8 +326,10 @@ function fetchCategoriesAndProducts($mysqli, $selectedStorageArea, $selectedCate
             <!-- ---------------------------- -->
             <div id="layoutSidenav_content">
                 <main>
-                <div class="container-fluid px-4">
-                    <h2 class="mb-2"><b>Minus Stock</b></h2>
+                <div class="container-fluid  px-4  p-2">
+   <div class="card border-0 shadow my-3 rounded-3 p-4 bg-white mx-auto" style="max-width: 950px; min-height: 560px;">
+
+                    <h2 class="mb-4 text-center m-4 "><b>Minus Stock</b></h2>
                     <form action="" method="post">
                         <div class="row mb-3">
                             <div class="col-md-4">
@@ -370,6 +405,21 @@ function fetchCategoriesAndProducts($mysqli, $selectedStorageArea, $selectedCate
                         </div>
                     </div>
                 </div>
+                <!-- Fail Modal -->
+                <div class="modal fade" id="failModal" tabindex="-1" aria-labelledby="failModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-warning">
+                                <h5 class="modal-title" id="failModalLabel">Alert</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p id="failMessage"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
                     </div>
                 </main> 
 
@@ -431,5 +481,18 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
     </script>
+   
+    <script>
+<?php if (!empty($_SESSION['no_stock_alert'])) { ?>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("failMessage").textContent = "<?php echo addslashes($_SESSION['no_stock_alert']); ?>";
+        const failModal = new bootstrap.Modal(document.getElementById("failModal"));
+        failModal.show();
+        setTimeout(function() {
+            failModal.hide();
+        }, 3000);
+    });
+<?php unset($_SESSION['no_stock_alert']); } ?>
+</script>
     </body>
 </html>

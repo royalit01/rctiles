@@ -104,7 +104,7 @@ $storageResult = $mysqli->query($storageQuery);
         <?php include "admin_header.php";  ?>
             <div id="layoutSidenav_content">
                 <main>
-                    <div class="container-fluid px-4">
+                    <div class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width: 1200px;">
                         <h1 class="mt-2 text-center">Add User</h1>
                         <!-- error / success messages -->
                         <div id="formAlert" class="alert alert-danger alert-dismissible fade d-none" role="alert">

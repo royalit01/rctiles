@@ -80,26 +80,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_stock'])) {
         <link href="../css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
- 
+ <style>
+  .gradient-btn {
+    background: linear-gradient(135deg,rgb(92, 140, 212) 0%,rgb(31, 106, 218) 100%);
+    border: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.gradient-btn:hover {
+    background: linear-gradient(135deg,rgb(125, 154, 198) 0%,rgb(37, 106, 210) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.gradient-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+}
+
+ </style>
     </head>
 
   <body class="sb-nav-fixed">
-     <?php  include 'navbar.php'; ?>
  
+  <?php include 'navbar.php'; ?>
 
             <div id="layoutSidenav_content">
+
                 <main>
 
-    <div class="container">
-        <br>
-        
-        <h2 class="mb-4 text-center fw-bold">Add Stock</h2>
+    <div class="container-fluid mt-4">
+        <div class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width: 950px;">
+        <h2 class="mt-1 mb-2 fw-bold fs-2 text-center">Add Stock</h2>
 
-        <form method="POST" action="">
+        <form class="p-2" method="POST" action="">
             <div class="mb-3">
-                <label class="form-label">Select Product:</label>
-                <select class="form-select" name="product_id" id="productDropdown" required data-live-search="true" style="width:100%" onchange="fetchStock()">
-                    <option value="">-- Choose Product --</option>
+                <label class="form-label fw-medium text-secondary"style="  font-weight: 550;"">Select Product:</label>
+                <select class="form-select rounded-3 py-2" name="product_id" id="productDropdown" required onchange="fetchStock()">
+                    <option value=""> Choose Product </option>
                     <?php while ($row = $productResult->fetch_assoc()): ?>
                         <option value="<?= $row['product_id'] ?>"><?= $row['product_name'] ?></option>
                     <?php endwhile; ?>
@@ -107,9 +126,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_stock'])) {
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Select Storage Area:</label>
-                <select class="form-select" name="storage_area_id" id="storageDropdown" required data-live-search="true" style="width:100%" onchange="fetchStock()">
-                    <option value="">-- Choose Storage --</option>
+                <label class="form-label fw-medium text-secondary"style="  font-weight: 550;"">Select Storage Area:</label>
+                <select class="form-select" name="storage_area_id" id="storageDropdown" required onchange="fetchStock()">
+                    <option value=""> Choose Storage </option>
                     <?php while ($row = $storageResult->fetch_assoc()): ?>
                         <option value="<?= $row['storage_area_id'] ?>"><?= $row['storage_area_name'] ?></option>
                     <?php endwhile; ?>
@@ -117,7 +136,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_stock'])) {
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Current Stock:</label>
+                <label class="form-label fw-medium text-secondary"style="  font-weight: 550;"">Current Stock:</label>
                 <input type="text" class="form-control" id="currentStock" readonly>
             </div>
 
@@ -131,8 +150,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_stock'])) {
                 <input type="number" name="pieces" class="form-control" min="0" required value="0">
             </div>
 
-            <button type="submit" name="add_stock" class="btn btn-primary w-100">Add Stock</button>
+             <div class="mb-3">
+                <label class="form-label fw-medium text-secondary"style="  font-weight: 550;"">Remark:</label>
+                <input type="text" class="form-control" id="remark">
+            </div>
+
+<div class="d-flex justify-content-center">
+    <button type="submit" name="add_stock" class="btn gradient-btn w-20 text-white p-2  position-relative">
+        <i class="fas fa-plus text-white me-2"></i> Add Stock
+    </button>
+</div>
         </form>
+                    </div>
     </div>
 
     <!-- Success Modal -->

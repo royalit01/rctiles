@@ -66,150 +66,169 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_bill'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>RC Mall Bill</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- jsPDF Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-
-    <!-- jsPDF AutoTable Plugin -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
-    <link href="../css/styles.css" rel="stylesheet" />
-    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-   
+    <link href="https://use.fontawesome.com/releases/v6.3.0/css/all.css" rel="stylesheet">
+    <style>
+        body {
+            background: #e9ecef;
+        }
+        .bill-container {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 32px rgba(0,0,0,0.10);
+            padding: 2.5rem 3rem 2rem 3rem;
+            max-width: 1100px;
+            margin: 60px auto 40px auto;
+        }
+        .bill-header {
+            border-bottom: 3px solid #0d6efd;
+            margin-bottom: 2rem;
+            padding-bottom: 1.2rem;
+        }
+        .bill-header h2 {
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+        .customer-info-box {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.1rem 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+        }
+        .customer-info-box strong {
+            color: #0d6efd;
+        }
+        .table th, .table td {
+            vertical-align: middle !important;
+            font-size: 1.08rem;
+        }
+        .table tfoot th {
+            background: #f1f3f4;
+            font-weight: 600;
+            font-size: 1.08rem;
+        }
+        .table-dark th {
+            background: #0d6efd !important;
+            color: #fff !important;
+            font-size: 1.09rem;
+        }
+        .btn-success {
+            min-width: 160px;
+            font-size: 1.08rem;
+            padding: 0.6rem 1.5rem;
+        }
+        @media (max-width: 900px) {
+            .bill-container {
+                padding: 1.2rem 0.5rem;
+                max-width: 99vw;
+            }
+        }
+        @media (max-width: 600px) {
+            .bill-header {
+                padding-bottom: 0.5rem;
+            }
+            .customer-info-box {
+                padding: 0.7rem 0.5rem;
+            }
+        }
+    </style>
 </head>
+<body>
+    <div class="bill-container">
+        <div class="bill-header text-center">
+            <h2 class="mb-1">RC Mall – Customer Bill</h2>
+            <div class="text-muted fs-6">Bill Generation</div>
+        </div>
 
-<body class="sb-nav-fixed">
-     <?php include "admin_header.php"; ?>
-     <div id="layoutSidenav_content">
-        <main>
-            <div class="container-box">
-                <h2 class="text-center mt-4 fw-bold pb-3">RC Mall Bill</h2>
-                
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <label class="fw-bold">Customer Name:</label>
-                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($order['customer_name']); ?>" disabled>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="fw-bold">Address:</label>
-                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($order['address']) . ', ' . htmlspecialchars($order['city']); ?>" disabled>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="fw-bold">Phone:</label>
-                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($order['phone_no']); ?>" disabled>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="fw-bold">Final Amount Paid:</label>
-                        <input type="number" class="form-control" id="finalAmountPaid" value="<?php echo $order['final_amount']; ?>" oninput="calculateTotals()">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="fw-bold">Rent:</label>
-                        <input type="number" class="form-control" id="rentAmount" value="0" oninput="calculateTotals()">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="fw-bold">Date:</label>
-                        <input type="text" class="form-control" value="<?php echo date('Y-m-d'); ?>" disabled>
-                    </div>
-                    <!-- Discount & GST UI -->
-                    <!-- <div class="col-md-4">
-                    <label class="fw-bold">GST %:</label>
-                    <input type="number" id="gstPercent" class="form-control"
-                            value="0" min="0" max="28" step="0.01" oninput="calculateTotals()">
-                    </div> -->
+        <div class="customer-info-box row mb-4">
+            <div class="col-md-4 col-12 mb-2"><strong>Name:</strong> <?= htmlspecialchars($order['customer_name']) ?></div>
+            <div class="col-md-4 col-12 mb-2"><strong>Phone:</strong> <?= htmlspecialchars($order['phone_no']) ?></div>
+            <div class="col-md-4 col-12"><strong>Address:</strong> <?= htmlspecialchars($order['address']) . ', ' . htmlspecialchars($order['city']) ?></div>
+        </div>
 
+        <form id="billForm" method="post">
+            <div class="row mb-3">
+                <div class="col-md-4 mb-2">
+                    <label class="fw-bold">Final Amount Paid:</label>
+                    <input type="number" class="form-control" id="finalAmountPaid" value="<?= $order['final_amount']; ?>" oninput="calculateTotals()">
                 </div>
-                <?php if(isset($_GET['saved'])): ?>
-                <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
-                    Bill details saved!
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <div class="col-md-4 mb-2">
+                    <label class="fw-bold">Rent:</label>
+                    <input type="number" class="form-control" id="rentAmount" value="0" oninput="calculateTotals()">
                 </div>
-                <?php endif; ?>
-                <form id="billForm" method="post">
-                    <div class="table-responsive">
-                        <!-- ⬇︎  OPEN the form just before the table (or higher, if you prefer) -->
-                
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Item Name</th>
-                                    <th>Quantity</th>
-                                    <th>Original Price ₹</th>
-                                    <th>Discounted Price ₹</th>
-                                    <th>Total Price</th>    
-                                </tr>
-                            </thead>
-                            <tbody id="billTable">
-                                <?php
-                                    $index  = 1;
-                                    $totalOriginalAmount = 0;
-
-                                    foreach ($products as $product):
-                                        $qty        = (int)$product['quantity'];
-                                        $origUnit   = (float)$product['original_price'];
-                                    
-                                        /* NEW ---------------------------------------- */
-                                        $discounted = $qty ? $product['custom_price'] / $qty : 0;   // per-unit
-                                        $total      = $product['custom_price'];                     // line-total
-                                    ?>
-                                    <tr class="product-row"
-                                        data-unit="<?= $discounted ?>"
-                                        data-orig='<?= $origUnit ?>'   
-                                        data-qty="<?= $qty ?>">
-                                        <td><?= $index++; ?></td>
-                                        <td><?= htmlspecialchars($product['product_name']); ?></td>
-                                        <td><?= $qty; ?></td>
-
-                                        <td>₹<?= number_format($origUnit,   2); ?></td>   <!-- Original -->
-                                        <td>₹<?= number_format($discounted, 2); ?></td>   <!-- NEW -->
-                                        <td>₹<?= number_format($total,      2); ?></td>   <!-- CHANGED -->
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-
-                            <!-- <tfoot>
-                                <tr>
-                                    <th colspan="4" class="text-end">Total:</th>
-                                    <th id="totalAmount">₹<span id="totalAmountValue"><?php echo number_format($order['final_amount'], 2); ?></span></th>
-
-                                </tr>
-                                <tr>
-                                    <th colspan="4" class="text-end">Rent:</th>
-                                    <th id="rentDisplay">₹0</th>
-                                </tr>
-                                <tr>
-                                    <th colspan="4" class="text-end">Grand Total:</th>
-                                    <th id="grandTotal">₹<?php echo number_format($totalOriginalAmount, 2); ?></th>
-                                </tr>
-                            </tfoot> -->
-                            <tfoot>
-                                <tr><th colspan="5" class="text-end">Item&nbsp;Total:</th><th id="itemTotal">₹0.00</th></tr>
-                                <tr><th colspan="5" class="text-end">Rent:</th><th id="rentDisplay">₹0.00</th></tr>
-                                <!-- <tr><th colspan="5" class="text-end">GST:</th><th id="gstDisplay">₹0.00</th></tr> -->
-                                <tr><th colspan="5" class="text-end">Discount:</th><th id="discountDisplay">₹0.00</th></tr>
-                                <tr class="table-dark"><th colspan="5" class="text-end fw-bold">Grand&nbsp;Total:</th><th id="grandTotal" class="fw-bold">₹0.00</th></tr>
-                            </tfoot>
-
-                            <input type="hidden" name="order_id"     value="<?= $order_id ?>"> <!-- if not already there -->
-                            <input type="hidden" name="rent"         id="rentInput">
-                            <input type="hidden" name="grand_total"  id="grandTotalInput">
-                            <input type="hidden" name="discounted_amount" id="discountedAmountInput">
-
-                        </table>
-                    </div>
-
-                    <button class="btn btn-success" onclick="downloadPDF()">Download PDF</button>
-                    <button type="submit" class="btn btn-success" name="save_bill" onclick="pushTotalsToHidden()">
-                        <i class="fas fa-save"></i> Save Bill
-                    </button>
-                </form>
+                <div class="col-md-4 mb-2">
+                    <label class="fw-bold">Date:</label>
+                    <input type="text" class="form-control" value="<?= date('Y-m-d'); ?>" disabled>
+                </div>
             </div>
-        </main>
+
+            <?php if(isset($_GET['saved'])): ?>
+            <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
+                Bill details saved!
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <?php endif; ?>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle shadow-sm">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Item Name</th>
+                            <th>Quantity</th>
+                            <th>Original Price ₹</th>
+                            <th>Discounted Price ₹</th>
+                            <th>Total Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="billTable">
+                        <?php
+                            $index  = 1;
+                            foreach ($products as $product):
+                                $qty        = (int)$product['quantity'];
+                                $origUnit   = (float)$product['original_price'];
+                                $discounted = $qty ? $product['custom_price'] / $qty : 0;
+                                $total      = $product['custom_price'];
+                        ?>
+                        <tr class="product-row"
+                            data-unit="<?= $discounted ?>"
+                            data-orig='<?= $origUnit ?>'
+                            data-qty="<?= $qty ?>">
+                            <td><?= $index++; ?></td>
+                            <td><?= htmlspecialchars($product['product_name']); ?></td>
+                            <td><?= $qty; ?></td>
+                            <td>₹<?= number_format($origUnit,   2); ?></td>
+                            <td>₹<?= number_format($discounted, 2); ?></td>
+                            <td>₹<?= number_format($total,      2); ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                    <tfoot>
+                        <tr><th colspan="5" class="text-end">Item&nbsp;Total:</th><th id="itemTotal">₹0.00</th></tr>
+                        <tr><th colspan="5" class="text-end">Rent:</th><th id="rentDisplay">₹0.00</th></tr>
+                        <tr><th colspan="5" class="text-end">Discount:</th><th id="discountDisplay">₹0.00</th></tr>
+                        <tr class="table-dark"><th colspan="5" class="text-end fw-bold">Grand&nbsp;Total:</th><th id="grandTotal" class="fw-bold">₹0.00</th></tr>
+                    </tfoot>
+                    <input type="hidden" name="order_id"     value="<?= $order_id ?>">
+                    <input type="hidden" name="rent"         id="rentInput">
+                    <input type="hidden" name="grand_total"  id="grandTotalInput">
+                    <input type="hidden" name="discounted_amount" id="discountedAmountInput">
+                </table>
+            </div>
+
+            <div class="text-center mt-4">
+                <button class="btn btn-success shadow me-2" type="button" onclick="downloadPDF()">
+                    <i class="fas fa-download me-2"></i>Download PDF
+                </button>
+                <button type="submit" class="btn btn-success shadow" name="save_bill" onclick="pushTotalsToHidden()">
+                    <i class="fas fa-save"></i> Save Bill
+                </button>
+            </div>
+        </form>
     </div>
-</body>
-<script>
+    <script>
          document.addEventListener("DOMContentLoaded", function() {
         setTimeout(applyFinalPrice, 100);
       });
@@ -397,4 +416,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_bill'])) {
                 .addEventListener('submit', pushTotalsToHidden);
 
     </script>
+</body>
 </html>

@@ -59,10 +59,11 @@ if (isset($_POST['updateSupplier'])) {
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid">
-                <h1 class="mt-4">Manage Suppliers</h1>
+                 <div class="card mt-3 border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width: 950px;min-height: 550px;">
+                <h1 class="my-4 text-center fw-bold">Manage Suppliers</h1>
 
                 <!-- Add Supplier Button -->
-                <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addSupplierModal">Add New Supplier</button>
+                <button class="btn btn-primary btn-sm mb-3" style="max-width: 200px; min-height:40px" data-bs-toggle="modal" data-bs-target="#addSupplierModal"><i class="fas fa-plus me-1"></i>Add New Supplier</button>
 
                 <!-- Add Supplier Modal -->
                 <div class="modal fade" id="addSupplierModal" tabindex="-1" aria-labelledby="addSupplierModalLabel" aria-hidden="true">
@@ -82,7 +83,7 @@ if (isset($_POST['updateSupplier'])) {
                                         <label for="supplier_details" class="form-label">Supplier Details</label>
                                         <input type="text" class="form-control" name="supplier_details" required />
                                     </div>
-                                    <button type="submit" name="addSupplier" class="btn btn-primary">Add</button>
+                                    <button type="submit" name="addSupplier" class="btn btn-primary ">Add</button>
                                 </form>
                             </div>
                         </div>
@@ -112,7 +113,7 @@ if (isset($_POST['updateSupplier'])) {
                             echo "<td>
                                     <form method='POST' style='display:inline;'>
                                         <input type='hidden' name='supplier_id' value='" . $row['supplier_id'] . "' />
-                                        <button type='button' class='btn btn-primary' onclick='editSupplier(" . $row['supplier_id'] . ", \"" . htmlspecialchars($row['supplier_name']) . "\", \"" 
+                                        <button type='button' class='btn btn-primary mb-2 mb-md-0 ' onclick='editSupplier(" . $row['supplier_id'] . ", \"" . htmlspecialchars($row['supplier_name']) . "\", \"" 
                                         . htmlspecialchars($row['supplier_details']) . "\")'>Edit</button> 
                                         <button type='button' class='btn btn-danger' onclick='confirmDelete(" . $row['supplier_id'] . ", \"" . $row['supplier_name'] . "\")'>Delete</button>
                                     </form>
@@ -184,6 +185,7 @@ if (isset($_POST['updateSupplier'])) {
               <div class="modal-body">
               <p id="successMessage"></p>
            </div>
+                    </div>
         </div>
         </main>
     </div>

@@ -1,7 +1,7 @@
 <?php
 session_start();  // Start the session at the beginning of the script
 
-include 'db_connect.php';  // Include your database connection details
+include './db_connect.php';  // Include your database connection details
 
 $login_err = '';  // Initialize the login error message variable
 

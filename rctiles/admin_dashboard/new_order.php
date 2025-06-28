@@ -171,7 +171,7 @@ include '../db_connect.php';
             </div>
 
             <button type="button" class="btn btn-primary mt-2" onclick="openProductModal(this, 'wall')">Choose Wall Tile</button>
-            <button type="button" class="btn btn-warning mt-2" onclick="enableEditSelection(this)">Edit Selection</button>
+            <!-- <button type="button" class="btn btn-warning mt-2" onclick="enableEditSelection(this)">Edit Selection</button> -->
 
             <!-- ✅ Separate div for wall tile selection -->
             <div class="selected-products-wall mt-2 text-muted"><p>No wall tiles selected yet.</p></div>
@@ -205,7 +205,7 @@ include '../db_connect.php';
             <p class="mt-2"><strong>Floor Area:</strong> <span class="floor-area">0.00 m²</span></p>
 
             <button type="button" class="btn btn-primary mt-2" onclick="openProductModal(this, 'floor')">Choose Floor Tile</button>
-            <button type="button" class="btn btn-warning mt-2" onclick="enableEditSelection(this)">Edit Selection</button>
+            <!-- <button type="button" class="btn btn-warning mt-2" onclick="enableEditSelection(this)">Edit Selection</button> -->
 
             <!-- ✅ Separate div for floor tile selection -->
             <div class="selected-products-floor mt-2 text-muted"><p>No floor tiles selected yet.</p></div>
@@ -362,7 +362,7 @@ include '../db_connect.php';
                         </td>
                         <td>
                             <input type="checkbox" class="product-checkbox" data-product-id="${product.id}"
-                            onchange="toggleProductSelection(this, ${product.id}, '${product.name.replace(/'/g, "\\'")}', ${product.price !== 'N/A' ? parseFloat(product.price) : 0})"                               ${isSelected ? "checked" : ""}>
+                            onchange="toggleProductSelection(this, ${product.id}, '${product.name.replace(/'/g, "\\'")}', ${product.price !== 'N/A' ? parseFloat(product.price) : 0})">
                         </td>
                     `;
                     tbody.appendChild(row);
@@ -1105,7 +1105,7 @@ function removeDetail(button) {
         }
 
         // Change button text back to Edit Selection
-        button.textContent = "Edit Selection";
+        // button.textContent = "Edit Selection";
         button.classList.remove("btn-success");
         button.classList.add("btn-warning");
         button.setAttribute("onclick", "enableEditSelection(this)");
@@ -1669,7 +1669,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <!-- 🔹 Bill Container (Hidden Initially) -->
 <!-- Full-Screen Bill Modal -->
-
+<script src="../js/scripts.js"></script>
 <!-- ✅ Ensure the modal is placed before closing body tag -->
 </body>
 </html>

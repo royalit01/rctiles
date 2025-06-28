@@ -145,7 +145,68 @@ $mysqli->close();
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="../css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-         
+         <style>
+  .btn-primary {
+    border-radius: 0.6rem;
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 0.75rem;
+  }
+
+  #successAlert {
+    max-width: 700px;
+    margin: 0 auto 1rem auto;
+  }
+  .gradient-btn {
+    background: linear-gradient(135deg,rgb(92, 140, 212) 0%,rgb(31, 106, 218) 100%);
+    border: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.gradient-btn:hover {
+    background: linear-gradient(135deg,rgb(125, 154, 198) 0%,rgb(37, 106, 210) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.gradient-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+}
+.custom-file-input {
+    border: 1px solid #ced4da;
+    border-radius: 0.75rem;
+    padding: 0.5rem 1rem;
+    height: 48px;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .custom-file-input::-webkit-file-upload-button {
+    background-color: #e9ecef;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 0.5rem 0 0 0.5rem;
+    margin-right: 1rem;
+    cursor: pointer;
+  }
+
+  .custom-file-input::file-selector-button {
+    background-color: #e9ecef;
+    border: none;
+    padding: 9px 16px;
+    border-radius: 0.5rem 0.5rem 0.5rem 0.5rem;
+    margin-right: 1rem;
+    cursor: pointer;
+  }
+
+  .custom-file-input:hover::file-selector-button {
+    background-color: #d3d3d3;
+  }
+</style>
+
     </head>
     <body class="sb-nav-fixed">
     <?php  include 'navbar.php'; ?>
@@ -155,9 +216,10 @@ $mysqli->close();
             <main>
                     <div class="container-fluid px-4">
                         <!-- ---------------------------------------->
-                        <h2 class="text-center text-primary">Add New Product</h2>
+                         <div class="card border-0 shadow rounded-3 p-4 bg-white mx-auto mt-4" style="max-width: 950px;">
+                        <h2 class="my-4 fw-bold fs-2 text-center">Add New Product</h2>
                         <?php if ($message): ?>
-                        <div class="alert alert-info" id="successAlert"><?= $message ?></div>
+                        <div class="alert alert-info  mx-auto mb-3"  style="max-width: 700px;" id="successAlert"><?= $message ?></div>
                         <?php endif; ?>
                         <script>
                             setTimeout(function() {
@@ -166,80 +228,81 @@ $mysqli->close();
                         </script>
                         <form action="" method="post"  enctype="multipart/form-data">
                             <div class="mb-3">
-                                <label for="productName" class="form-label">Product Name</label>
-                                <input type="text" class="form-control shadow" id="productName" name="productName" required>
+                                <label for="productName" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Product Name</label>
+                                <input type="text" class="form-control rounded-3 py-2" id="productName" name="productName" required>
                             </div>
                             <div class="mb-3">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea class="form-control shadow" id="description" name="description" required></textarea>
+                                <label for="description" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Description</label>
+                                <textarea class="form-control rounded-3 py-2" id="description" name="description" required></textarea>
                             </div>
                             
                             <div class="mb-3">
-                                <label for="category" class="form-label">Category</label>
-                                <select class="form-select shadow" id="category" name="category" required>
+                                <label for="category" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Category</label>
+                                <select class="form-select rounded-3 py-2" id="category" name="category" required>
                                     <?php foreach ($categories as $category): ?>
                                     <option value="<?= $category['category_id'] ?>"><?= $category['category_name'] ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="supplier" class="form-label">Supplier</label>
-                                <select class="form-select shadow" id="supplier" name="supplier" required>
+                                <label for="supplier" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Supplier</label>
+                                <select class="form-select " id="supplier" name="supplier" required>
                                     <?php foreach ($suppliers as $supplier): ?>
                                     <option value="<?= $supplier['supplier_id'] ?>"><?= $supplier['supplier_name'] ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="price" class="form-label">Price</label>
-                                <input type="number" step="0.01" class="form-control shadow" id="price" name="price" required>
+                                <label for="price" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Selling price</label>
+                                <input type="number" step="0.01" class="form-control rounded-3 py-2" id="price" name="price" required>
                             </div>
                             <div class="mb-3">
-                                <label for="costPrice" class="form-label">Cost Price</label>
-                                <input type="number" step="0.01" class="form-control shadow" id="costPrice" name="costPrice" required>
+                                <label for="costPrice" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Purchase Price</label>
+                                <input type="number" step="0.01" class="form-control rounded-3 py-2" id="costPrice" name="costPrice" required>
                             </div>
                             
                             <div class="mb-3">
-                                <label for="status" class="form-label">Status</label>
-                                <select class="form-select shadow" id="status" name="status" required>
+                                <label for="status" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Status</label>
+                                <select class="form-select " id="status" name="status" required>
                                     <option value="Active">Active</option>
                                     <option value="Inactive">Inactive</option>
                                     <option value="Discontinued">Discontinued</option>
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="totalPackets" class="form-label">Total Packets</label>
-                                <input type="number" class="form-control shadow" id="totalPackets" name="totalPackets" required onchange="calculateTotalPieces()">
+                                <label for="totalPackets" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Total Packets</label>
+                                <input type="number" class="form-control rounded-3 py-2" id="totalPackets" name="totalPackets" required onchange="calculateTotalPieces()">
                             </div>
                             <div class="mb-3">
-                                <label for="piecesPerPacket" class="form-label">Pieces Per Packet</label>
-                                <input type="number" class="form-control shadow" id="piecesPerPacket" name="piecesPerPacket" required onchange="calculateTotalPieces()">
+                                <label for="piecesPerPacket" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Pieces Per Packet</label>
+                                <input type="number" class="form-control rounded-3 py-2" id="piecesPerPacket" name="piecesPerPacket" required onchange="calculateTotalPieces()">
                             </div>
                             <div class="mb-3">
-                                <label for="quantity" class="form-label">Total Pieces</label>
-                                <input type="number" class="form-control shadow" id="quantity" name="quantity" required readonly>
+                                <label for="quantity" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Total Pieces</label>
+                                <input type="number" class="form-control rounded-3 py-2" id="quantity" name="quantity" required readonly>
                             </div>
                             <div class="mb-3">
-                                <label for="storageArea" class="form-label">Storage Area</label>
-                                <select class="form-select shadow" id="storageArea" name="storageArea" required>
+                                <label for="storageArea" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Storage Area</label>
+                                <select class="form-select " id="storageArea" name="storageArea" required>
                                     <?php foreach ($storage_areas as $area): ?>
                                     <option value="<?= $area['storage_area_id'] ?>"><?= $area['storage_area_name'] ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="minStockLevel" class="form-label">Minimum Stock Level</label>
-                                <input type="number" class="form-control shadow" id="minStockLevel" name="minStockLevel" value="7" required>
+                                <label for="minStockLevel" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Minimum Stock Level</label>
+                                <input type="number" class="form-control rounded-3 py-2" id="minStockLevel" name="minStockLevel" value="7" required>
                             </div>
                             <div class="mb-3">
-                                <label for="productImage" class="form-label">Product Image <span style="color:red">*</span> </label>
-                                <input type="file" class="form-control shadow" id="productImage" name="productImage" required >
+                                <label for="productImage" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Product Image <span style="color:red">*</span> </label>
+                                <input type="file" class="form-control custom-file-input" id="productImage" name="productImage" required >
                             </div>
                             <div class="text-center">
-                            <button type="submit" class="btn btn-primary">Add Product</button>
+                            <button type="submit" class="btn gradient-btn btn-primary mb-4"><i class="fas fa-plus text-white me-2"></i>Add Product</button>
                             </div>
                         </form>
                         <!-- ---------------------------------------->
+                                    </div>
                     </div>
                 </main>
 
@@ -275,14 +338,16 @@ $mysqli->close();
 
         <script>
 document.querySelector('form').addEventListener('submit', function(e) {
-    var imageInput = document.getElementById('productImage');
-    if (!imageInput.value) {
-        alert('Please upload a product image.');
-        imageInput.focus();
+    const packets = document.querySelector('input[name="packets"]').value;
+    const pieces = document.querySelector('input[name="pieces"]').value;
+    if (!packets || !pieces || Number(packets) === 0 && Number(pieces) === 0) {
+        alert('Enter amount to add (packets or pieces)');
         e.preventDefault();
     }
 });
 </script>
+
+
 
     </body>
 </html>
