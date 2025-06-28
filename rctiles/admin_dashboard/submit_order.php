@@ -44,10 +44,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // echo "</pre>";
 
     // Get final price
-    $final_price = isset($_POST['final_price']) ? floatval($_POST['final_price']) : 0;
-    if ($final_price <= 0) {
-        die("Error: Invalid final price.");
-    }
+    // $final_price = isset($_POST['final_price']) ? floatval($_POST['final_price']) : 0;
+    // if ($final_price <= 0) {
+    //     die("Error: Invalid final price.");
+    // }
 
     // Start transaction
     $mysqli->begin_transaction();
@@ -72,10 +72,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // echo "Customer already exists. Customer ID: $customer_id<br>";
         }
 
-        // Step 3: Insert order into `orders` table
-        // ✅ Updated query to match the current structure of the `orders` table
-        $stmt = $mysqli->prepare("INSERT INTO orders (customer_id, total_amount) VALUES (?, ?)");
-        $stmt->bind_param("id", $customer_id, $final_price);
+        // Step 3: Calculate total_amount as the sum of all product original prices (before any discount)
+        $total_amount = 0;
+        foreach ($products as $product) {
+            $total_amount += floatval($product['unitPrice']) * intval($product['quantity']);
+        }
+
+        // Now insert order
+        $sql = "INSERT INTO orders (customer_id, total_amount, order_date) VALUES (?, ?, NOW())";
+        $stmt = $mysqli->prepare($sql);
+        $stmt->bind_param("id", $customer_id, $total_amount);
         $stmt->execute();
         $order_id = $stmt->insert_id;
         $stmt->close();
@@ -168,6 +174,13 @@ foreach ($products as $p) {
     $stmt->close();
 }
 
+
+        // // Update final amount in orders table
+        // $sql = "UPDATE orders SET final_amount = ? WHERE order_id = ?";
+        // $stmt = $mysqli->prepare($sql);
+        // $stmt->bind_param("di", $final_amount, $order_id);
+        // $stmt->execute();
+        // $stmt->close();
 
         // Commit transaction
         $mysqli->commit();

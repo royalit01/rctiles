@@ -25,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['assign_order'])) {
 
         $rent = (float)$ord['transport_rent'];
         $amt  = (float)$ord['discounted_amount'];
+        
         $remaining = $amt + $rent;
 
         // Insert delivery record
@@ -60,7 +61,8 @@ if (!empty($_GET['search'])) {
     $types   .= 's';
 }
 
-$sql = "SELECT o.order_id, c.name customer, c.phone_no, o.discounted_amount, o.total_amount, o.transport_rent,
+$sql = "SELECT o.order_id, c.name customer, c.phone_no,  o.transport_rent,
+   (SELECT SUM(custom_price) FROM pending_orders WHERE order_id = o.order_id) AS discounted_amount,
                IFNULL(d.delivery_id,0) AS delivery_id,
                d.delivery_user_id, d.status, d.amount_paid, d.amount_remaining
         FROM orders o
@@ -108,7 +110,7 @@ $sql = "SELECT o.order_id, c.name customer, c.phone_no, o.discounted_amount, o.t
  
 
 <main class="py-4 container-fluid">
-    <div class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width: 1200px;">
+      <div class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width: 1200px;">
      <center><h2 class="mb-4">Assign Orders to Delivery Personnel</h2></center>
 
     <?php if(!empty($error)): ?>
@@ -147,12 +149,7 @@ $sql = "SELECT o.order_id, c.name customer, c.phone_no, o.discounted_amount, o.t
             </thead>
             <tbody>
             <?php $i=1; while($row=$result->fetch_assoc()):
-            // Calculate total amount including transport rent it fetches discounted_amount if available
-            // otherwise it uses total_amount
-                $amt = isset($row['discounted_amount']) && $row['discounted_amount'] !== null
-                    ? (float)$row['discounted_amount']
-                    : (float)$row['total_amount'];
-                $grand = $amt + (float)$row['transport_rent'];
+                $grand = (float)$row['discounted_amount'] + (float)$row['transport_rent'];
             ?>
                 <tr>
                     <td><?= $i++ ?></td>
@@ -214,7 +211,6 @@ $sql = "SELECT o.order_id, c.name customer, c.phone_no, o.discounted_amount, o.t
 </div>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
- <script src="../js/scripts.js"></script>
 <script>
 $(document).on('click','.open-delivery',function(){
     const id = $(this).data('delivery');
