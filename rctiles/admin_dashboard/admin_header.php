@@ -1,24 +1,36 @@
+<?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    // Not logged in
+    header("Location: ../login.php");
+    exit;
+}
+
+// Now you can check the role if you want:
+
+?>
+
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
             <a class="navbar-brand ps-3" href="index.html">Admin Dashboard</a>
             <!-- Sidebar Toggle-->
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
             <!-- Navbar Search-->
-            <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+            <!-- <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
                 <div class="input-group">
                     <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" />
                     <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
                 </div>
-            </form>
+            </form> -->
             <!-- Navbar-->
             <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="#!">Settings</a></li>
-                        <li><a class="dropdown-item" href="#!">Activity Log</a></li>
+                        <!-- <li><a class="dropdown-item" href="#!">Settings</a></li>
+                        <li><a class="dropdown-item" href="#!">Activity Log</a></li> -->
                         <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" href="#!">Logout</a></li>
+                        <li><a class="dropdown-item" href="../logout.php">Logout</a></li>
                     </ul>
                 </li>
             </ul>
@@ -28,6 +40,8 @@
                 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                     <div class="sb-sidenav-menu">
                         <div class="nav">
+                                                       <?= ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2  ) ? '
+
                             <div class="sb-sidenav-menu-heading">Dashboard</div>
                             <a class="nav-link" href="admin_dashboard.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
@@ -37,6 +51,9 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Storage Dashboard
                             </a>
+                            ' : '' ?>
+
+                                                                                   <?= ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2  ) ? '
 
                             <div class="sb-sidenav-menu-heading">Members</div>
                             <a class="nav-link" href="add_user.php">
@@ -47,6 +64,8 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Edit & View Member
                             </a>
+                            ' : '' ?>
+                                                       <?= ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2  ) ? '
 
                             <div class="sb-sidenav-menu-heading">Orders</div>
                             <a class="nav-link" href="new_order.php">
@@ -73,6 +92,9 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Custom Bill
                             </a>
+                            ' : '' ?>
+
+                                                       <?= ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2  ) ? '
 
                             <div class="sb-sidenav-menu-heading">Log</div>
                             <a class="nav-link" href="member_log.php">
@@ -83,6 +105,9 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Storage Log
                             </a>
+                            ' : '' ?>
+
+                                                       <?= ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2  ) ? '
 
                             <div class="sb-sidenav-menu-heading">Inventory</div>
                             <a class="nav-link" href="../Storage Dashboard/Report.php">
@@ -97,6 +122,9 @@
                             <!--    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>-->
                             <!--    Share Inventory-->
                             <!--</a>-->
+                            ' : '' ?>
+
+                                                       <?= ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2  ) ? '
 
                             <div class="sb-sidenav-menu-heading">others</div>
                             <a class="nav-link" href="recycle_bin.php">
@@ -107,7 +135,9 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Delete Orders
                             </a>
-                           
+                           ' : '' ?>
+                                                                                  <?= ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2  ) ? '
+
                             <div class="sb-sidenav-menu-heading">Report</div>
                             <!--<a class="nav-link" href="add_storagearea.php">-->
                             <!--    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>-->
@@ -117,7 +147,10 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Low Stock Report
                             </a>
+                            ' : '' ?>
                             
+                                                                                   <?= ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2  ) ? '
+
                             <div class="sb-sidenav-menu-heading">Ledger</div>
                             <a class="nav-link" href="customer_ledger.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
@@ -131,9 +164,10 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Delivery Payment
                             </a>
+                            ' : '' ?>
                     <div class="sb-sidenav-footer">
                         <div class="small">Logged in as:</div>
-                        Admin
+                        <!-- <?= $_SESSION['role_name'] ?> -->
                     </div>
                 </nav>
             </div>

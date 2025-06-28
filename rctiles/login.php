@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];        // Get the password from form
 
     // SQL to check the existence of user with the given phone number and fetch their role
-    $sql = "SELECT user_id, password, role_id,name FROM users WHERE phone_no = ?";
+    $sql = "SELECT user_id, password, role_id,name role_name FROM users WHERE phone_no = ?";
 
     if ($stmt = $mysqli->prepare($sql)) {
         // Bind the phone number to the prepared SQL statement
@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             if ($stmt->num_rows == 1) {
                 // Bind the results
-                $stmt->bind_result($user_id, $hashed_password, $role_id,$user_name);
+                $stmt->bind_result($user_id, $hashed_password, $role_id,$role_name);
 
                 if ($stmt->fetch()) {
                     // Use password_verify to check if the entered password matches the one stored
@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $_SESSION['user_id'] = $user_id;
                         $_SESSION['phone_no'] = $phone_no;
                         $_SESSION['role_id'] = $role_id;
-                        $_SESSION['user_name'] = $user_name;  
+                        $_SESSION['user_name'] = $role_name;  
 
                         // Redirect to different dashboards based on the role
                         // switch ($role_id) {

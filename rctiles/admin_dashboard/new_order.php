@@ -1,7 +1,7 @@
-
-
-<?include '../db_connect.php'; ?>
-
+<?php
+session_start();  // Start the session at the beginning of the script
+include '../db_connect.php';
+?>
 
 <!DOCTYPE html>
 <html lang="en">

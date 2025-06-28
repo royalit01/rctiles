@@ -1,3 +1,15 @@
+<?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    // Not logged in
+    header("Location: ../login.php");
+    exit;
+}
+
+// Now you can check the role if you want:
+
+?>
+
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
             <a class="navbar-brand ps-3" href="#">Storage Dashboard</a>
@@ -15,10 +27,10 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="#!">Settings</a></li>
-                        <li><a class="dropdown-item" href="#!">Activity Log</a></li>
+                        <!-- <li><a class="dropdown-item" href="#!">Settings</a></li>
+                        <li><a class="dropdown-item" href="#!">Activity Log</a></li> -->
                         <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" href="../login.php">Logout</a></li>
+                        <li><a class="dropdown-item" href="../logout.php">Logout</a></li>
                     </ul>
                 </li>
             </ul>
@@ -28,6 +40,8 @@
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                     <div class="sb-sidenav-menu">
                         <div class="nav">
+                           <?= ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2  ) ? '
+
                             <div class="sb-sidenav-menu-heading">Main Dashboard</div>
                             <a class="nav-link" href="Product.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
@@ -49,27 +63,32 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Add Product
                             </a>
+                            ':''
+                            ?>
 
+                          
+                           <?= ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2  ) ? '
+                             <div class="sb-sidenav-menu-heading">Edit Options</div>
+    <a class="nav-link collapsed" href="Edit_Product.php">
+        <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+        Edit Product
+    </a>
+    <a class="nav-link collapsed" href="Edit_Category.php">
+        <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+        Edit Category
+    </a>
+    <a class="nav-link collapsed" href="Edit_Supplier.php">
+        <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+        Edit Supplier
+    </a>
+    <a class="nav-link collapsed" href="Edit_Storage_Area.php">
+        <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+        Edit Storage Area
+    </a>
+' : ' ' ?>
 
-                            <div class="sb-sidenav-menu-heading">Edit Options</div>
-                            <a class="nav-link collapsed" href="Edit_Product.php" >
-                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                                Edit Product
-                            </a>
-                            <a class="nav-link collapsed" href="Edit_Category.php" >
-                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                                Edit Category
-                            </a>
-                            <a class="nav-link collapsed" href="Edit_Supplier.php" >
-                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                                Edit Supplier 
-                            </a>
-                            <a class="nav-link collapsed" href="Edit_Storage_Area.php" >
-                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                                Edit Storage Area 
-                            </a>
+                                                       <?= ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2  ) ? '
 
-                            
                             <div class="sb-sidenav-menu-heading">Advance Edit Options</div>
                             <!-- <a class="nav-link collapsed" href="Bulk_Stock_Update.php" >
                                 <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
@@ -83,8 +102,9 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
                                 Stock Update Excel
                             </a>
+                      ': ' ' ?>
+                                                       <?= ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2  ) ? '
 
-                            
                             <div class="sb-sidenav-menu-heading">Report</div>
                             <a class="nav-link collapsed" href="Report.php"  >
                                 <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
@@ -102,10 +122,11 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
                                 Low Stock Report
                             </a>
+                            ': ' ' ?>
                     <div class="sb-sidenav-footer">
                         <div class="small">Logged in as:</div>
-                        Admin
+                        <?= $_SESSION['role_name'] ?>
                     </div>
                 </nav>
-            </div> 
+            </div>
 
