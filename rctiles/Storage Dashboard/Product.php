@@ -19,27 +19,41 @@ $whereClauses = [];
 $selectedStorageArea = $_POST['storage_area_id'] ?? null;
 $selectedCategory = $_POST['category_id'] ?? null;
 
+// Pagination setup
+$itemsPerPage = 10;
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($page - 1) * $itemsPerPage;
+
+// Count total products for pagination
+$count_query = "SELECT COUNT(DISTINCT ps.product_id) as total
+                FROM products p
+                JOIN product_stock ps ON p.product_id = ps.product_id
+                JOIN category c ON p.category_id = c.category_id";
+if ($selectedStorageArea) {
+    $whereClauses[] = "ps.storage_area_id = " . intval($selectedStorageArea);
+}
+if ($selectedCategory) {
+    $whereClauses[] = "p.category_id = " . intval($selectedCategory);
+}
+if (count($whereClauses) > 0) {
+    $count_query .= " WHERE " . implode(' AND ', $whereClauses);
+}
+$count_result = $mysqli->query($count_query);
+$total_items = $count_result ? $count_result->fetch_assoc()['total'] : 0;
+$total_pages = $total_items > 0 ? ceil($total_items / $itemsPerPage) : 1;
+
 // Modify the product query based on selected options
 $product_query = "SELECT p.product_name, p.description, ps.product_id, SUM(ps.quantity) as total_quantity, 
                          ps.pieces_per_packet, ps.min_stock_level, p.product_image, 
                          c.category_name
                   FROM products p
                   JOIN product_stock ps ON p.product_id = ps.product_id
-                  JOIN category c ON p.category_id = c.category_id"; // Join category table
-
-if ($selectedStorageArea) {
-    $whereClauses[] = "ps.storage_area_id = " . intval($selectedStorageArea);
-}
-
-if ($selectedCategory) {
-    $whereClauses[] = "p.category_id = " . intval($selectedCategory);
-}
-
+                  JOIN category c ON p.category_id = c.category_id";
 if (count($whereClauses) > 0) {
     $product_query .= " WHERE " . implode(' AND ', $whereClauses);
 }
-
 $product_query .= " GROUP BY ps.product_id, ps.pieces_per_packet";
+$product_query .= " LIMIT $itemsPerPage OFFSET $offset";
 
 $result = $mysqli->query($product_query);
 while ($prod_row = $result->fetch_assoc()) {
@@ -110,67 +124,90 @@ $mysqli->close();
                                        
                         <?php if (!empty($products)): ?>
                             <div class="row">
-    <div class="col-12">
-        <div class="mb-3">
-            <input type="text" id="searchInput" class="form-control" placeholder="Search products..." onkeyup="filterTable()" style="max-width: 410px; width: 100%;">
-        </div>
-        <!-- <h4>Products Details</h4> -->
-        <div class="table-responsive">
-            <table class="table align-middle" id="sortableTable">
-                <thead>
-                    <tr>
-                         <th>Image</th>
-                        <th onclick="sortTable(1)">Product<span class="sort-icon" style="float:right;">⬍</span></th>
-                        <th>stock</th>                    
-                        </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($products as $product): ?>
-                        <?php
-                        $packets = intdiv($product['total_quantity'], $product['pieces_per_packet']);
-                        $pieces = $product['total_quantity'] % $product['pieces_per_packet'];
-                        ?>
-                        <tr onclick='showProductDetails(<?php echo json_encode([
-                            "name" => htmlspecialchars($product['product_name']),
-                            "description" => htmlspecialchars($product['description']),
-                            "category" => htmlspecialchars($product['category_name']),
-                            "minStockLevel" => htmlspecialchars($product['min_stock_level']),
-                            "boxes" => $packets,
-                            "pieces" => $pieces
-                        ]); ?>)'> <!-- Adding onclick event here -->
-                            <!-- Image Column -->
-                            <td onclick="event.stopPropagation();"> <!-- Stop propagation for image click -->
-                                <img src="../uploads/<?= htmlspecialchars($product['product_image']) ?>" 
-                                     alt="" 
-                                     class="rounded-circle border border-primary" 
-                                     style="width: 50px; height: 50px; cursor: pointer;"
-                                     onclick="showImageModal('<?= htmlspecialchars($product['product_image']) ?>');">
-                            </td>
-                            
-                            <!-- Product Information Column -->
-                            <td>
-                                <div>
-                                    <strong class="text-dark"><?= htmlspecialchars($product['product_name']) ?></strong><br>
-                                    <small class="text-muted"><?= htmlspecialchars($product['category_name']) ?></small> &nbsp;<span class="badge text-bg-warning"><?= htmlspecialchars($product['description']) ?></span><br>
-                                    <span class="text-danger">
-                                        <i class="fas fa-arrow-down"></i> Stock: <?= htmlspecialchars($product['min_stock_level']) ?>
-                                    </span>
-                                </div>
-                            </td>
-                            
-                            <!-- Stock Column -->
-                            <td>
-                                <span class="badge bg-primary"><?= $packets ?> Box</span>
-                                <span class="badge bg-secondary mt-1"><?= $pieces ?> Pc</span>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-
-            </table>
+        <div class="col-12">
+            <div class="mb-3">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search products..." onkeyup="filterTable()" style="max-width: 410px; width: 100%;">
+            </div>
+            <div class="table-responsive">
+                <table class="table align-middle" id="sortableTable">
+                    <thead>
+                        <tr>
+                             <th>Image</th>
+                            <th onclick="sortTable(1)">Product<span class="sort-icon" style="float:right;">⬍</span></th>
+                            <th>stock</th>                    
+                            </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($products as $product): ?>
+                            <?php
+                            $packets = intdiv($product['total_quantity'], $product['pieces_per_packet']);
+                            $pieces = $product['total_quantity'] % $product['pieces_per_packet'];
+                            ?>
+                            <tr onclick='showProductDetails(<?php echo json_encode([
+                                "name" => htmlspecialchars($product['product_name']),
+                                "description" => htmlspecialchars($product['description']),
+                                "category" => htmlspecialchars($product['category_name']),
+                                "minStockLevel" => htmlspecialchars($product['min_stock_level']),
+                                "boxes" => $packets,
+                                "pieces" => $pieces
+                            ]); ?>)'> <!-- Adding onclick event here -->
+                                <!-- Image Column -->
+                                <td onclick="event.stopPropagation();"> <!-- Stop propagation for image click -->
+                                    <img src="../uploads/<?= htmlspecialchars($product['product_image']) ?>" 
+                                         alt="" 
+                                         class="rounded-circle border border-primary" 
+                                         style="width: 50px; height: 50px; cursor: pointer;"
+                                         onclick="showImageModal('<?= htmlspecialchars($product['product_image']) ?>');">
+                                </td>
+                                
+                                <!-- Product Information Column -->
+                                <td>
+                                    <div>
+                                        <strong class="text-dark"><?= htmlspecialchars($product['product_name']) ?></strong><br>
+                                        <small class="text-muted"><?= htmlspecialchars($product['category_name']) ?></small> &nbsp;<span class="badge text-bg-warning"><?= htmlspecialchars($product['description']) ?></span><br>
+                                        <span class="text-danger">
+                                            <i class="fas fa-arrow-down"></i> Stock: <?= htmlspecialchars($product['min_stock_level']) ?>
+                                        </span>
+                                    </div>
+                                </td>
+                                
+                                <!-- Stock Column -->
+                                <td>
+                                    <span class="badge bg-primary"><?= $packets ?> Box</span>
+                                    <span class="badge bg-secondary mt-1"><?= $pieces ?> Pc</span>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+                <!-- Pagination controls -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mt-3">
+                        <?php if ($page > 1): ?>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<?= $page - 1 ?>" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo; Prev</span>
+                                </a>
+                            </li>
+                        <?php endif; ?>
+                        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                            <li class="page-item <?= $i == $page ? 'active' : '' ?>">
+                                <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                            </li>
+                        <?php endfor; ?>
+                        <?php if ($page < $total_pages): ?>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<?= $page + 1 ?>" aria-label="Next">
+                                    <span aria-hidden="true">Next &raquo;</span>
+                                </a>
+                            </li>
+                        <?php endif; ?>
+                    </ul>
+                </nav>
+                <!-- End Pagination controls -->
+            </div>
         </div>
     </div>
-</div>
                         <?php endif; ?>
                     </div>
                     </div>  

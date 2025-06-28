@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 ini_set('display_errors', 1);
@@ -206,12 +205,55 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_stock'])) {
             }
         });
     </script>
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-        <script src="../js/scripts.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-        <script src="../assets/demo/chart-area-demo.js"></script>
-        <script src="../assets/demo/chart-bar-demo.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
-        <script src="../js/datatables-simple-demo.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+document.querySelector('form').addEventListener('submit', function(e) {
+    const packets = document.querySelector('input[name="packets"]').value;
+    const pieces = document.querySelector('input[name="pieces"]').value;
+    if (!packets || !pieces || Number(packets) === 0 && Number(pieces) === 0) {
+        alert(Enter amount to add (packets or pieces)');
+        e.preventDefault();
+    }
+});
+</script>
+
+<!-- Add Select2 for searchable dropdowns -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#productDropdown').select2({
+        dropdownParent: $('#productDropdown').parent(),
+        width: '100%',
+        placeholder: '-- Choose Product --',
+        allowClear: true,
+        minimumResultsForSearch: 0 // always show search
+    });
+    $('#storageDropdown').select2({
+        dropdownParent: $('#storageDropdown').parent(),
+        width: '100%',
+        placeholder: '-- Choose Storage --',
+        allowClear: true,
+        minimumResultsForSearch: 0 // always show search
+    });
+});
+</script>
+<style>
+.select2-container .select2-search--dropdown .select2-search__field {
+    width: 100% !important;
+}
+@media (max-width: 600px) {
+    .select2-container {
+        width: 100% !important;
+    }
+    .select2-dropdown {
+        left: 0 !important;
+        width: 100vw !important;
+        min-width: 100vw !important;
+    }
+}
+</style>
+
+</body>
 </html>

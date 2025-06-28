@@ -50,6 +50,23 @@ $whereClauses = [];
 $selectedStorageArea = $_POST['storage_area_id'] ?? null;
 $selectedCategory = $_POST['category_id'] ?? null;
 
+// Pagination setup
+$productsPerPage = 10;
+$page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $productsPerPage;
+
+// Count total products for pagination
+$count_query = "SELECT COUNT(DISTINCT ps.product_id, ps.pieces_per_packet) as total
+                FROM products p
+                JOIN product_stock ps ON p.product_id = ps.product_id
+                JOIN category c ON p.category_id = c.category_id";
+if (count($whereClauses) > 0) {
+    $count_query .= " WHERE " . implode(' AND ', $whereClauses);
+}
+$count_result = $mysqli->query($count_query);
+$totalProducts = $count_result ? (int)$count_result->fetch_assoc()['total'] : 0;
+$totalPages = ceil($totalProducts / $productsPerPage);
+
 // Modify the product query based on selected options
 $product_query = "SELECT p.product_name, p.description, ps.product_id, SUM(ps.quantity) as total_quantity, 
                          ps.pieces_per_packet, ps.min_stock_level, p.product_image, 
@@ -71,6 +88,7 @@ if (count($whereClauses) > 0) {
 }
 
 $product_query .= " GROUP BY ps.product_id, ps.pieces_per_packet";
+$product_query .= " LIMIT $productsPerPage OFFSET $offset";
 
 $result = $mysqli->query($product_query);
 while ($prod_row = $result->fetch_assoc()) {
@@ -158,51 +176,49 @@ $mysqli->close();
                         $packets = intdiv($product['total_quantity'], $product['pieces_per_packet']);
                         $pieces = $product['total_quantity'] % $product['pieces_per_packet'];
                         ?>
-                        <tr> <!-- Adding onclick event here -->
-                            <!-- Image Column -->
-                            <td onclick="event.stopPropagation();"> <!-- Stop propagation for image click -->
+                        <tr>
+                            <td onclick="event.stopPropagation();">
                                 <img src="../uploads/<?= htmlspecialchars($product['product_image']) ?>" 
                                      alt="" 
                                      class="rounded-circle border border-primary" 
                                      style="width: 50px; height: 50px; cursor: pointer;"
                                      onclick="showImageModal('<?= htmlspecialchars($product['product_image']) ?>');">
                             </td>
-                            
-                            <!-- Product Information Column -->
                             <td>
                                 <div>
                                     <strong class="text-dark"><?= htmlspecialchars($product['product_name']) ?></strong><br>
                                     <small class="text-muted"><?= htmlspecialchars($product['category_name']) ?></small> &nbsp;<span class="badge text-bg-warning"><?= htmlspecialchars($product['description']) ?></span><br>
-                                     <span class="badge bg-primary"><?= $packets ?> Box</span>
-                                     <span class="badge bg-secondary mt-1"><?= $pieces ?> Pc</span>
+                                    <span class="badge bg-primary"><?= $packets ?> Box</span>
+                                    <span class="badge bg-secondary mt-1"><?= $pieces ?> Pc</span>
                                 </div>
                             </td>
-                            
-                            <!-- Stock Column -->
                             <td>
-                                     <a href="Update_Product.php?product_id=<?= $product['product_id'] ?>" class="btn btn-primary btn-sm">Edit</a>
-                                    <!--<button class="btn btn-danger btn-sm" onclick="confirmDelete(<?= $product['product_id'] ?>)">Delete</button>-->
+                                <a href="Update_Product.php?product_id=<?= $product['product_id'] ?>" class="btn btn-primary btn-sm">Edit</a>
                                 <button class="btn btn-danger btn-sm" onclick="confirmDelete(<?= $product['product_id'] ?>)">Delete</button>
-
                             </td>
                         </tr>
-                    <?php endforeach; ?>
-                </tbody>
-                
-
-            </table>
-            
-            
-            <!--<div class="modal-footer">-->
-            <!--    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>-->
-            <!--    <button type="button" class="btn btn-danger" onclick="confirmDelete(document.getElementById('deleteCategoryId').value)">OK</button>-->
-            <!--</div>-->
-            
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+                <!-- Pagination Controls -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <?php if ($page > 1): ?>
+                            <li class="page-item"><a class="page-link" href="?page=<?= $page - 1 ?><?= isset($_POST['storage_area_id']) ? '&storage_area_id=' . $_POST['storage_area_id'] : '' ?><?= isset($_POST['category_id']) ? '&category_id=' . $_POST['category_id'] : '' ?>">Previous</a></li>
+                        <?php endif; ?>
+                        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                            <li class="page-item <?= $i == $page ? 'active' : '' ?>">
+                                <a class="page-link" href="?page=<?= $i ?><?= isset($_POST['storage_area_id']) ? '&storage_area_id=' . $_POST['storage_area_id'] : '' ?><?= isset($_POST['category_id']) ? '&category_id=' . $_POST['category_id'] : '' ?>"><?= $i ?></a>
+                            </li>
+                        <?php endfor; ?>
+                        <?php if ($page < $totalPages): ?>
+                            <li class="page-item"><a class="page-link" href="?page=<?= $page + 1 ?><?= isset($_POST['storage_area_id']) ? '&storage_area_id=' . $_POST['storage_area_id'] : '' ?><?= isset($_POST['category_id']) ? '&category_id=' . $_POST['category_id'] : '' ?>">Next</a></li>
+                        <?php endif; ?>
+                    </ul>
+                </nav>
+            </div>
         </div>
     </div>
-</div>
-
-
                         <?php endif; ?>
                     </div>
                     </div>  

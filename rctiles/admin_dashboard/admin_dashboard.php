@@ -1,3 +1,24 @@
+<?php
+include '../db_connect.php';
+// Get today's total custom_total and total orders
+$sql = "SELECT SUM((SELECT SUM(custom_price) FROM pending_orders WHERE order_id = o.order_id)) AS total_custom_total, COUNT(DISTINCT o.order_id) AS total_orders FROM orders o WHERE DATE(o.order_date) = CURDATE()";
+$result = $mysqli->query($sql);
+$total_custom_total = 0;
+$total_orders = 0;
+if ($result && $row = $result->fetch_assoc()) {
+    $total_custom_total = $row['total_custom_total'];
+    if ($total_custom_total === null) {
+        $total_custom_total = 0;
+    }
+    $total_orders = $row['total_orders'] ?? 0;
+}
+// Get total count of pending_orders
+$count_pending_orders = 0;
+$count_result = $mysqli->query("SELECT COUNT(*) AS total FROM pending_orders");
+if ($count_result && $row2 = $count_result->fetch_assoc()) {
+    $count_pending_orders = (int)$row2['total'];
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -10,26 +31,138 @@
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="../css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+                <style>
+   body {
+  background-color: #f8f9fa;
+  font-family: 'Poppins', sans-serif;
+}
+
+.info-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 20px;
+  background: white;
+  transition: 0.3s ease;
+}
+
+.info-card h5 {
+  font-weight: 600;
+  color: #333;
+}
+
+.info-card p {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.nav-card {
+  display: inline-block;
+  background: white;
+  padding: 15px 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  margin: 10px;
+  transition: transform 0.3s ease;
+}
+
+.nav-card:hover {
+  transform: scale(1.05);
+  background-color: #f1f1f1;
+}
+
+/* ✅ THIS PART WAS INSIDE MEDIA QUERY — FIXED NOW */
+.card-link {
+  text-decoration: none !important;
+  display: block;
+  height: 100%;
+}
+
+.card-link .info-card {
+  border-radius: 12px;
+  background: white;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-link:hover .info-card {
+  transform: scale(1.05);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  background-color: #f1f1f1;
+}
+
+.card-link h5, .card-link p {
+  color: #333;
+}
+
+/* ✅ Only keep this part in media query */
+@media (max-width: 576px) {
+  .info-row .col-md-3 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+  </style>
     </head>
     <body class="sb-nav-fixed">
         <?php include "admin_header.php";  ?>
-            <div id="layoutSidenav_content">
+          <div id="layoutSidenav_content">
                 <main>
-                    
-                </main>
-                <footer class="py-4 bg-light mt-auto">
-                    <div class="container-fluid px-4">
-                        <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; Your Website 2023</div>
-                            <div>
-                                <a href="#">Privacy Policy</a>
-                                &middot;
-                                <a href="#">Terms &amp; Conditions</a>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
-            </div>
+   <div class="card border-0 shadow rounded-3 mt-5 p-4 bg-white mx-auto" style="max-width: 950px;">
+      <h1 class="mb-2 fw-bold mt-3 text-center">Admin Dashboard </h1>
+                     <div class="container py-5">
+    <!-- Section 1: Info Stats -->
+  <div class="row info-row text-center mb-4">
+  <div class="col-md-3 mb-3">
+    <a href="total_orders.php" class="card-link">
+      <div class="info-card h-100">
+        <h5>Total Orders</h5>
+          <p> <?= (int)$total_orders ?></p>
+      </div>
+    </a>
+  </div>
+  <div class="col-md-3 mb-3">
+    <a href="total_amount.php" class="card-link">
+      <div class="info-card h-100">
+        <h5>Total Amount</h5>
+              <p>₹<?= number_format((float)$total_custom_total, 2) ?></p>
+
+      </div>
+    </a>
+  </div>
+  <div class="col-md-3 mb-3">
+    <a href="pending_orders.php" class="card-link">
+      <div class="info-card h-100">
+        <h5>Pending Orders</h5>
+        <p><?= (int)$count_pending_orders ?></p>
+      </div>
+    </a>
+  </div>
+  <div class="col-md-3 mb-3">
+    <a href="shipped_orders.php" class="card-link">
+      <div class="info-card h-100">
+        <h5>Shipped Orders</h5>
+        <p>105</p>
+      </div>
+    </a>
+  </div>
+</div>
+
+
+    <!-- Section 2: Navigation Tabs -->
+    <div class="text-center">
+      <a href="../Storage Dashboard/Transaction.php" class="nav-card">Transaction</a>
+      <a href="admin_orders.php" class="nav-card">View Orders</a>
+      <a href="approved_orders.php" class="nav-card">Create Bill</a>
+      <a href="low_stock.php" class="nav-card">Low Stock Report</a>
+      <a href="customer_ledger.php" class="nav-card">Customer Leader Page</a>
+    </div>
+  </div>
+           
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="../js/scripts.js"></script>

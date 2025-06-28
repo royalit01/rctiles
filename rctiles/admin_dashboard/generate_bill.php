@@ -9,7 +9,7 @@ $order_id = intval($_GET['order_id']);
 
 // Fetch Order and Customer Details
 $query = "SELECT po.order_id, c.name AS customer_name, c.phone_no, c.address, c.city, 
-                 o.total_amount AS final_amount
+                 (SELECT SUM(custom_price) FROM pending_orders WHERE order_id = o.order_id)  AS final_amount
           FROM pending_orders po
           JOIN customers c ON po.customer_id = c.customer_id
           JOIN orders o ON po.order_id = o.order_id
