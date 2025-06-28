@@ -93,10 +93,6 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Low Stock 
                             </a>
-                            <!--<a class="nav-link" href="add_product.php">-->
-                            <!--    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>-->
-                            <!--    Share Inventory-->
-                            <!--</a>-->
 
                             <div class="sb-sidenav-menu-heading">others</div>
                             <a class="nav-link" href="recycle_bin.php">
