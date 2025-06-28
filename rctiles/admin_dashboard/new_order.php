@@ -820,6 +820,8 @@ function updateProductPrice(input) {
 
     // Check if there's a final amount set (discount applied)
     const finalAmount = document.getElementById("finalAmountPaid").value;
+
+
     if (finalAmount && parseFloat(finalAmount) > 0 &&
         parseFloat(finalAmount) < parseFloat(document.getElementById("totalAmount").textContent.replace('₹', ''))) {
         // Re-apply the discount with the new prices
@@ -895,6 +897,7 @@ function applyFinalPrice() {
 
     // Don't update the finalAmountPaid input, but do update the hidden field
     document.getElementById("final_price").value = finalAmount;
+    updateGrandAmount();
 }
 
 function updateSummary() {
@@ -964,6 +967,7 @@ function updateSummary() {
     document.getElementById("totalAmount").textContent = `₹${totalAmount.toFixed(2)}`;
     document.getElementById("finalAmountPaid").value = totalAmount.toFixed(2);
     document.getElementById("final_price").value = totalAmount.toFixed(2);
+    updateGrandAmount();   
 }
 
 function removeDetail(button) {
@@ -1073,6 +1077,13 @@ function removeDetail(button) {
 
         const productModal = new bootstrap.Modal(document.getElementById('productModal'));
         productModal.show();
+    }
+
+    function updateGrandAmount() {
+    let finalAmount = parseFloat(document.getElementById('finalAmountPaid').value) || 0;
+    let rentAmount = parseFloat(document.getElementById('RentAmount').value) || 0;
+    let grandAmount = finalAmount + rentAmount;
+    document.getElementById('grandAmountPaid').value = grandAmount.toFixed(2);
     }
 
     function saveEditedSelection(button) {
@@ -1304,6 +1315,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 }); 
+
 
     //by agrima same.new end
 
@@ -1608,9 +1620,19 @@ document.addEventListener("DOMContentLoaded", () => {
                                     </div>
                                     <input type="hidden" name="final_price" id="final_price"> -->
                                     <div class="mb-3">
-                                        <label for="finalAmountPaid" class="form-label"><strong>Final Amount Paid (₹):</strong></label>
-                                        <input type="text" class="form-control" id="finalAmountPaid" placeholder="Enter final amount" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); applyFinalPrice();">
-                                    </div>
+                                    <label for="finalAmountPaid" class="form-label"><strong>Final Amount Paid (₹):</strong></label>
+<input type="text" class="form-control" id="finalAmountPaid" name="final_amount_paid"
+    placeholder="Enter final amount"
+    oninput="this.value = this.value.replace(/[^0-9.]/g, ''); applyFinalPrice(); updateGrandAmount();">
+
+<label for="RentAmount" class="form-label"><strong>Rent Paid (₹):</strong></label>
+<input type="text" class="form-control" id="RentAmount" name="rent_amount"
+    placeholder="Enter rent amount" value="0"
+    oninput="this.value = this.value.replace(/[^0-9.]/g, ''); applyFinalPrice(); updateGrandAmount();">
+
+<label for="grandAmountPaid" class="form-label"><strong>Grand Amount Paid (₹):</strong></label>
+<input type="text" class="form-control" id="grandAmountPaid" name="grand_amount_paid"
+    placeholder="Grand amount" readonly>                                    </div>
                                     <input type="hidden" name="final_price" id="final_price">
                                     <button type="button" class="btn btn-secondary" onclick="prevStep()">Previous</button>
                                     <button type="submit" class="btn btn-success">Submit Order</button>

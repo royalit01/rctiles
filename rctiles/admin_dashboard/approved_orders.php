@@ -1,7 +1,14 @@
 <?php
 include '../db_connect.php';
 
-// Fetch approved orders with total amount and custom price
+// Pagination and filter setup
+$status_filter = isset($_GET['status']) ? $_GET['status'] : 'all';
+$date_filter = isset($_GET['date']) ? $_GET['date'] : '';
+$limit = 20;
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($page - 1) * $limit;
+
+// Fetch approved orders with total amount and custom price, with pagination
 $sql = "SELECT po.order_id, c.name AS customer_name, c.phone_no, 
                                (SELECT SUM(custom_price) FROM pending_orders WHERE order_id = o.order_id)  AS 
  total_amount, SUM(po.custom_price) AS custom_total
@@ -9,8 +16,15 @@ $sql = "SELECT po.order_id, c.name AS customer_name, c.phone_no,
         JOIN customers c ON po.customer_id = c.customer_id
         JOIN orders o ON po.order_id = o.order_id
         WHERE po.approved = 1
-        GROUP BY po.order_id";
+        GROUP BY po.order_id
+        LIMIT $limit OFFSET $offset";
 $result = $mysqli->query($sql);
+
+// Get total count for pagination
+$count_sql = "SELECT COUNT(DISTINCT po.order_id) as total FROM pending_orders po WHERE po.approved = 1";
+$count_result = $mysqli->query($count_sql);
+$total_rows = $count_result ? $count_result->fetch_assoc()['total'] : 0;
+$total_pages = ceil($total_rows / $limit);
 ?>
 
 <!DOCTYPE html>
@@ -144,6 +158,25 @@ $result = $mysqli->query($sql);
                         </div>
                     </div>
                 <?php endwhile; ?>
+
+                <!-- Pagination Controls -->
+                <div class="mt-4">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item <?php if($page <= 1){ echo 'disabled'; } ?>">
+                                <a class="page-link" href="?page=<?php echo $page - 1; ?>" tabindex="-1">Previous</a>
+                            </li>
+                            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                                <li class="page-item <?php if($page == $i){ echo 'active'; } ?>">
+                                    <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                </li>
+                            <?php endfor; ?>
+                            <li class="page-item <?php if($page >= $total_pages){ echo 'disabled'; } ?>">
+                                <a class="page-link" href="?page=<?php echo $page + 1; ?>">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </main>
         <footer class="py-4 bg-light mt-auto">

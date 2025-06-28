@@ -1,9 +1,10 @@
 <?php
 include "../db_connect.php";
+ include "admin_header.php"; 
 
-// Fetch user details (assuming user ID is from session or URL)
+$user_id = $_SESSION['user_id'];// Fetch user details (assuming user ID is from session or URL)
 // For demonstration, using hardcoded user_id
-$user_id = 1; 
+ 
 
 $query = $mysqli->prepare("SELECT * FROM users WHERE user_id = ?");
 $query->bind_param("i", $user_id);
@@ -89,7 +90,6 @@ $user = $result->fetch_assoc();
     </style>
 </head>
 <body class="sb-nav-fixed">
-    <?php include "admin_header.php"; ?>
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid px-3">

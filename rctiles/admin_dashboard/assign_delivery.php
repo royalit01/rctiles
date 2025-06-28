@@ -56,6 +56,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['assign_order'])) {
 $driversRes = $mysqli->query("SELECT user_id, name FROM users WHERE role_id=(SELECT role_id FROM roles WHERE role_name='Delivery' LIMIT 1) ORDER BY name");
 $drivers = $driversRes->fetch_all(MYSQLI_ASSOC);
 
+// Pagination setup
+$limit = 20;
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($page - 1) * $limit;
+
 // Filters
 $where = ["po.approved = 1"];
 $params = [];
@@ -65,6 +70,15 @@ if (!empty($_GET['search'])) {
     $params[] = '%' . $_GET['search'] . '%';
     $types   .= 's';
 }
+
+// Count total for pagination
+$count_sql = "SELECT COUNT(DISTINCT o.order_id) as total FROM orders o JOIN pending_orders po ON po.order_id = o.order_id JOIN customers c ON c.customer_id = o.customer_id WHERE " . implode(' AND ', $where);
+$count_stmt = $mysqli->prepare($count_sql);
+if ($types) $count_stmt->bind_param($types, ...$params);
+$count_stmt->execute();
+$count_result = $count_stmt->get_result();
+$total_rows = $count_result ? $count_result->fetch_assoc()['total'] : 0;
+$total_pages = ceil($total_rows / $limit);
 
 $sql = "SELECT o.order_id, c.name customer, c.phone_no,  o.transport_rent,
    (SELECT SUM(custom_price) FROM pending_orders WHERE order_id = o.order_id) AS discounted_amount,
@@ -76,13 +90,14 @@ $sql = "SELECT o.order_id, c.name customer, c.phone_no,  o.transport_rent,
         LEFT JOIN delivery_orders d ON d.order_id = o.order_id
         WHERE " . implode(' AND ', $where) . "
         GROUP BY o.order_id
-        ORDER BY o.order_date DESC";
+        ORDER BY o.order_date DESC
+        LIMIT $limit OFFSET $offset";
 
-    $stmt = $mysqli->prepare($sql);
-    if ($types) $stmt->bind_param($types, ...$params);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    ?>
+$stmt = $mysqli->prepare($sql);
+if ($types) $stmt->bind_param($types, ...$params);
+$stmt->execute();
+$result = $stmt->get_result();
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -207,6 +222,21 @@ $sql = "SELECT o.order_id, c.name customer, c.phone_no,  o.transport_rent,
             </tbody>
         </table>
     </div>
+
+    <!-- Pagination controls -->
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+        <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
+          <a class="page-link" href="?page=<?= $page - 1 . (!empty($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '') ?>">Previous</a>
+        </li>
+        <li class="page-item disabled">
+          <span class="page-link"> <?= $page ?> </span>
+        </li>
+        <li class="page-item <?= $page >= $total_pages ? 'disabled' : '' ?>">
+          <a class="page-link" href="?page=<?= $page + 1 . (!empty($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '') ?>">Next</a>
+        </li>
+      </ul>
+    </nav>
 
     <!-- Delivery modal -->
     <div class="modal fade" id="deliveryModal" tabindex="-1" aria-hidden="true">
