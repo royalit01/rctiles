@@ -9,7 +9,7 @@ $order_id = intval($_GET['order_id']);
 
 // Fetch Order and Customer Details
 $query = "SELECT po.order_id, c.name AS customer_name, c.phone_no, c.address, c.city, 
-                 (SELECT SUM(custom_price) FROM pending_orders WHERE order_id = o.order_id)  AS final_amount
+                 o.final_amount, o.rent_amount AS transport_rent
           FROM pending_orders po
           JOIN customers c ON po.customer_id = c.customer_id
           JOIN orders o ON po.order_id = o.order_id
@@ -156,13 +156,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_bill'])) {
                 </div>
                 <div class="col-md-4 mb-2">
                     <label class="fw-bold">Rent:</label>
-                    <input type="number" class="form-control" id="rentAmount" value="0" oninput="calculateTotals()">
+                    <input type="number" class="form-control" id="rentAmount" value="<?= $order['transport_rent']; ?>" oninput="calculateTotals()"  disabled >
                 </div>
                 <div class="col-md-4 mb-2">
                     <label class="fw-bold">Date:</label>
                     <input type="text" class="form-control" value="<?= date('Y-m-d'); ?>" disabled>
                 </div>
             </div>
+            
 
             <?php if(isset($_GET['saved'])): ?>
             <div class="alert alert-success alert-dismissible fade show m-3" role="alert">

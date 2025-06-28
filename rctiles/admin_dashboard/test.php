@@ -17,17 +17,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['assign_order'])) {
         $error = "This order has already been assigned for delivery.";
     } else {
         // Get rent and discounted amount (fallback to total_amount if discounted is NULL)
-        $ord = $mysqli->query("
-            SELECT 
-                COALESCE(o.final_amount, o.total_amount) AS discounted_amount,
-                COALESCE(o.rent_amount, 0) AS transport_rent
-            FROM orders o
-            WHERE o.order_id = $orderId
-        ")->fetch_assoc();
+        $ord = $mysqli->query("SELECT 
+                                  COALESCE(discounted_amount, total_amount) AS discounted_amount, 
+                                  COALESCE(transport_rent, 0) AS transport_rent 
+                               FROM orders 
+                               WHERE order_id = $orderId")->fetch_assoc();
 
         $rent = (float)$ord['transport_rent'];
         $amt  = (float)$ord['discounted_amount'];
-        
         $remaining = $amt + $rent;
 
         // Insert delivery record
@@ -53,11 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['assign_order'])) {
 $driversRes = $mysqli->query("SELECT user_id, name FROM users WHERE role_id=(SELECT role_id FROM roles WHERE role_name='Delivery' LIMIT 1) ORDER BY name");
 $drivers = $driversRes->fetch_all(MYSQLI_ASSOC);
 
-// Pagination setup
-$limit = 20;
-$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
-$offset = ($page - 1) * $limit;
-
 // Filters
 $where = ["po.approved = 1"];
 $params = [];
@@ -68,33 +60,22 @@ if (!empty($_GET['search'])) {
     $types   .= 's';
 }
 
-// Count total for pagination
-$count_sql = "SELECT COUNT(DISTINCT o.order_id) as total FROM orders o JOIN pending_orders po ON po.order_id = o.order_id JOIN customers c ON c.customer_id = o.customer_id WHERE " . implode(' AND ', $where);
-$count_stmt = $mysqli->prepare($count_sql);
-if ($types) $count_stmt->bind_param($types, ...$params);
-$count_stmt->execute();
-$count_result = $count_stmt->get_result();
-$total_rows = $count_result ? $count_result->fetch_assoc()['total'] : 0;
-$total_pages = ceil($total_rows / $limit);
-
-$sql = "SELECT o.order_id, c.name customer, c.phone_no,  o.rent_amount As transport_rent,
-               o.final_amount AS discounted_amount,
+$sql = "SELECT o.order_id, c.name customer, c.phone_no, o.discounted_amount, o.transport_rent,
                IFNULL(d.delivery_id,0) AS delivery_id,
                d.delivery_user_id, d.status, d.amount_paid, d.amount_remaining
-                     FROM orders o
+        FROM orders o
         JOIN customers c ON c.customer_id = o.customer_id
         JOIN pending_orders po ON po.order_id = o.order_id
         LEFT JOIN delivery_orders d ON d.order_id = o.order_id
         WHERE " . implode(' AND ', $where) . "
         GROUP BY o.order_id
-        ORDER BY o.order_date DESC
-        LIMIT $limit OFFSET $offset";
+        ORDER BY o.order_date DESC";
 
-$stmt = $mysqli->prepare($sql);
-if ($types) $stmt->bind_param($types, ...$params);
-$stmt->execute();
-$result = $stmt->get_result();
-?>
+    $stmt = $mysqli->prepare($sql);
+    if ($types) $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    ?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -107,8 +88,6 @@ $result = $stmt->get_result();
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="../css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"/>                
-
         <style>
         /* Base font slightly larger for readability */
         body{font-size:1.05rem;}
@@ -129,8 +108,7 @@ $result = $stmt->get_result();
  
 
 <main class="py-4 container-fluid">
-      <div class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width: 1200px;">
-     <center><h2 class="mb-4">Assign Orders to Delivery Personnel</h2></center>
+    <h2 class="mb-4">Assign Orders to Delivery Personnel</h2>
 
     <?php if(!empty($error)): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -220,21 +198,6 @@ $result = $stmt->get_result();
         </table>
     </div>
 
-    <!-- Pagination controls -->
-    <nav aria-label="Page navigation example">
-      <ul class="pagination justify-content-center">
-        <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
-          <a class="page-link" href="?page=<?= $page - 1 . (!empty($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '') ?>">Previous</a>
-        </li>
-        <li class="page-item disabled">
-          <span class="page-link"> <?= $page ?> </span>
-        </li>
-        <li class="page-item <?= $page >= $total_pages ? 'disabled' : '' ?>">
-          <a class="page-link" href="?page=<?= $page + 1 . (!empty($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '') ?>">Next</a>
-        </li>
-      </ul>
-    </nav>
-
     <!-- Delivery modal -->
     <div class="modal fade" id="deliveryModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-fullscreen-sm-down">
@@ -245,7 +208,6 @@ $result = $stmt->get_result();
 </div>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../js/scripts.js"></script>
 <script>
 $(document).on('click','.open-delivery',function(){
     const id = $(this).data('delivery');

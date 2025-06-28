@@ -10,7 +10,7 @@ $offset = ($page - 1) * $limit;
 
 // Fetch approved orders with total amount and custom price, with pagination
 $sql = "SELECT po.order_id, c.name AS customer_name, c.phone_no, 
-                               (SELECT SUM(custom_price) FROM pending_orders WHERE order_id = o.order_id)  AS 
+                               o.final_amount  AS 
  total_amount, SUM(po.custom_price) AS custom_total
         FROM pending_orders po
         JOIN customers c ON po.customer_id = c.customer_id

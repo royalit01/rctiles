@@ -1621,15 +1621,15 @@ document.addEventListener("DOMContentLoaded", () => {
                                     <input type="hidden" name="final_price" id="final_price"> -->
                                     <div class="mb-3">
                                     <label for="finalAmountPaid" class="form-label"><strong>Final Amount Paid (₹):</strong></label>
-<input type="text" class="form-control" id="finalAmountPaid" name="final_amount_paid"
-    placeholder="Enter final amount"
-    oninput="this.value = this.value.replace(/[^0-9.]/g, ''); applyFinalPrice(); updateGrandAmount();">
+                                    <input type="text" class="form-control" id="finalAmountPaid" name="final_amount_paid"
+                                        placeholder="Enter final amount"
+                                        oninput="this.value = this.value.replace(/[^0-9.]/g, ''); applyFinalPrice(); updateGrandAmount();">
 
-<label for="RentAmount" class="form-label"><strong>Rent Paid (₹):</strong></label>
-<input type="text" class="form-control" id="RentAmount" name="rent_amount"
-    placeholder="Enter rent amount" value="0"
-    oninput="this.value = this.value.replace(/[^0-9.]/g, ''); applyFinalPrice(); updateGrandAmount();">
-
+                                    <label for="RentAmount" class="form-label"><strong>Rent Paid (₹):</strong></label>
+                                    <input type="text" class="form-control" id="RentAmount" name="rent_amount"
+                                     placeholder="Enter rent amount" value="0"
+                                     oninput="this.value = this.value.replace(/[^0-9.]/g, ''); applyFinalPrice(); updateGrandAmount();">
+ 
 <label for="grandAmountPaid" class="form-label"><strong>Grand Amount Paid (₹):</strong></label>
 <input type="text" class="form-control" id="grandAmountPaid" name="grand_amount_paid"
     placeholder="Grand amount" readonly>                                    </div>

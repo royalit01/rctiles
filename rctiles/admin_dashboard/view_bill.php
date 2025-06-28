@@ -7,7 +7,7 @@ if (!$order_id) die("Invalid Order ID");
 // Fetch customer and order
 $stmt = $mysqli->prepare("
     SELECT c.name, c.phone_no, c.address, c.city,
-                 (SELECT SUM(custom_price) FROM pending_orders WHERE order_id = o.order_id) AS final_amount, o.transport_rent
+                 o.final_amount,  o.transport_rent
     FROM orders o
     JOIN customers c ON o.customer_id = c.customer_id
     WHERE o.order_id = ?

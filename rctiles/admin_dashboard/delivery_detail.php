@@ -55,7 +55,7 @@ if (!$deliveryId) die('Bad request');
 
 // Fetch delivery header
 $head = $mysqli->query("
-    SELECT d.*, o.order_id, o.transport_rent, c.name AS customer, c.phone_no
+    SELECT d.*, o.order_id, o.rent_amount, c.name AS customer, c.phone_no
     FROM delivery_orders d
     JOIN orders o ON o.order_id = d.order_id
     JOIN customers c ON c.customer_id = o.customer_id

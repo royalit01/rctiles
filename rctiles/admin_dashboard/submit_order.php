@@ -21,6 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone_no = $_POST['phone_no'];
     $address = $_POST['address'];
     $city = $_POST['city'];
+    $final_amount = isset($_POST['final_amount_paid']) ? floatval($_POST['final_amount_paid']) : 0;
+    $rent_amount = isset($_POST['rent_amount']) ? floatval($_POST['rent_amount']) : 0;
 
     // Debugging: Log customer details
     // echo "Customer Name: $customer_name<br>";
@@ -79,9 +81,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Now insert order
-        $sql = "INSERT INTO orders (customer_id, total_amount, order_date) VALUES (?, ?, NOW())";
+        $sql = "INSERT INTO orders (customer_id, total_amount, final_amount, rent_amount, order_date) VALUES (?, ?, ?, ?, NOW())";
         $stmt = $mysqli->prepare($sql);
-        $stmt->bind_param("id", $customer_id, $total_amount);
+        $stmt->bind_param("iddd", $customer_id, $total_amount, $final_amount, $rent_amount);
         $stmt->execute();
         $order_id = $stmt->insert_id;
         $stmt->close();
