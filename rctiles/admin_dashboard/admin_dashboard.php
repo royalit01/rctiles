@@ -131,7 +131,7 @@ if ($count_result && $row2 = $count_result->fetch_assoc()) {
     <a href="total_orders.php" class="card-link">
       <div class="info-card bg-primary  h-100">
         <h5>Total Orders</h5>
-        <p>128</p>
+        <p> <?= (int)$total_orders ?></p>
       </div>
     </a>
   </div>
@@ -139,7 +139,7 @@ if ($count_result && $row2 = $count_result->fetch_assoc()) {
     <a href="total_amount.php" class="card-link">
       <div class="info-card bg-secondary  h-100">
         <h5>Total Sales</h5>
-        <p>₹ 1,24,500</p>
+         <p>₹<?= number_format((float)$total_custom_total, 2) ?></p>
       </div>
     </a>
   </div>
@@ -147,7 +147,7 @@ if ($count_result && $row2 = $count_result->fetch_assoc()) {
     <a href="pending_orders.php" class="card-link">
       <div class="info-card bg-danger  h-100">
         <h5>Pending Orders</h5>
-        <p>23</p>
+        <p> <?= (int)$total_orders ?></p>
       </div>
     </a>
   </div>
@@ -166,7 +166,7 @@ if ($count_result && $row2 = $count_result->fetch_assoc()) {
   <div class="container mt-4">
   <div class="row justify-content-center text-center gap-4">
     <div class="col-6 col-sm-4 col-md-2 mb-3">
-    <!--  <a href="transaction.php" class="nav-card">Transaction</a> -->
+    <a href="transaction.php" class="nav-card">Transaction</a>
     </div>
     <div class="col-6 col-sm-4 col-md-2 mb-3">
       <a href="view_orders.php" class="nav-card">View Orders</a>

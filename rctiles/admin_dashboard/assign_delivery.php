@@ -17,11 +17,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['assign_order'])) {
         $error = "This order has already been assigned for delivery.";
     } else {
         // Get rent and discounted amount (fallback to total_amount if discounted is NULL)
-        $ord = $mysqli->query("SELECT 
-                                  COALESCE(discounted_amount, total_amount) AS discounted_amount, 
-                                  COALESCE(transport_rent, 0) AS transport_rent 
-                               FROM orders 
-                               WHERE order_id = $orderId")->fetch_assoc();
+        $ord = $mysqli->query("
+            SELECT 
+                COALESCE(
+                    (SELECT SUM(custom_price) FROM pending_orders WHERE order_id = o.order_id), 
+                    o.total_amount
+                ) AS discounted_amount,
+                COALESCE(o.transport_rent, 0) AS transport_rent
+            FROM orders o
+            WHERE o.order_id = $orderId
+        ")->fetch_assoc();
 
         $rent = (float)$ord['transport_rent'];
         $amt  = (float)$ord['discounted_amount'];
@@ -64,7 +69,7 @@ if (!empty($_GET['search'])) {
 $sql = "SELECT o.order_id, c.name customer, c.phone_no,  o.transport_rent,
    (SELECT SUM(custom_price) FROM pending_orders WHERE order_id = o.order_id) AS discounted_amount,
                IFNULL(d.delivery_id,0) AS delivery_id,
-               d.delivery_user_id, d.status, d.amount_paid, d.amount_remaining
+               d.delivery_user_id, d.status, d.amount_paid, (SELECT SUM(custom_price) FROM pending_orders WHERE order_id = o.order_id) AS amount_remaining
         FROM orders o
         JOIN customers c ON c.customer_id = o.customer_id
         JOIN pending_orders po ON po.order_id = o.order_id

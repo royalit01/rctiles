@@ -175,12 +175,12 @@ foreach ($products as $p) {
 }
 
 
-        // Update final amount in orders table
-        $sql = "UPDATE orders SET final_amount = ? WHERE order_id = ?";
-        $stmt = $mysqli->prepare($sql);
-        $stmt->bind_param("di", $final_amount, $order_id);
-        $stmt->execute();
-        $stmt->close();
+        // // Update final amount in orders table
+        // $sql = "UPDATE orders SET final_amount = ? WHERE order_id = ?";
+        // $stmt = $mysqli->prepare($sql);
+        // $stmt->bind_param("di", $final_amount, $order_id);
+        // $stmt->execute();
+        // $stmt->close();
 
         // // Update final amount in orders table
         // $sql = "UPDATE orders SET final_amount = ? WHERE order_id = ?";
