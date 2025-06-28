@@ -62,9 +62,12 @@ $riders = $mysqli->query("
 <title>Member Ledger</title>
 
 <link href="../css/styles.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.3.0/css/all.css">
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <style>
 @media (max-width:575.98px){
  table thead{display:none}

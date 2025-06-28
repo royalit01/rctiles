@@ -18,8 +18,8 @@
           <i class="fas fa-user fa-fw"></i>
         </a>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-          <li><a class="dropdown-item" href="#!">Settings</a></li>
-          <li><a class="dropdown-item" href="#!">Activity Log</a></li>
+          <li><a class="dropdown-item" href="my_profile.php">My Profile</a></li>
+          <!-- <li><a class="dropdown-item" href="#!">Activity Log</a></li> -->
           <li><hr class="dropdown-divider" /></li>
           <li><a class="dropdown-item" href="../login.php">Logout</a></li>
         </ul>
@@ -32,7 +32,13 @@
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                     <div class="sb-sidenav-menu">
                         <div class="nav">
+                    <div class="sb-sidenav-menu-heading">DASHBOARD</div>
+                   <a class="nav-link" href="../admin_dashboard/admin_dashboard.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                Admin Dashboard
+                            </a>
                             <div class="sb-sidenav-menu-heading">Main Dashboard</div>
+                           
                             <a class="nav-link" href="Product.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Product
