@@ -1,6 +1,4 @@
 <?php
-/* customer_ledger.php – Admin view */
-
 session_start();
 include "../db_connect.php";
 if (!isset($_SESSION['user_id']) || $_SESSION['role_id'] != 1) {
@@ -49,7 +47,6 @@ $sumTotal = $sumPaid = $sumPend = 0;
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.3.0/css/all.css">
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 <style>
-<<<<<<< Updated upstream
 /* ---------- mobile card layout (< 576 px) ---------- */
 @media (max-width:575.98px){
   body {
@@ -178,8 +175,8 @@ $sumTotal = $sumPaid = $sumPend = 0;
     padding-bottom: 0.5rem;
   }
   td[data-label="Delivery Person(s)"]::before {
-    margin-bottom: 0.2rem;
-=======
+    margin-bottom: 0.2rem;}
+  }
 /* Desktop table - original styling */
 @media (min-width: 768px) {
   .mobile-view { display: none; }
@@ -322,7 +319,6 @@ $sumTotal = $sumPaid = $sumPend = 0;
   }
   table tbody tr:hover {
     background-color: #f8f9fa;
->>>>>>> Stashed changes
   }
 }
 </style>

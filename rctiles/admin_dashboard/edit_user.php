@@ -49,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['user_id'])) {
     $storage_area_id = $_POST['storage_area_id']  ?: $row['storage_area_id'];
     $role_id         = $_POST['role_id']          ?: $row['role_id'];
     $aadhar_id_no    = $_POST['aadhar_id_no']     ?: $row['aadhar_id_no'];
+    $role_name       = $_POST['role_name']        ?: $row['role_name'];
 
     /* 3. File upload (optional) */
     $image = $row['user_image'];                        // default = old image
@@ -66,13 +67,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['user_id'])) {
         $newPwdHash = password_hash($newPwdPlain, PASSWORD_DEFAULT);
         $sql  = "UPDATE users
                    SET name=?, email=?, phone_no=?, storage_area_id=?,
-                       role_id=?, aadhar_id_no=?, user_image=?, password=?
+                       role_id=?, aadhar_id_no=?, user_image=?, password=? 
                  WHERE user_id=?";
         $stmt = $mysqli->prepare($sql);
         $stmt->bind_param("sssiisssi",
                           $name, $email, $phone_no, $storage_area_id,
                           $role_id, $aadhar_id_no, $image,
-                          $newPwdHash, $user_id);
+                          $newPwdHash, $user_id );
     } else {
         $sql  = "UPDATE users
                    SET name=?, email=?, phone_no=?, storage_area_id=?,
@@ -144,6 +145,7 @@ if (!empty($password)) {
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="../css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
         <style>
             @media (max-width: 576px) {
                 .btn-sm {
@@ -173,6 +175,7 @@ if (!empty($password)) {
                                         <th>Name</th>
                                         <th class="d-none d-lg-table-cell">Email</th> <!-- Hides on xs to md, visible on lg and larger -->
                                         <th class="d-none d-lg-table-cell">phone_no</th>
+                                        <th class="d-none d-lg-table-cell"> Role </th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -191,6 +194,7 @@ echo "<td><img src='../uploads/" . htmlspecialchars($row['user_image']) . "' alt
                                         echo "<td>" . htmlspecialchars($row['name']) . "</td>";
                                         echo "<td class='d-none d-lg-table-cell'>" . htmlspecialchars($row['email']) . "</td>";
                                         echo "<td class='d-none d-lg-table-cell'>" . htmlspecialchars($row['phone_no']) . "</td>";
+                                        echo "<td class='d-none d-lg-table-cell'>" . htmlspecialchars($row['role_name']) . "</td>";
                                         echo "<td>
                                                 <button class='btn btn-primary btn-sm mt-1 edit-btn' data-bs-toggle='modal' data-bs-target='#editUserModal'
                                         data-bs-userid='" . $row['user_id'] . "'

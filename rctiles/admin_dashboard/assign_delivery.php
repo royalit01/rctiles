@@ -95,6 +95,8 @@ $sql = "SELECT o.order_id, c.name customer, c.phone_no,  o.transport_rent,
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="../css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"/>                
+
         <style>
         /* Base font slightly larger for readability */
         body{font-size:1.05rem;}
