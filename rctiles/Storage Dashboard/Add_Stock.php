@@ -151,6 +151,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_stock'])) {
                 <input type="number" name="pieces" class="form-control" min="0" required value="0">
             </div>
 
+             <div class="mb-3">
+                <label class="form-label fw-medium text-secondary"style="  font-weight: 550;"">Remark:</label>
+                <input type="text" class="form-control" id="remark">
+            </div>
+
 <div class="d-flex justify-content-center">
     <button type="submit" name="add_stock" class="btn gradient-btn w-20 text-white p-2  position-relative">
         <i class="fas fa-plus text-white me-2"></i> Add Stock
