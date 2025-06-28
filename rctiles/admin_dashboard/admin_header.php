@@ -89,7 +89,7 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 View Stock
                             </a>
-                            <a class="nav-link" href="../Storage Dashboard/Low_Stock_Report.php">
+                            <a class="nav-link" href="../Storage Dashboard/Low_Stock.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Low Stock 
                             </a>
@@ -109,7 +109,7 @@
                             <!--    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>-->
                             <!--    Order report-->
                             <!--</a>-->
-                            <a class="nav-link" href="add_product.php">
+                            <a class="nav-link" href="../Storage Dashboard/Low_Stock_Report.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Low Stock Report
                             </a>
