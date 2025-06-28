@@ -54,7 +54,7 @@ if ($count_result && $row2 = $count_result->fetch_assoc()) {
 
 .info-card p {
   font-size: 1.2rem;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .nav-card {
@@ -166,7 +166,7 @@ if ($count_result && $row2 = $count_result->fetch_assoc()) {
   <div class="container mt-4">
   <div class="row justify-content-center text-center gap-4">
     <div class="col-6 col-sm-4 col-md-2 mb-3">
-    <a href="transaction.php" class="nav-card">Transaction</a>
+     <a href="transaction.php" class="nav-card">Transaction</a>
     </div>
     <div class="col-6 col-sm-4 col-md-2 mb-3">
       <a href="view_orders.php" class="nav-card">View Orders</a>

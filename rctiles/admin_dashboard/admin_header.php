@@ -24,17 +24,20 @@ if (!isset($_SESSION['user_id'])) {
                 </div>
             </form> -->
             <!-- Navbar-->
-            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+              <div class="d-flex ms-auto">
+    <ul class="navbar-nav me-1 me-lg-4">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user fa-fw"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <!-- <li><a class="dropdown-item" href="#!">Settings</a></li>
-                        <li><a class="dropdown-item" href="#!">Activity Log</a></li> -->
+                        <li><a class="dropdown-item" href="my_profile.php">My Profile</a></li>
+                        <!-- <li><a class="dropdown-item" href="#!">Activity Log</a></li> -->
                         <li><hr class="dropdown-divider" /></li>
                         <li><a class="dropdown-item" href="../logout.php">Logout</a></li>
                     </ul>
                 </li>
             </ul>
+            </div>
         </nav>
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
@@ -115,7 +118,7 @@ if (!isset($_SESSION['user_id'])) {
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 View Stock
                             </a>
-                            <a class="nav-link" href="../Storage Dashboard/Low_Stock_Report.php">
+                            <a class="nav-link" href="../Storage Dashboard/Low_Stock.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Low Stock 
                             </a>
@@ -144,7 +147,7 @@ if (!isset($_SESSION['user_id'])) {
                             <!--    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>-->
                             <!--    Order report-->
                             <!--</a>-->
-                            <a class="nav-link" href="add_product.php">
+                            <a class="nav-link" href="../Storage Dashboard/Low_Stock_Report.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Low Stock Report
                             </a>

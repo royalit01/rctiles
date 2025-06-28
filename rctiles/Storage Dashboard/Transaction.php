@@ -213,9 +213,13 @@ $result = $stmt->get_result();
                       Storage: <?=htmlspecialchars($row['storage_area_name'])?>
                     </small> ·
                   <?php endif; ?>
-                  <small class="fst-italic text-secondary">
-                    <?=htmlspecialchars($row['description'])?>
-                  </small>
+
+                 <small class="fst-italic text-secondary">
+    <?=htmlspecialchars($row['description'])?>
+</small>
+<div>
+    <small>Remark:</small>
+</div>
                 </td>
                 <td>
                   <span class="badge bg-primary"><?=$boxes?> Box</span><br>
