@@ -413,7 +413,6 @@ doc.setLineWidth(0.2).line(14, separatorY, 196, separatorY);
                     cells[2].innerText,  // Quantity
                     "Box",               // Unit
                     cells[4].innerText.replace('₹', ''),  // Price/Unit
-                    "₹3,813.56 (18.0%)", // GST (static for this example)
                     cells[5].innerText.replace('₹', '')   // Amount
                 ]);
             });
@@ -425,13 +424,12 @@ doc.setLineWidth(0.2).line(14, separatorY, 196, separatorY);
                 document.querySelectorAll("#billTable tr")[0].querySelector("td:nth-child(3)").innerText, // Quantity
                 "",
                 "",
-                document.getElementById("grandTotal").textContent.replace('₹', '').includes('25000') ? "₹3,813.56" : "₹0.00",
                 document.getElementById("grandTotal").textContent.replace('₹', '')
             ]);
 
             // Custom table styling for rounded borders
             doc.autoTable({
-                head: [["#", "Item Name", "Quantity", "Unit", "Price/ Unit", "GST", "Amount"]],
+                head: [["#", "Item Name", "Quantity", "Unit", "Price/ Unit", "Amount"]],
                 body: tableBody,
                 startY: 80,
                 margin: { left: 14 },
@@ -440,11 +438,12 @@ doc.setLineWidth(0.2).line(14, separatorY, 196, separatorY);
                     cellPadding: 3,
                     valign: 'middle',
                     lineColor: [0, 0, 0],
-                    lineWidth: 0.1
+                    lineWidth: 0.1,
+                    textColor: [0, 0, 0] // Make all table text black by default
                 },
                 headStyles: {
-                    fillColor: [150, 0, 0], // Red header
-                    textColor: 255,
+                    fillColor: [220, 38, 38], // Red header
+                    textColor: 255, // Black text
                     fontStyle: 'bold',
                     cellPadding: {top: 5, right: 2, bottom: 5, left: 2},
                     halign: 'center'
@@ -460,7 +459,7 @@ doc.setLineWidth(0.2).line(14, separatorY, 196, separatorY);
                 },
                 didDrawCell: (data) => {
                     if (data.section === 'body' && data.row.index === tableBody.length - 1) {
-                        doc.setFillColor(150, 0, 0); // Red for total row
+                        doc.setFillColor(220, 38, 38); // Red for total row
                         doc.roundedRect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 1, 1, 'F');
                         doc.setTextColor(255, 255, 255); // White text for total row
                     }
@@ -482,40 +481,50 @@ doc.setLineWidth(0.2).line(14, separatorY, 196, separatorY);
 
             // ---------- Tax Summary Table (Smaller and on Right) ----------
             const taxSummaryY = doc.autoTable.previous.finalY + 10;
-            const taxSummaryBody = [
-                ["Sub Total", "₹21,186.44"],
-                ["SGST @9.0%", "₹1,906.78"],
-                ["CGST @9.0%", "₹1,906.78"],
-                ["Total", "₹25,000"]
-            ];
+            // Calculate dynamic tax summary
+const subTotal = parseFloat(document.getElementById("itemTotal").textContent.replace('₹','')) || 0;
+const grandTotal = parseFloat(document.getElementById("grandTotal").textContent.replace('₹','')) || 0;
+const rentAmount = parseFloat(document.getElementById("rentAmount").value) || 0;
+const total = +(subTotal + rentAmount).toFixed(2);
+
+const taxSummaryBody = [
+    ["Sub Total", `₹${subTotal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`],
+    ["Rent", `₹${rentAmount.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`],
+
+    ["Total", `₹${total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`]
+];
 
             doc.autoTable({
                 head: [["Description", "Amount"]],
                 body: taxSummaryBody,
                 startY: taxSummaryY,
-                margin: { left: 120 }, // Positioned on right
-                tableWidth: 80, // Smaller width
+                margin: { left: 130 },
                 styles: { 
                     fontSize: 9,
                     cellPadding: 3,
                     valign: 'middle',
                     lineColor: [0, 0, 0],
-                    lineWidth: 0.1
+                    lineWidth: 0.1,
+                    textColor: [0, 0, 0]
                 },
                 headStyles: {
-                    fillColor: [150, 0, 0], // Red header
+                    fillColor: [220, 38, 38], // Vibrant red (Tailwind Red-600)
                     textColor: 255,
                     fontStyle: 'bold'
                 },
                 columnStyles: {
-                    0: { cellWidth: 50, halign: 'left' },
-                    1: { cellWidth: 30, halign: 'right' }
+                    0: { cellWidth: 28, halign: 'left' },
                 },
-                didDrawCell: (data) => {
+                didParseCell: function (data) {
+                    // Style the 'Total' row
                     if (data.section === 'body' && data.row.index === taxSummaryBody.length - 1) {
-                        doc.setFillColor(150, 0, 0); // Red for total row
-                        doc.roundedRect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 1, 1, 'F');
-                        doc.setTextColor(255, 255, 255); // White text for total row
+                        data.cell.styles.fillColor = [220, 38, 38]; // Vibrant red for total row
+                        data.cell.styles.textColor = 255; // White text
+                        data.cell.styles.fontStyle = 'bold';
+                    }
+                    // Style the 'Sub Total' and 'Rent' rows
+                    if (data.section === 'body' && (data.row.index === 0 || data.row.index === 1)) {
+                        data.cell.styles.fontStyle = 'bold';
                     }
                 }
             });
