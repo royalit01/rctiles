@@ -192,7 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_bill'])) {
                                 $discounted = $qty ? $product['custom_price'] / $qty : 0;
                                 $total      = $product['custom_price'];
                         ?>
-                        <tr class="product-row"
+                        <tr class="product-row   " style="background-color: #fff; color: #000;"
                             data-unit="<?= $discounted ?>"
                             data-orig='<?= $origUnit ?>'
                             data-qty="<?= $qty ?>">
