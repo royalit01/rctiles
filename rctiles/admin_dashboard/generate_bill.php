@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_bill'])) {
             font-size: 1.08rem;
         }
         .table tfoot th {
-            background: #f1f3f4;
+            background:rgb(244, 241, 241);
             font-weight: 600;
             font-size: 1.08rem;
         }
