@@ -214,11 +214,8 @@ $result = $stmt->get_result();
                     </small> ·
                   <?php endif; ?>
 
-                 <small class="fst-italic text-secondary">
-    <?=htmlspecialchars($row['description'])?>
-</small>
-<div>
-    <small>Remark:</small>
+                  <div>
+    <small >Remark:</small> <span style="color:#222;" class="fst-italic"><?= htmlspecialchars($row['description']) ?></span>
 </div>
                 </td>
                 <td>

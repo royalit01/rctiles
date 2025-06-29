@@ -23,6 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_stock'])) {
     $packets = (int)$_POST['packets'];
     $pieces = (int)$_POST['pieces'];
     $user_id = (int)$_SESSION['user_id'];
+    $remark = trim($_POST['remark'] ?? '');
 
     // Fetch pieces_per_packet
     $stmt = $mysqli->prepare("SELECT pieces_per_packet FROM product_stock WHERE product_id = ? LIMIT 1");
@@ -54,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_stock'])) {
 
         // Log transaction with description
         $type = 'Add';
-        $description = "Stock added";
+        $description = $remark !== '' ? $remark : "Stock added";
         $stmt = $mysqli->prepare("INSERT INTO transactions (user_id, product_id, storage_area_id, transaction_type, quantity_changed, transaction_date, description) VALUES (?, ?, ?, ?, ?, NOW(), ?)");
         $stmt->bind_param("iiisis", $user_id, $product_id, $storage_area_id, $type, $totalAdded, $description);
         $stmt->execute();
@@ -151,8 +152,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_stock'])) {
             </div>
 
              <div class="mb-3">
-                <label class="form-label fw-medium text-secondary"style="  font-weight: 550;"">Remark:</label>
-                <input type="text" class="form-control" id="remark">
+                <label class="form-label fw-medium text-secondary"style="  font-weight: 550;">Remark:</label>
+                <input type="text" class="form-control" id="remark" name="remark">
             </div>
 
 <div class="d-flex justify-content-center">
@@ -217,7 +218,7 @@ document.querySelector('form').addEventListener('submit', function(e) {
     const packets = document.querySelector('input[name="packets"]').value;
     const pieces = document.querySelector('input[name="pieces"]').value;
     if (!packets || !pieces || Number(packets) === 0 && Number(pieces) === 0) {
-        alert(Enter amount to add (packets or pieces)');
+        alert('Enter amount to add (packets or pieces)');
         e.preventDefault();
     }
 });
