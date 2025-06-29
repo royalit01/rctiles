@@ -176,7 +176,7 @@ $result = $stmt->get_result();
                         <strong><?= htmlspecialchars($row['customer']) ?></strong><br>
                         <a href="tel:<?= $row['phone_no'] ?>" class="text-decoration-none small text-muted"><?= htmlspecialchars($row['phone_no']) ?></a>
                     </td>
-                    <td><?= number_format($grand,2) ?></td>
+                    <td><?= number_format((float)$row['discounted_amount'],2) ?></td>
                     <td><?= number_format($row['transport_rent'],2) ?></td>
                     <td>
                         <?php if(!$row['delivery_id']): ?>
@@ -221,17 +221,27 @@ $result = $stmt->get_result();
     </div>
 
     <!-- Pagination controls -->
-    <nav aria-label="Page navigation example">
-      <ul class="pagination justify-content-center">
-        <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
-          <a class="page-link" href="?page=<?= $page - 1 . (!empty($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '') ?>">Previous</a>
-        </li>
-        <li class="page-item disabled">
-          <span class="page-link"> <?= $page ?> </span>
-        </li>
-        <li class="page-item <?= $page >= $total_pages ? 'disabled' : '' ?>">
-          <a class="page-link" href="?page=<?= $page + 1 . (!empty($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '') ?>">Next</a>
-        </li>
+    <nav aria-label="Page navigation">
+      <ul class="pagination justify-content-center mt-3">
+        <?php if ($page > 1): ?>
+          <li class="page-item">
+            <a class="page-link" href="<?= htmlspecialchars(preg_replace('/([&?])page=\\d+/', '$1', $_SERVER['REQUEST_URI'])) . (strpos($_SERVER['REQUEST_URI'], '?') !== false ? '&' : '?') . 'page=' . ($page - 1) ?>" aria-label="Previous">
+              <span aria-hidden="true">&laquo; Prev</span>
+            </a>
+          </li>
+        <?php endif; ?>
+        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+          <li class="page-item <?= $i == $page ? 'active' : '' ?>">
+            <a class="page-link" href="<?= htmlspecialchars(preg_replace('/([&?])page=\\d+/', '$1', $_SERVER['REQUEST_URI'])) . (strpos($_SERVER['REQUEST_URI'], '?') !== false ? '&' : '?') . 'page=' . $i ?>"><?= $i ?></a>
+          </li>
+        <?php endfor; ?>
+        <?php if ($page < $total_pages): ?>
+          <li class="page-item">
+            <a class="page-link" href="<?= htmlspecialchars(preg_replace('/([&?])page=\\d+/', '$1', $_SERVER['REQUEST_URI'])) . (strpos($_SERVER['REQUEST_URI'], '?') !== false ? '&' : '?') . 'page=' . ($page + 1) ?>" aria-label="Next">
+              <span aria-hidden="true">Next &raquo;</span>
+            </a>
+          </li>
+        <?php endif; ?>
       </ul>
     </nav>
 

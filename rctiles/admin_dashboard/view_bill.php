@@ -7,7 +7,7 @@ if (!$order_id) die("Invalid Order ID");
 // Fetch customer and order
 $stmt = $mysqli->prepare("
     SELECT c.name, c.phone_no, c.address, c.city,
-                 o.final_amount,  o.transport_rent
+                 o.final_amount,  o.rent_amount AS transport_rent
     FROM orders o
     JOIN customers c ON o.customer_id = c.customer_id
     WHERE o.order_id = ?
@@ -142,13 +142,14 @@ $total = $order['final_amount'] + $order['transport_rent'];
                     <?php endforeach ?>
                 </tbody>
                 <tfoot>
-                    <tr>
-                        <th colspan="5" class="text-end">Rent:</th>
-                        <th>₹<?= number_format($order['transport_rent'],2) ?></th>
-                    </tr>
+                    
                     <tr>
                         <th colspan="5" class="text-end">Final Amount Paid:</th>
                         <th>₹<?= number_format($order['final_amount'],2) ?></th>
+                    </tr>
+                    <tr>
+                        <th colspan="5" class="text-end">Rent:</th>
+                        <th>₹<?= number_format($order['transport_rent'],2) ?></th>
                     </tr>
                     <tr class="table-dark">
                         <th colspan="5" class="text-end">Grand Total:</th>

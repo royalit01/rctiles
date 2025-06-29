@@ -1,7 +1,7 @@
 <?php
 include '../db_connect.php';
 // Get today's total custom_total and total orders
-$sql = "SELECT SUM((SELECT SUM(custom_price) FROM pending_orders WHERE order_id = o.order_id)) AS total_custom_total, COUNT(DISTINCT o.order_id) AS total_orders FROM orders o WHERE DATE(o.order_date) = CURDATE()";
+$sql = "SELECT SUM(final_amount) AS total_custom_total, COUNT(DISTINCT o.order_id) AS total_orders FROM orders o WHERE DATE(o.order_date) = CURDATE()";
 $result = $mysqli->query($sql);
 $total_custom_total = 0;
 $total_orders = 0;
@@ -166,19 +166,19 @@ if ($count_result && $row2 = $count_result->fetch_assoc()) {
   <div class="container mt-4">
   <div class="row justify-content-center text-center gap-4">
     <div class="col-6 col-sm-4 col-md-2 mb-3">
-     <a href="transaction.php" class="nav-card">Transaction</a>
+     <a href="../Storage Dashboard/Transaction.php" class="nav-card">Transaction</a>
     </div>
     <div class="col-6 col-sm-4 col-md-2 mb-3">
-      <a href="view_orders.php" class="nav-card">View Orders</a>
+      <a href="admin_orders.php" class="nav-card">View Orders</a>
     </div>
     <div class="col-6 col-sm-4 col-md-2 mb-3">
-      <a href="create_bill.php" class="nav-card">Create Bill</a>
+      <a href="approved_orders.php" class="nav-card">Create Bill</a>
     </div>
     <div class="col-6 col-sm-4 col-md-2 mb-3">
-      <a href="low_stock.php" class="nav-card">Low Stock</a>
+      <a href="../Storage Dashboard/Low_Stock_Report.php" class="nav-card">Low Stock</a>
     </div>
     <div class="col-6 col-sm-4 col-md-2 mb-3">
-      <a href="customer_leader.php" class="nav-card">Customer Leader</a>
+      <a href="customer_ledger.php" class="nav-card">Customer Leader</a>
     </div>
   </div>
 </div>
