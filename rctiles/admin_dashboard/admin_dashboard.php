@@ -1,4 +1,11 @@
 <?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start(); // Start the session if not already started
+}
+if(!isset($_SESSION['user_id']) || $_SESSION['role_id'] != 1) {
+    header("Location: ../login.php");
+    exit;
+}
 include '../db_connect.php';
 // Get today's total custom_total and total orders
 $sql = "SELECT SUM(final_amount) AS total_custom_total, COUNT(DISTINCT o.order_id) AS total_orders FROM orders o WHERE DATE(o.order_date) = CURDATE()";

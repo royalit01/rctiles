@@ -1,5 +1,11 @@
 <?php
-// include "admin_header.php";
+if (session_status() == PHP_SESSION_NONE) {
+    session_start(); // Start the session if not already started
+}
+if(!isset($_SESSION['user_id']) || $_SESSION['role_id'] != 1) {
+    header("Location: ../login.php");
+    exit;
+}
 require '../db_connect.php';
 
 // Pagination setup

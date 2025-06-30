@@ -1,4 +1,12 @@
-<?php include '../db_connect.php';
+<?php 
+if (session_status() == PHP_SESSION_NONE) {
+    session_start(); // Start the session if not already started
+}
+if(!isset($_SESSION['user_id']) || $_SESSION['role_id'] != 1) {
+    header("Location: ../login.php");
+    exit;
+}
+include '../db_connect.php';
 
 $sql = "SELECT o.order_id, c.name AS customer_name, o.total_amount
         FROM orders o
