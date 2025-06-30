@@ -165,7 +165,7 @@ if (!empty($password)) {
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <div class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width: 1200px;">
+                        <div class="card border-0 shadow rounded-3 p-4 bg-white my-5 mx-auto" style="max-width: 1200px;">
                             <h2 class="text-center mb-3">Edit User Details</h2>
                             <div class="table-responsive">
                             <table class="table">
@@ -391,7 +391,6 @@ echo "<td><img src='../uploads/" . htmlspecialchars($row['user_image']) . "' alt
                 });
             })();
         </script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
         <script src="../js/scripts.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
         <script src="../assets/demo/chart-area-demo.js"></script>

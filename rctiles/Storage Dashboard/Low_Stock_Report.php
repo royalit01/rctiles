@@ -74,8 +74,8 @@ $result = $mysqli->query($query);
             <!-- ---------------------------- -->
             <div id="layoutSidenav_content">
                 <main>
-                <div class="container-fluid mt-3">
-                                                <div class="card border-0 shadow my-4 rounded-3 p-4 bg-white mx-auto" style="max-width: 950px; ">
+                <div class="container-fluid mt-1">
+                                                <div class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width: 950px; ">
                         <h1 class="mt-4 text-center mb-3 fw-bold">Low Stock Report</h1>
                             <div class="card-body">
                                 <form action="" method="POST" class="mb-3">

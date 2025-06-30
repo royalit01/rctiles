@@ -193,7 +193,7 @@ $mysqli->close();
                                 </div>
                             </td>
                             <td>
-                                <a href="Update_Product.php?product_id=<?= $product['product_id'] ?>" class="btn btn-primary btn-sm">Edit</a>
+                                <a href="Update_Product.php?product_id=<?= $product['product_id'] ?>" class="btn btn-primary mb-md-0 mb-2 btn-sm">Edit</a>
                                 <button class="btn btn-danger btn-sm" onclick="confirmDelete(<?= $product['product_id'] ?>)">Delete</button>
                             </td>
                         </tr>
