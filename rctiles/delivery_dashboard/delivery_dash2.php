@@ -1,5 +1,7 @@
 <?php
 session_start();
+include "delivery_header.php"; 
+
 include "../db_connect.php";
 ?>
 <!DOCTYPE html>
@@ -15,9 +17,7 @@ include "../db_connect.php";
 
 </head>
 <body class="sb-nav-fixed">
-<?php include "delivery_header.php"; ?>
-            <div id="layoutSidenav_content">
-
+<div id="layoutSidenav_content">
 <main class="main-content ">
                         <div class="card border-0 shadow rounded-3 p-4 bg-white mx-auto " style="max-width: 800px;">
 
@@ -48,7 +48,6 @@ include "../db_connect.php";
   </div>
 </main>
 </div>
-
 <!-- Modal -->
 <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -71,32 +70,21 @@ include "../db_connect.php";
   </div>
 </div>
 
-<footer class="footer text-center">
-  &copy; Delivery System <?php echo date('Y'); ?>
-  <div class="float-end">
-    <a href="#">Privacy Policy</a> · <a href="#">Terms</a>
-  </div>
-</footer>
+
 
 <!-- Styles for dashboard page -->
 <style>
+  html, body {
+    overflow: hidden;
+    height: 100%;
+  }
   body {
-   
     background-color: #f8f9fa;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
   .main-content {
-    /* padding: 1.5rem; */
-    /* min-height: calc(100vh - 56px); */
-  }
-  .content-wrapper {
-    /* height: 100%; */
-  }
-  .content-area {
-    /* min-height: calc(100vh - 150px); */
-    background-color: #ffffff !important;
-    border: 1px solid #e3e6f0;
-    /* margin-bottom: 60px; */
+    margin-top: 70px !important;
+    /* padding-top: 0; */
   }
   .dashboard-header {
     text-align: center;
@@ -188,15 +176,15 @@ include "../db_connect.php";
     color: white;
   }
   .footer {
+    /* Remove fixed positioning for scrollable content */
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    margin-top: 40px;
     background-color: #212529;
     padding: 10px 20px;
     border-top: 1px solid #444;
     font-size: 0.875rem;
     color: #adb5bd;
+    /* z-index: 1050; */
   }
   .footer a {
     color: #adb5bd;

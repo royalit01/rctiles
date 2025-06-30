@@ -1,4 +1,3 @@
-
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <style>
@@ -178,13 +177,4 @@
             </div>
         </nav>
     </div>
-    <!-- Your main content should be placed in #layoutSidenav_content in your page -->
-</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-<script>
-    // Sidebar toggle for mobile
-    document.getElementById('sidebarToggle').addEventListener('click', function() {
-        var sidenav = document.getElementById('layoutSidenav_nav');
-
-          });
-</script>
+    <!-- Do NOT close #layoutSidenav here. The main content and closing div should be in the page file. -->
