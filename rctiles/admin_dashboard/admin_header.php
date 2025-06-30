@@ -1,11 +1,13 @@
 <?php
-session_start();
+    session_start();
+
 
 if (!isset($_SESSION['user_id'])) {
-    // Not logged in
     header("Location: ../login.php");
     exit;
 }
+
+
 
 // Now you can check the role if you want:
 

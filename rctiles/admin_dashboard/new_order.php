@@ -1,11 +1,11 @@
 <?php
-session_start();  // Start the session at the beginning of the script
+if (session_status() == PHP_SESSION_NONE) {
+    session_start(); // Start the session if not already started
+}
 include '../db_connect.php';
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -1585,6 +1585,118 @@ document.addEventListener("DOMContentLoaded", () => {
                                     <div class="d-flex justify-content-between align-items-center mt-3">
                                         <button type="button" class="btn btn-success" onclick="addDetail()">Add New</button>
                                         <div>
+                                            <button type="button" class="btn btn-secondary" onclick="prevStep()">Previous</button>
+                                            <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 3: Confirmation -->
+                                <!-- Step 3: Summary Page -->
+                                <div class="form-step" id="step3">
+                                    <h5>Selected Products Summary</h5>
+                                    <table class="table table-bordered summary-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Product</th>
+                                                <th>Quantity</th>
+                                                <th>Original Price</th>
+                                                <th>Final Price</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="summaryBody"></tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th colspan="3" class="text-end">Total Amount:</th>
+                                                <th id="totalAmount">₹0.00</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+
+                                    <!-- ✅ Custom Final Price Input (Placed Correctly Below Table) -->
+                                    <!-- <div class="mb-3">
+                                        <label for="finalAmountPaid" class="form-label"><strong>Final Amount Paid (₹):</strong></label>
+                                        <input type="number" class="form-control" id="finalAmountPaid" placeholder="Enter final amount" oninput="applyFinalPrice()">
+                                    </div>
+                                    <input type="hidden" name="final_price" id="final_price"> -->
+                                    <div class="mb-3">
+                                    <label for="finalAmountPaid" class="form-label"><strong>Final Amount Paid (₹):</strong></label>
+                                    <input type="text" class="form-control" id="finalAmountPaid" name="final_amount_paid"
+                                        placeholder="Enter final amount"
+                                        oninput="this.value = this.value.replace(/[^0-9.]/g, ''); applyFinalPrice(); updateGrandAmount();">
+
+                                    <label for="RentAmount" class="form-label"><strong>Rent Paid (₹):</strong></label>
+                                    <input type="text" class="form-control" id="RentAmount" name="rent_amount"
+                                     placeholder="Enter rent amount" value="0"
+                                     oninput="this.value = this.value.replace(/[^0-9.]/g, ''); applyFinalPrice(); updateGrandAmount();">
+ 
+<label for="grandAmountPaid" class="form-label"><strong>Grand Amount Paid (₹):</strong></label>
+<input type="text" class="form-control" id="grandAmountPaid" name="grand_amount_paid"
+    placeholder="Grand amount" readonly>                                    </div>
+                                    <input type="hidden" name="final_price" id="final_price">
+                                    <button type="button" class="btn btn-secondary" onclick="prevStep()">Previous</button>
+                                    <button type="submit" class="btn btn-success">Submit Order</button>
+                                </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+
+
+<!-- Product Selection Modal -->
+<!-- Product Selection Modal -->
+<!-- Product Selection Modal -->
+<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" >
+
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productModalLabel">Select Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Selected Category:</strong> <span id="selectedCategoryName"></span></p>
+                <p><strong>Total Area:</strong> <span id="selectedTotalArea">0.00 m²</span></p>
+
+                <!-- Warning Message -->
+                <div id="quantityWarning" class="alert alert-warning d-none" role="alert"></div>
+
+                <!-- Product List -->
+                <div id="productListContainer" class="table-responsive">
+                    <table class="table table-bordered product-table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Product Name</th>
+                                <th>Description</th>
+                                <th>Area per Unit</th>
+                                <th>Quantity</th>
+                                <th>Select</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="saveSelectedProducts()">Confirm Selection</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- 🔹 Bill Container (Hidden Initially) -->
+<!-- Full-Screen Bill Modal -->
+<script src="../js/scripts.js"></script>
+<!-- ✅ Ensure the modal is placed before closing body tag -->
+</body>
+</html>
+
+              <div>
                                             <button type="button" class="btn btn-secondary" onclick="prevStep()">Previous</button>
                                             <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
                                         </div>

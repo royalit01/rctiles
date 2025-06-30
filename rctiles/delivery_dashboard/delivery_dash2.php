@@ -3,6 +3,10 @@ session_start();
 include "delivery_header.php"; 
 
 include "../db_connect.php";
+
+$pendingOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.address, o.final_amount AS total_amount, o.rent_amount FROM delivery_orders do JOIN orders o ON do.order_id = o.order_id JOIN customers c ON o.customer_id = c.customer_id WHERE do.status = 'Assigned'");
+$deliveredOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.address FROM delivery_orders do JOIN orders o ON do.order_id = o.order_id JOIN customers c ON o.customer_id = c.customer_id WHERE do.status = 'Completed'");
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -32,14 +36,14 @@ include "../db_connect.php";
                 <button class="btn btn-pending status-btn w-100" id="pendingBtn" data-status="pending">
                   <i class="fas fa-clock"></i>
                   <span>PENDING</span>
-                  <div class="btn-count">15</div>
+                  <div class="btn-count"><?php echo $pendingOrders ? $pendingOrders->num_rows : 0; ?></div>
                 </button>
               </div>
               <div class="col-md-6">
                 <button class="btn btn-delivered status-btn w-100" id="deliveredBtn" data-status="delivered">
                   <i class="fas fa-check-circle"></i>
                   <span>DELIVERED</span>
-                  <div class="btn-count">28</div>
+                  <div class="btn-count"><?php echo $deliveredOrders ? $deliveredOrders->num_rows : 0; ?></div>
                 </button>
               </div>
             </div>
@@ -71,6 +75,52 @@ include "../db_connect.php";
 </div>
 
 
+
+<!-- Hidden dynamic order lists -->
+<div id="pendingOrdersList" style="display:none;">
+  <?php
+  if ($pendingOrders && $pendingOrders->num_rows > 0) {
+    echo '<form id="collectAmountForm"><div class="table-responsive"><table class="table table-bordered align-middle mb-0">';
+    echo '<thead class="table-primary"><tr><th>Order ID</th><th>Name</th><th>Mobile</th><th>Address</th><th>Total Amount</th><th>Rent</th><th>Status</th><th>Collect Amount</th></tr></thead><tbody>';
+    while ($row = $pendingOrders->fetch_assoc()) {
+      echo '<tr>'
+        .'<td>'.htmlspecialchars($row['order_id']).'</td>'
+        .'<td>'.htmlspecialchars($row['name']).'</td>'
+        .'<td>'.htmlspecialchars($row['phone_no']).'</td>'
+        .'<td>'.htmlspecialchars($row['address']).'</td>'
+        .'<td>₹'.number_format((float)$row['total_amount'],2).'</td>'
+        .'<td>₹'.number_format((float)$row['rent_amount'],2).'</td>'
+        .'<td><span class="badge badge-pending">Pending</span></td>'
+        .'<td><input type="number" min="0" step="0.01" name="collect_amount['.htmlspecialchars($row['order_id']).']" class="form-control form-control-sm" placeholder="Enter amount"></td>'
+        .'</tr>';
+    }
+    echo '</tbody></table></div>';
+    echo '<div class="mt-3 text-end"><button type="submit" class="btn btn-success">Submit Collection</button></div></form>';
+  } else {
+    echo '<div class="list-group-item">No pending deliveries.</div>';
+  }
+  ?>
+</div>
+<div id="deliveredOrdersList" style="display:none;">
+  <?php
+  if ($deliveredOrders && $deliveredOrders->num_rows > 0) {
+    echo '<div class="table-responsive"><table class="table table-bordered align-middle mb-0">';
+    echo '<thead class="table-success"><tr><th>Order ID</th><th>Name</th><th>Mobile</th><th>Address</th><th>Status</th></tr></thead><tbody>';
+    while ($row = $deliveredOrders->fetch_assoc()) {
+      echo '<tr>'
+        .'<td>'.htmlspecialchars($row['order_id']).'</td>'
+        .'<td>'.htmlspecialchars($row['name']).'</td>'
+        .'<td>'.htmlspecialchars($row['phone_no']).'</td>'
+        .'<td>'.htmlspecialchars($row['address']).'</td>'
+        .'<td><span class="badge badge-delivered">Delivered</span></td>'
+        .'</tr>';
+    }
+    echo '</tbody></table></div>';
+  } else {
+    echo '<div class="list-group-item">No delivered orders.</div>';
+  }
+  ?>
+</div>
 
 <!-- Styles for dashboard page -->
 <style>
@@ -209,19 +259,13 @@ include "../db_connect.php";
     if (status === 'pending') {
       modalTitle.textContent = 'Pending Deliveries';
       modalIcon.className = 'fas fa-clock modal-icon text-primary';
-      modalContent.innerHTML = `<div class="list-group">
-        <div class="list-group-item"><strong>Order #12345</strong> - John Doe <span class="badge badge-pending float-end">Pending</span></div>
-        <div class="list-group-item"><strong>Order #12346</strong> - Jane Smith <span class="badge badge-pending float-end">Pending</span></div>
-      </div>`;
+      modalContent.innerHTML = document.getElementById('pendingOrdersList').innerHTML;
       actionBtn.textContent = 'Process Orders';
       actionBtn.className = 'btn btn-primary';
     } else {
       modalTitle.textContent = 'Delivered Orders';
       modalIcon.className = 'fas fa-check-circle modal-icon text-success';
-      modalContent.innerHTML = `<div class="list-group">
-        <div class="list-group-item"><strong>Order #12340</strong> - Alice <span class="badge badge-delivered float-end">Delivered</span></div>
-        <div class="list-group-item"><strong>Order #12341</strong> - Bob <span class="badge badge-delivered float-end">Delivered</span></div>
-      </div>`;
+      modalContent.innerHTML = document.getElementById('deliveredOrdersList').innerHTML;
       actionBtn.textContent = 'View Reports';
       actionBtn.className = 'btn btn-success';
     }
@@ -230,9 +274,13 @@ include "../db_connect.php";
   }
 
   document.getElementById('actionBtn').addEventListener('click', () => {
-    const modalTitle = document.getElementById('modalTitle').textContent;
-    alert(modalTitle.includes('Pending') ? 'Redirecting to processing page...' : 'Opening reports...');
-  });
+  const modalTitle = document.getElementById('modalTitle').textContent;
+  if (modalTitle.includes('Pending')) {
+    window.location.href = "../admin_dashboard/assign_delivery.php";
+  } else {
+    window.location.href = "../admin_dashboard/assign_delivery.php";
+  }
+});
 </script>
 </body>
 </html>
