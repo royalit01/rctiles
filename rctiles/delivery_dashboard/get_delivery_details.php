@@ -1,5 +1,5 @@
 <?php
-include "../../db_connect.php";
+include "../db_connect.php";
 session_start();
 if ($_SESSION['role_id'] != 4) { http_response_code(403); exit; }
 
