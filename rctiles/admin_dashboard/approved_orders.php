@@ -43,11 +43,11 @@ $total_pages = ceil($total_rows / $limit);
     <style>
         body {
             background-color: #f8f9fa;
-            padding-top: 56px; /* Space for fixed navbar */
+            padding-top: 6px;  /*  padding-top: 56px; Space for fixed navbar */
         }
         .container-box {
             width: 100%;
-            max-width: 1200px;
+            max-width: 900px;
             background: white;
             padding: 20px;
             border-radius: 10px;

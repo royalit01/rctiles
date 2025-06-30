@@ -113,13 +113,64 @@ $result = $stmt->get_result();
         /* Base font slightly larger for readability */
         body{font-size:1.05rem;}
 
-        @media (max-width: 575.98px){
-            /* card‑style rows on extra‑small screens */
-            table.table thead{display:none}
-            table.table tbody tr{display:block;margin-bottom:1rem;border:1px solid #dee2e6;border-radius:.5rem}
-            table.table tbody tr td{display:flex;justify-content:space-between;padding:.55rem .9rem;font-size:1rem;}
-            table.table tbody tr td:first-child{font-weight:600}
-        }
+      @media (max-width: 575.98px) {
+    /* card-style rows with headers for each data cell */
+    table.table thead { display: none; }
+    
+    table.table tbody tr {
+        display: block;
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: .5rem;
+        padding: .75rem;
+        background: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    table.table tbody tr td {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        padding: .5rem .75rem;
+        font-size: 0.95rem;
+        border: none;
+        flex-wrap: wrap;
+    }
+    
+    table.table tbody tr td:before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #495057;
+        margin-right: 1rem;
+        min-width: 120px;
+    }
+    
+    /* Special styling for action buttons */
+    table.table tbody tr td[data-label="Actions"] .btn {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+    
+    /* Stack form elements in delivery person column */
+    table.table tbody tr td[data-label="Delivery Person"] form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+    }
+    
+    table.table tbody tr td[data-label="Delivery Person"] select {
+        width: 100% !important;
+        margin-right: 0 !important;
+    }
+    
+    /* Make status badges full width */
+    table.table tbody tr td[data-label="Status"] .badge {
+        display: block;
+        text-align: center;
+        margin-bottom: 0.25rem;
+    }
+}
     </style>
     </head>
     <body class="sb-nav-fixed">
@@ -171,14 +222,16 @@ $result = $stmt->get_result();
                 $grand = (float)$row['discounted_amount'] + (float)$row['transport_rent'];
             ?>
                 <tr>
-                    <td><?= $i++ ?></td>
-                    <td>
-                        <strong><?= htmlspecialchars($row['customer']) ?></strong><br>
-                        <a href="tel:<?= $row['phone_no'] ?>" class="text-decoration-none small text-muted"><?= htmlspecialchars($row['phone_no']) ?></a>
-                    </td>
-                    <td><?= number_format((float)$row['discounted_amount'],2) ?></td>
-                    <td><?= number_format($row['transport_rent'],2) ?></td>
-                    <td>
+                    <td ><?= $i++ ?></td>
+                  <td data-label="Customer / Phone">
+    <div class="d-flex flex-column">
+        <strong><?= htmlspecialchars($row['customer']) ?></strong>
+        <a href="tel:<?= $row['phone_no'] ?>" class="text-decoration-none small text-muted"><?= htmlspecialchars($row['phone_no']) ?></a>
+    </div>
+</td>
+                     <td data-label="Total (₹)"><?= number_format((float)$row['discounted_amount'],2) ?></td>
+                    <td data-label="Rent (₹)"><?= number_format($row['transport_rent'],2) ?></td>
+                    <td data-label="Delivery Person">
                         <?php if(!$row['delivery_id']): ?>
                             <form class="d-flex" method="post" onsubmit="return confirm('Assign this order to selected user?');">
                                 <input type="hidden" name="order_id" value="<?= $row['order_id'] ?>">

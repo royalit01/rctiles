@@ -95,8 +95,15 @@ $result = $stmt->get_result();
             /* card‑style rows on extra‑small screens */
             table.table thead{display:none}
             table.table tbody tr{display:block;margin-bottom:1rem;border:1px solid #dee2e6;border-radius:.5rem}
-            table.table tbody tr td{display:flex;justify-content:space-between;padding:.55rem .9rem;font-size:1rem;}
-            table.table tbody tr td:first-child{font-weight:600}
+table.table tbody tr td {
+        display: flex;
+        justify-content: space-between;
+        width: 100%; /* Add this */
+        padding: .55rem .9rem;
+        font-size: 1rem;
+        border: none; /* Add this to remove cell borders */
+    }
+                table.table tbody tr td:first-child{font-weight:600}
             
         }
         .table {
@@ -116,7 +123,7 @@ $result = $stmt->get_result();
             <div id="layoutSidenav_content">
                 
                 <main>
-                    <div class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width: 1200px;">
+                    <div class="card border-0 shadow my-3 rounded-3 p-4 bg-white mx-auto" style="max-width: 900px;">
                     <br>
             <h2 class="mb-4"><center>Orders Waiting for Stock Deduction</center></h2>
 
