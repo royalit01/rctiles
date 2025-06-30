@@ -25,6 +25,7 @@ if (!$order) {
     die("Order not found.");
 }
 
+
 // Fetch Ordered Products (Including Multiplier)
 $product_query = "SELECT p.product_name, po.quantity, po.original_price, po.custom_price, po.multiplier 
                   FROM pending_orders po
@@ -300,17 +301,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_bill'])) {
             const doc = new jsPDF({ orientation: "p", unit: "mm", format: "a4" });
 
             // Add company logo
-            // Note: You'll need to replace this with your actual logo path
-          // Add company logo (uncomment and adjust path if needed)
 // doc.addImage('rctiles/images/bill logo.jpg', 'JPEG', 15, 10, 30, 15);
 
-// ---------- Top Header Section with Dark Gray Background ----------
-doc.setFillColor(50, 50, 50); // Dark gray background
+// ---------- Top Header Section ----------
+doc.setFillColor(50, 50, 50); 
 doc.rect(0, 0, 210, 30, 'F');
 
 // Left side content (gray bar)
 doc.setFontSize(10).setFont("helvetica", "bold");
-doc.setTextColor(255, 255, 255); // White text
+doc.setTextColor(255, 255, 255); 
 
 // RC Industries name (left side)
 doc.text("RC INDUSTRIES", 15, 12);
@@ -322,13 +321,13 @@ doc.text("State: 23-Madhya Pradesh", 15, 22);
 
 // RC TILES logo (centered and raised)
 doc.setFontSize(20).setFont("helvetica", "bold");
-doc.setTextColor(200, 0, 0); // Red color
-const pageCenter = 100; // Center of A4 page (210mm width)
+doc.setTextColor(200, 0, 0); 
+const pageCenter = 100; 
 doc.text("RC TILES", pageCenter, 15, { align: "center" });
 
 // Right-aligned contact information (raised to match left side)
 doc.setFontSize(10).setFont("helvetica", "normal");
-doc.setTextColor(255, 255, 255); // White text
+doc.setTextColor(255, 255, 255); 
 const rightMargin = 195;
 doc.text("Phone: 1234567890", rightMargin, 12, { align: "right" });
 doc.text("Email: rc@gmail.com", rightMargin, 17, { align: "right" });
@@ -336,33 +335,33 @@ doc.text("Address: 7671 MAXI ROAD LIDYOSPUR", rightMargin, 22, { align: "right" 
 
 
             // ---------- Document Header Sections ----------
-const startY = 40; // Added top margin by increasing initial Y position
+const startY = 40; 
 // Left Side: Bill To Section
 doc.setFontSize(10).setFont("helvetica", "bold");
-doc.setTextColor(150, 0, 0); // Reddish header
+doc.setTextColor(150, 0, 0); 
 doc.text("Bill To", 14, startY);
 
 // Dynamic Customer Details
 try {
     // Customer Name (larger font)
-    doc.setFontSize(15).setFont("helvetica", "bold"); // Increased from 10 to 12
+    doc.setFontSize(15).setFont("helvetica", "bold"); 
     doc.setTextColor(0, 0, 0);
     const customerName = document.querySelector(".col-md-4.col-12.mb-2 strong").nextSibling.nodeValue.trim();
-    doc.text(customerName, 14, startY + 7); // Adjusted y-position
+    doc.text(customerName, 14, startY + 7); 
     
     // Customer Address (dynamic)
-    doc.setFontSize(10).setFont("helvetica", "normal"); // Reset to normal for address
+    doc.setFontSize(10).setFont("helvetica", "normal"); 
     const customerInfo = document.querySelectorAll(".customer-info-box div");
     const customerAddress = customerInfo[2]?.querySelector("strong")?.nextSibling?.nodeValue?.trim() || "Address Not Available";
     const addressLines = doc.splitTextToSize(customerAddress, 80);
     
-    let addressY = startY + 13; // Adjusted spacing
+    let addressY = startY + 13; 
     addressLines.forEach(line => {
         doc.text(line, 14, addressY);
         addressY += 6;
     });
     
- // GSTIN and State (semi-bold labels with normal values)
+ // GSTIN and State 
 doc.setFont("helvetica", "bold");
  doc.setTextColor(10, 10, 10); // Semi-bold for labels
 doc.text("GSTIN Number: ", 14, addressY + 1);
@@ -383,9 +382,8 @@ doc.text(" 23-Madhya Pradesh", stateX, addressY + 8);
 }
 
 // ---------- Tax Invoice Box with White Text ----------
-// Red "Tax Invoice" heading (unchanged)
-// Tax Invoice Section (shifted down by 5 units)
-const invoiceY = startY + 5;  // Shift down from original startY
+
+const invoiceY = startY + 5;  
 
 // Tax Invoice Heading (red)
 doc.setFontSize(14).setFont("helvetica", "bold");
@@ -397,13 +395,12 @@ doc.setFontSize(10).setFont("helvetica", "normal");
 doc.setTextColor(0, 0, 0);
 doc.text("Invoice No.: 20", 140, invoiceY + 7);
 doc.text("Date: " + new Date().toLocaleDateString(), 140, invoiceY + 14);
-doc.text("Place of Supply: 23-Madhya Pradesh", 140, invoiceY + 21);
 
 // Horizontal line separator
 const separatorY = startY + 32; // Slightly increased for new spacing
 doc.setLineWidth(0.2).line(14, separatorY, 196, separatorY);
 
-            // ---------- Product Table with Rounded Borders ----------
+            // ---------- Product Table  ----------
             const tableBody = [];
             document.querySelectorAll("#billTable tr").forEach((tr, i) => {
                 const cells = tr.querySelectorAll("td");
@@ -427,7 +424,7 @@ doc.setLineWidth(0.2).line(14, separatorY, 196, separatorY);
                 document.getElementById("grandTotal").textContent.replace('₹', '')
             ]);
 
-            // Custom table styling for rounded borders
+           
             doc.autoTable({
                 head: [["#", "Item Name", "Quantity", "Unit", "Price/ Unit", "Amount"]],
                 body: tableBody,
@@ -439,7 +436,7 @@ doc.setLineWidth(0.2).line(14, separatorY, 196, separatorY);
                     valign: 'middle',
                     lineColor: [0, 0, 0],
                     lineWidth: 0.1,
-                    textColor: [0, 0, 0] // Make all table text black by default
+                    textColor: [0, 0, 0] 
                 },
                 headStyles: {
                     fillColor: [220, 38, 38], // Red header
@@ -464,7 +461,7 @@ doc.setLineWidth(0.2).line(14, separatorY, 196, separatorY);
                         doc.setTextColor(255, 255, 255); // White text for total row
                     }
                     // Draw inner borders
-                    doc.setDrawColor(200, 200, 200);
+                    doc.setDrawColor(0, 0, 0);
                     doc.setLineWidth(0.1);
                     doc.line(data.cell.x, data.cell.y, data.cell.x + data.cell.width, data.cell.y);
                     doc.line(data.cell.x, data.cell.y, data.cell.x, data.cell.y + data.cell.height);
@@ -480,7 +477,7 @@ doc.setLineWidth(0.2).line(14, separatorY, 196, separatorY);
             });
 
             // ---------- Tax Summary Table (Smaller and on Right) ----------
-            const taxSummaryY = doc.autoTable.previous.finalY + 10;
+            const taxSummaryY = doc.autoTable.previous.finalY + 8;
             // Calculate dynamic tax summary
 const subTotal = parseFloat(document.getElementById("itemTotal").textContent.replace('₹','')) || 0;
 const grandTotal = parseFloat(document.getElementById("grandTotal").textContent.replace('₹','')) || 0;
@@ -508,7 +505,7 @@ const taxSummaryBody = [
                     textColor: [0, 0, 0]
                 },
                 headStyles: {
-                    fillColor: [220, 38, 38], // Vibrant red (Tailwind Red-600)
+                    fillColor: [220, 38, 38], 
                     textColor: 255,
                     fontStyle: 'bold'
                 },
@@ -518,7 +515,7 @@ const taxSummaryBody = [
                 didParseCell: function (data) {
                     // Style the 'Total' row
                     if (data.section === 'body' && data.row.index === taxSummaryBody.length - 1) {
-                        data.cell.styles.fillColor = [220, 38, 38]; // Vibrant red for total row
+                        data.cell.styles.fillColor = [220, 38, 38]; 
                         data.cell.styles.textColor = 255; // White text
                         data.cell.styles.fontStyle = 'bold';
                     }
@@ -543,41 +540,103 @@ const taxSummaryBody = [
     doc.text("Bank Account No.: 06860510000335", 14, footerY + 10);
     doc.text("Bank IFSC code: UCBA0000686", 14, footerY + 15);
     doc.text("Account Holder's Name: RC Industries", 14, footerY + 20);
-    
-    // 2. Description Section (Added between Pay To and Amount in Words)
-const descY = footerY + 29; // Space after Pay To
+
+
+
+// ---------- Description Section ----------
+const descY = footerY + 29; // Adjust this based on previous content
+
+// 1. "Description" heading
 doc.setFont("helvetica", "bold");
-doc.setTextColor(150, 0, 0);
+doc.setTextColor(150, 0, 0); // Red color for heading
 doc.text("Description", 14, descY);
 
-doc.setFont("helvetica", "normal");
- doc.setTextColor(0, 0, 0);
-const descriptionLines = [
-    "Alankar Speciality Cables Pvt Ltd",
-    "Shipping address: Plot no. 69 DMIC Vikram Udyogpuri",
-    "Near Village Narwar, Ujjain M.P. 456664"
-];
+let addressLines = [];
 
-descriptionLines.forEach((line, index) => {
-    doc.text(line, 14, descY + 5 + (index * 5));
-});
+try {
+    // Get customer data from the page
+    const customerName = document.querySelector(".col-md-4.col-12.mb-2 strong").nextSibling.nodeValue.trim();
+    const customerAddress = document.querySelectorAll(".customer-info-box div")[2]?.querySelector("strong")?.nextSibling?.nodeValue?.trim() || "Address Not Available";
+    const pinCode = "456664"; // Or extract dynamically if available
+    
+    // 2. Customer Name (second line)
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(0, 0, 0); // Black text
+    doc.text(customerName, 14, descY + 5);
+    
+    // 3. Customer Full Address (third line) - with automatic wrapping
+    doc.setFont("helvetica", "normal");
+     addressLines = doc.splitTextToSize(customerAddress, 80); // 80mm width
+    let currentY = descY + 10;
+    addressLines.forEach(line => {
+        doc.text(line, 14, currentY);
+        currentY += 5; // 5mm line height
+    });
+    
+    // 4. PIN Code (fourth line)
+    doc.text(pinCode, 14, currentY);
+    
+} catch (e) {
+    console.error("Error loading customer data:", e);
+    doc.text("Customer data loading error", 14, descY + 5);
+}
 
 // 3. Invoice Amount in Words (Moved below Description)
-const amountWordsY = descY + (descriptionLines.length * 5) + 10; // Dynamic position
+const amountWordsY = descY + (addressLines.length * 5) + 17; // Dynamic position
 doc.setFont("helvetica", "bold");
 doc.setTextColor(150, 0, 0);
 doc.text("Invoice Amount In Words", 14, amountWordsY);
 
 doc.setFont("helvetica", "normal");
  doc.setTextColor(0, 0, 0);
-const amount = parseFloat(document.getElementById("grandTotal").textContent.replace('₹', ''));
-let amountInWords = "Twenty Five Thousand Rupees only";
-if (amount !== 25000) {
-    amountInWords = "Amount in words would appear here";
+// Get the dynamic total amount from your form
+const amount = parseFloat(document.getElementById("grandTotal").textContent.replace('₹', '')) || 0;
+
+// Function to convert numbers to words (add this at the top of your script)
+function numberToWords(num) {
+    const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+    const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+    const teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+    
+    function convertLessThanOneThousand(num) {
+        if (num === 0) return '';
+        if (num < 10) return ones[num];
+        if (num < 20) return teens[num - 10];
+        if (num < 100) return tens[Math.floor(num / 10)] + (num % 10 !== 0 ? ' ' + ones[num % 10] : '');
+        return ones[Math.floor(num / 100)] + ' Hundred' + (num % 100 !== 0 ? ' and ' + convertLessThanOneThousand(num % 100) : '');
+    }
+    
+    if (num === 0) return 'Zero';
+    let result = '';
+    if (num >= 10000000) {
+        result += convertLessThanOneThousand(Math.floor(num / 10000000)) + ' Crore ';
+        num %= 10000000;
+    }
+    if (num >= 100000) {
+        result += convertLessThanOneThousand(Math.floor(num / 100000)) + ' Lakh ';
+        num %= 100000;
+    }
+    if (num >= 1000) {
+        result += convertLessThanOneThousand(Math.floor(num / 1000)) + ' Thousand ';
+        num %= 1000;
+    }
+    if (num > 0) {
+        result += convertLessThanOneThousand(num);
+    }
+    return result.trim();
 }
+
+// Convert the amount to words
+let amountInWords = numberToWords(Math.floor(amount)) + ' Rupees';
+const paise = Math.round((amount - Math.floor(amount)) * 100);
+if (paise > 0) {
+    amountInWords += ' and ' + numberToWords(paise) + ' Paise';
+}
+amountInWords += ' only';
+
+// Wrap and display the amount in words
 const amountLines = doc.splitTextToSize(amountInWords, 120);
 doc.text(amountLines, 14, amountWordsY + 5);
-
 // 4. Signature Section (Moved further down)
 const signY = amountWordsY + 15 // Increased spacing
 doc.setFillColor(240, 240, 240);
