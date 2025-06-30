@@ -373,7 +373,7 @@ const logoBase64 = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAYGB
 // doc.addImage('rctiles/images/bill logo.jpg', 'JPEG', 15, 10, 30, 15);
 
 // ---------- Top Header Section with Dark Gray Background ----------
-doc.setFillColor(50, 50, 50); // Dark gray background
+doc.setFillColor(220, 38, 38); // Dark gray background
 doc.rect(0, 0, 210, 30, 'F');
 
 // Left side content (gray bar)
@@ -388,12 +388,14 @@ doc.setFontSize(8).setFont("helvetica", "normal");
 doc.text("GSTIN: 23AAKFRB273NTZJ", 15, 17);
 doc.text("State: 23-Madhya Pradesh", 15, 22);
 
-// RC TILES logo (centered and raised)
-doc.setFontSize(20).setFont("helvetica", "bold");
-doc.setTextColor(200, 0, 0); // Red color
-const pageCenter = 100; // Center of A4 page (210mm width)
-doc.text("RC TILES", pageCenter, 15, { align: "center" });
-doc.addImage(logoBase64, 'JPEG', 15, 10, 30, 15); // Adjust position/size as needed
+// Remove the RC TILES text and center the logo
+const pageWidth = doc.internal.pageSize.getWidth(); // Get full page width (210mm for A4)
+const logoWidth = 30; // Your logo width in mm
+const logoHeight = 20; // Your logo height in mm
+const logoX = (pageWidth - logoWidth) / 2; // Calculate center position
+const logoY = 5;
+
+doc.addImage(logoBase64, 'JPEG', logoX, logoY, logoWidth, logoHeight);
 
 // Right-aligned contact information (raised to match left side)
 doc.setFontSize(10).setFont("helvetica", "normal");
@@ -457,7 +459,7 @@ doc.text(" 23-Madhya Pradesh", stateX, addressY + 8);
 const invoiceY = startY + 5;  // Shift down from original startY
 
 // Tax Invoice Heading (red)
-doc.setFontSize(14).setFont("helvetica", "bold");
+doc.setFontSize(10).setFont("helvetica", "bold");
 doc.setTextColor(150, 0, 0);
 doc.text("Tax Invoice", 140, invoiceY);
 
@@ -466,7 +468,6 @@ doc.setFontSize(10).setFont("helvetica", "normal");
 doc.setTextColor(0, 0, 0);
 doc.text("Invoice No.: 20", 140, invoiceY + 7);
 doc.text("Date: " + new Date().toLocaleDateString(), 140, invoiceY + 14);
-doc.text("Place of Supply: 23-Madhya Pradesh", 140, invoiceY + 21);
 
 // Horizontal line separator
 const separatorY = startY + 32; // Slightly increased for new spacing
