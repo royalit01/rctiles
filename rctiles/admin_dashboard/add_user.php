@@ -1,6 +1,21 @@
 <?php
 include "../db_connect.php"; 
 
+session_start();
+
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../login.php");
+    exit;
+}
+
+    
+if(!isset ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2  ) ) {
+        header("Location: ../");
+        exit;
+}
+
+
 // Handle POST request to add a user
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
