@@ -10,10 +10,10 @@ if (!isset($_SESSION['user_id'])) {
 }
 
     
-if(!isset ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2  ) ) {
-        header("Location: ../");
-        exit;
-}
+// if(!isset ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2   )) {
+//         header("Location: ../");
+//         exit;
+// }
 
 
 // Handle POST request to add a user
@@ -115,13 +115,144 @@ $storageResult = $mysqli->query($storageQuery);
         <link href="../css/styles.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-        
+        <style>
+  /* Main card styling */
+  .card {
+    border-radius: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  /* Form title */
+  h1 {
+    color: black;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Form labels */
+  .form-label {
+    font-weight: 550;
+    color: #495057;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Form inputs */
+  .form-control {
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ced4da;
+    transition: all 0.3s ease;
+  }
+
+  .form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+
+  /* Select dropdowns */
+  .form-select {
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ced4da;
+  }
+
+  /* Alert styling */
+  .alert {
+    border-radius: 0.75rem;
+    max-width: 700px;
+    margin: 0 auto 1rem auto;
+  }
+
+  /* Button styling */
+  .btn-primary {
+    border-radius: 0.6rem;
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, rgb(92, 140, 212) 0%, rgb(31, 106, 218) 100%);
+    border: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, rgb(125, 154, 198) 0%, rgb(37, 106, 210) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  /* File input styling */
+  .custom-file-input {
+    border: 1px solid #ced4da;
+    border-radius: 0.75rem;
+    padding: 0.5rem 1rem;
+    height: 48px;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .custom-file-input::-webkit-file-upload-button {
+    background-color: #e9ecef;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 0.5rem 0 0 0.5rem;
+    margin-right: 1rem;
+    cursor: pointer;
+  }
+
+  .custom-file-input::file-selector-button {
+    background-color: #e9ecef;
+    border: none;
+    padding: 9px 16px;
+    border-radius: 0.5rem 0.5rem 0.5rem 0.5rem;
+    margin-right: 1rem;
+    cursor: pointer;
+  }
+
+  .custom-file-input:hover::file-selector-button {
+    background-color: #d3d3d3;
+  }
+
+  /* Password toggle button */
+  .input-group-text {
+    border-radius: 0 0.75rem 0.75rem 0;
+    cursor: pointer;
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+  }
+
+  /* Required field indicator */
+  .text-danger {
+    color: #dc3545;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .card {
+      margin: 1rem;
+      padding: 1.5rem;
+     
+    }
+    
+    h1 {
+      font-size: 1.75rem;
+    }
+  }
+</style>
     </head>
     <body class="sb-nav-fixed">
         <?php include "admin_header.php";  ?>
             <div id="layoutSidenav_content">
                 <main>
-                    <div class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width: 1200px;">
+                    <div class="card border-0 shadow rounded-3 p-4 bg-white  mx-auto" style="max-width: 900px;">
                         <h1 class="mt-2 text-center">Add User</h1>
                         <!-- error / success messages -->
                         <div id="formAlert" class="alert alert-danger alert-dismissible fade d-none" role="alert">
@@ -199,8 +330,9 @@ $storageResult = $mysqli->query($storageQuery);
   <label for="userImage" class="form-label">User Image:</label>
   <input type="file" class="form-control" id="userImage" name="user_image" accept="image/*">
 </div>
-                            <button type="submit" class="btn btn-primary">Add User</button>
-                        </form>
+<div class="d-flex justify-content-center">
+  <button type="submit" class="btn btn-primary">Add User</button>
+</div>                        </form>
                     </div>
                 </main>
             </div>
@@ -270,7 +402,6 @@ $storageResult = $mysqli->query($storageQuery);
 
         </script>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="../js/scripts.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
         <script src="../assets/demo/chart-area-demo.js"></script>

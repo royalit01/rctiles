@@ -218,7 +218,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_bill'])) {
             <div class="row mb-3">
                 <div class="col-md-4 mb-2">
                     <label class="fw-bold">Final Amount Paid:</label>
-                    <input type="number" class="form-control" id="finalAmountPaid" value="<?= $order['final_amount']; ?>" oninput="calculateTotals()">
+                    <input type="number" class="form-control" id="finalAmountPaid" value="<?= $order['final_amount']; ?>" oninput="calculateTotals()" disabled>
                 </div>
                 <div class="col-md-4 mb-2">
                     <label class="fw-bold">Rent:</label>
@@ -551,13 +551,19 @@ doc.setLineWidth(0.2).line(14, separatorY, 196, separatorY);
 const subTotal = parseFloat(document.getElementById("itemTotal").textContent.replace('₹','')) || 0;
 const grandTotal = parseFloat(document.getElementById("grandTotal").textContent.replace('₹','')) || 0;
 const rentAmount = parseFloat(document.getElementById("rentAmount").value) || 0;
+const discountAmt = parseFloat(document.getElementById("discountDisplay").textContent.replace('₹','')) || 0;
+const paidAmount = parseFloat(document.getElementById("finalAmountPaid").value) || 0;
 const total = +(subTotal + rentAmount).toFixed(2);
+const remainingAmount = Math.max(grandTotal - paidAmount, 0);
 
 const taxSummaryBody = [
     ["Sub Total", `₹${subTotal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`],
     ["Rent", `₹${rentAmount.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`],
-
-    ["Total", `₹${total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`]
+    ["Discount", `₹${discountAmt.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`],
+   ["Total", `₹${total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`],
+     ["Paid Amount", `₹${paidAmount.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`],
+    ["Remaining Amount", `₹${remainingAmount.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`],
+   
 ];
 
             doc.autoTable({
@@ -582,14 +588,14 @@ const taxSummaryBody = [
                     0: { cellWidth: 28, halign: 'left' },
                 },
                 didParseCell: function (data) {
-                    // Style the 'Total' row
-                    if (data.section === 'body' && data.row.index === taxSummaryBody.length - 1) {
+                    // Style the 'Total' row in red
+                    if (data.section === 'body' && data.row.index === 3) {
                         data.cell.styles.fillColor = [220, 38, 38]; // Vibrant red for total row
                         data.cell.styles.textColor = 255; // White text
                         data.cell.styles.fontStyle = 'bold';
                     }
-                    // Style the 'Sub Total' and 'Rent' rows
-                    if (data.section === 'body' && (data.row.index === 0 || data.row.index === 1)) {
+                    // Style the 'Sub Total', 'Rent', 'Discount', and 'Paid Amount' rows (bold only)
+                    if (data.section === 'body' && (data.row.index === 0 || data.row.index === 1 || data.row.index === 2 || data.row.index === 4)) {
                         data.cell.styles.fontStyle = 'bold';
                     }
                 }

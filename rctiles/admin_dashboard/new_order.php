@@ -939,9 +939,7 @@ function updateSummary() {
     totalAmount = allProducts.reduce((sum, product) => sum + product.currentTotalPrice, 0);
 
     console.log("🔄 Summary Data:", allProducts);
-    console.log("🔄 Total Amount:", 
-        
-    );
+    console.log("🔄 Total Amount:");
 
     allProducts.forEach(product => {
         summaryBody.insertAdjacentHTML("beforeend", `
@@ -1696,10 +1694,10 @@ document.addEventListener("DOMContentLoaded", () => {
 </body>
 </html>
 
-              <div>
+              <!-- <div>
                                             <button type="button" class="btn btn-secondary" onclick="prevStep()">Previous</button>
                                             <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
 

@@ -23,32 +23,162 @@ $deliveredOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.addr
 <body class="sb-nav-fixed">
 <div id="layoutSidenav_content">
 <main class="main-content ">
-                        <div class="card border-0 shadow rounded-3 p-4 bg-white mx-auto " style="max-width: 800px;">
+  <div class="card border-0 shadow rounded-3 p-4 bg-white mx-auto w-100" style="max-width: 100%;">
+    <div class="dashboard-header mb-4">
+      <h2 class="dashboard-title">Delivery Dashboard</h2>
+      <p class="dashboard-subtitle">Manage your delivery operations efficiently</p>
+    </div>
+    <div class="dashboard-actions">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <button class="btn btn-pending status-btn w-100" id="pendingBtn" type="button">
+            <i class="fas fa-clock"></i>
+            <span>PENDING</span>
+            <div class="btn-count"><?php echo $pendingOrders ? $pendingOrders->num_rows : 0; ?></div>
+          </button>
+        </div>
+        <div class="col-md-6">
+          <button class="btn btn-delivered status-btn w-100" id="deliveredBtn" type="button">
+            <i class="fas fa-check-circle"></i>
+            <span>DELIVERED</span>
+            <div class="btn-count"><?php echo $deliveredOrders ? $deliveredOrders->num_rows : 0; ?></div>
+          </button>
+        </div>
+      </div>
+    </div>
 
- 
-          <div class="dashboard-header mb-4">
-            <h2 class="dashboard-title">Delivery Dashboard</h2>
-            <p class="dashboard-subtitle">Manage your delivery operations efficiently</p>
-          </div>
-          <div class="dashboard-actions">
-            <div class="row g-3">
-              <div class="col-md-6">
-                <button class="btn btn-pending status-btn w-100" id="pendingBtn" data-status="pending">
-                  <i class="fas fa-clock"></i>
-                  <span>PENDING</span>
-                  <div class="btn-count"><?php echo $pendingOrders ? $pendingOrders->num_rows : 0; ?></div>
-                </button>
-              </div>
-              <div class="col-md-6">
-                <button class="btn btn-delivered status-btn w-100" id="deliveredBtn" data-status="delivered">
-                  <i class="fas fa-check-circle"></i>
-                  <span>DELIVERED</span>
-                  <div class="btn-count"><?php echo $deliveredOrders ? $deliveredOrders->num_rows : 0; ?></div>
-                </button>
-              </div>
-            </div>
-          </div>
-
+  </div>
+  <!-- Show Pending Orders Table -->
+  <div class="mt-4" id="pendingSection">
+    <h4 class="mb-3">Pending Deliveries</h4>
+    <?php
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['collect_amount'])) {
+      include_once '../db_connect.php';
+      $successMsg = $errorMsg = '';
+      $deliveryIds = [];
+      $res = $mysqli->query("SELECT delivery_id, order_id FROM delivery_orders WHERE status = 'Assigned'");
+      while ($drow = $res->fetch_assoc()) {
+        $deliveryIds[$drow['order_id']] = $drow['delivery_id'];
+      }
+      foreach ($_POST['collect_amount'] as $orderId => $amount) {
+        $amount = floatval($amount);
+        if ($amount > 0 && isset($deliveryIds[$orderId])) {
+          $deliveryId = $deliveryIds[$orderId];
+          // Insert payment
+          $stmt = $mysqli->prepare("INSERT INTO delivery_payments (delivery_id, amount_paid, remarks) VALUES (?, ?, ?)");
+          $empty = '';
+          $stmt->bind_param('ids', $deliveryId, $amount, $empty);
+          $stmt->execute();
+          // Update delivery_orders
+          $mysqli->query("UPDATE delivery_orders SET amount_paid = amount_paid + $amount, amount_remaining = GREATEST(amount_remaining - $amount, 0), status = IF(amount_remaining - $amount <= 0, 'Completed', 'Partially Paid') WHERE delivery_id = $deliveryId");
+          $successMsg = 'Collection updated successfully.';
+        }
+      }
+      if ($successMsg) {
+        echo '<div class="alert alert-success">'.$successMsg.'</div>';
+        // Add this to reload the page after a short delay
+        echo '<script>setTimeout(function(){ window.location.reload(); }, 1200);</script>';
+      }
+      if ($errorMsg) echo '<div class="alert alert-danger">'.$errorMsg.'</div>';
+    }
+    if ($pendingOrders && $pendingOrders->num_rows > 0) {
+      echo '<form id="collectAmountForm" method="post"><div class="table-responsive"><table class="table table-bordered align-middle mb-0">';
+      echo '<thead class="table-primary"><tr><th>Order ID</th><th>Name</th><th>Mobile</th><th>Address</th><th>Storage Area ID</th><th>Products</th><th>Total Amount</th><th>Rent</th><th>Status</th><th>Collect Amount</th></tr></thead><tbody>';
+      while ($row = $pendingOrders->fetch_assoc()) {
+        // Fetch latest paid and remaining for this delivery
+        $deliveryIdRes = $mysqli->query("SELECT delivery_id, amount_paid, amount_remaining FROM delivery_orders WHERE order_id = ".(int)$row['order_id']." AND status = 'Assigned' LIMIT 1");
+        $deliveryData = $deliveryIdRes ? $deliveryIdRes->fetch_assoc() : null;
+        $paid = $deliveryData ? $deliveryData['amount_paid'] : 0;
+        $remaining = $deliveryData ? $deliveryData['amount_remaining'] : ($row['total_amount'] + $row['rent_amount']);
+        $grand = (float)$row['total_amount'] + (float)$row['rent_amount'];
+        $storageAreaRes = $mysqli->query("SELECT storage_area_id, product_id FROM minus_stock WHERE order_id = ".(int)$row['order_id']);
+        $storageAreaIds = [];
+        $productInfo = [];
+        if ($storageAreaRes && $storageAreaRes->num_rows > 0) {
+          while ($saRow = $storageAreaRes->fetch_assoc()) {
+            $storageAreaIds[] = $saRow['storage_area_id'];
+            $pid = (int)$saRow['product_id'];
+            $pname = '-';
+            $qtyOrdered = '-';
+            // Fetch product name
+            $productRes = $mysqli->query("SELECT product_name FROM products WHERE product_id = $pid LIMIT 1");
+            if ($productRes && $productRes->num_rows > 0) {
+              $pname = $productRes->fetch_assoc()['product_name'];
+            }
+            // Fetch qty_ordered from delivery_items
+            if (isset($deliveryData['delivery_id'])) {
+              $did = (int)$deliveryData['delivery_id'];
+              $qtyRes = $mysqli->query("SELECT qty_ordered FROM delivery_items WHERE delivery_id = $did AND product_id = $pid LIMIT 1");
+              if ($qtyRes && $qtyRes->num_rows > 0) {
+                $qtyOrdered = $qtyRes->fetch_assoc()['qty_ordered'];
+              }
+            }
+            $productInfo[] = htmlspecialchars($pname) . ' (Qty: ' . htmlspecialchars($qtyOrdered) . ')';
+          }
+        }
+        $storageAreaIdDisplay = $storageAreaIds ? htmlspecialchars(implode(', ', $storageAreaIds)) : '-';
+        $productInfoDisplay = $productInfo ? htmlspecialchars(implode(', ', $productInfo)) : '-';
+        echo '<tr>'
+          .'<td>'.htmlspecialchars($row['order_id']).'</td>'
+          .'<td>'.htmlspecialchars($row['name']).'</td>'
+          .'<td>'.htmlspecialchars($row['phone_no']).'</td>'
+          .'<td>'.htmlspecialchars($row['address']).'</td>'
+          .'<td>'.$storageAreaIdDisplay.'</td>'
+          .'<td>'.$productInfoDisplay.'</td>'
+          .'<td>'
+            .'<div class="border p-2 rounded">'
+            .'<strong>Grand Total:</strong> ₹'.number_format($grand, 2).'<br>'
+            .'<span class="text-success">Paid: ₹'.number_format($paid, 2).'</span><br>'
+            .'<span class="'.($remaining > 0 ? 'text-danger' : 'text-muted').'">Remaining: ₹'.number_format($remaining, 2).'</span>'
+            .'</div>'
+          .'</td>'
+          .'<td>₹'.number_format((float)$row['rent_amount'],2).'</td>'
+          .'<td><span class="badge badge-pending">Pending</span></td>'
+          .'<td><input type="number" min="0" max="'.htmlspecialchars($remaining).'" step="0.01" name="collect_amount['.htmlspecialchars($row['order_id']).']" class="form-control form-control-sm" placeholder="Enter amount"></td>'
+          .'</tr>';
+      }
+      echo '</tbody></table></div>';
+      echo '<div class="mt-3 text-end"><button type="submit" class="btn btn-success">Submit Collection</button></div></form>';
+    } else {
+      echo '<div class="list-group-item">No pending deliveries.</div>';
+    }
+    ?>
+  </div>
+  <!-- Show Delivered Orders Table -->
+  <div class="mt-5" id="deliveredSection" style="display:none;">
+    <h4 class="mb-3">Delivered Orders</h4>
+    <?php
+    if ($deliveredOrders && $deliveredOrders->num_rows > 0) {
+      echo '<div class="table-responsive"><table class="table table-bordered align-middle mb-0">';
+      echo '<thead class="table-success"><tr><th>Order ID</th><th>Name</th><th>Mobile</th><th>Address</th><th>Grand Total</th><th>Paid</th><th>Remaining</th><th>Status</th></tr></thead><tbody>';
+      while ($row = $deliveredOrders->fetch_assoc()) {
+        // Fetch latest paid and remaining for this delivery
+        $deliveryIdRes = $mysqli->query("SELECT delivery_id, amount_paid, amount_remaining, rent FROM delivery_orders WHERE order_id = ".(int)$row['order_id']." AND status = 'Completed' LIMIT 1");
+        $deliveryData = $deliveryIdRes ? $deliveryIdRes->fetch_assoc() : null;
+        $paid = $deliveryData ? $deliveryData['amount_paid'] : 0;
+        $rent = $deliveryData ? $deliveryData['rent'] : 0;
+        // You may want to fetch total_amount from orders table as well
+        $orderTotalRes = $mysqli->query("SELECT final_amount FROM orders WHERE order_id = ".(int)$row['order_id']);
+        $orderTotalData = $orderTotalRes ? $orderTotalRes->fetch_assoc() : null;
+        $totalAmount = $orderTotalData ? $orderTotalData['final_amount'] : 0;
+        $grand = (float)$totalAmount + (float)$rent;
+        $remaining = $deliveryData ? $deliveryData['amount_remaining'] : 0;
+        echo '<tr>'
+          .'<td>'.htmlspecialchars($row['order_id']).'</td>'
+          .'<td>'.htmlspecialchars($row['name']).'</td>'
+          .'<td>'.htmlspecialchars($row['phone_no']).'</td>'
+          .'<td>'.htmlspecialchars($row['address']).'</td>'
+          .'<td>₹'.number_format($grand, 2).'</td>'
+          .'<td>₹'.number_format($paid, 2).'</td>'
+          .'<td>₹'.number_format($remaining, 2).'</td>'
+          .'<td><span class="badge badge-delivered">Delivered</span></td>'
+          .'</tr>';
+      }
+      echo '</tbody></table></div>';
+    } else {
+      echo '<div class="list-group-item">No delivered orders.</div>';
+    }
+    ?>
   </div>
 </main>
 </div>
@@ -68,7 +198,6 @@ $deliveredOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.addr
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="actionBtn">Take Action</button>
       </div>
     </div>
   </div>
@@ -76,56 +205,10 @@ $deliveredOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.addr
 
 
 
-<!-- Hidden dynamic order lists -->
-<div id="pendingOrdersList" style="display:none;">
-  <?php
-  if ($pendingOrders && $pendingOrders->num_rows > 0) {
-    echo '<form id="collectAmountForm"><div class="table-responsive"><table class="table table-bordered align-middle mb-0">';
-    echo '<thead class="table-primary"><tr><th>Order ID</th><th>Name</th><th>Mobile</th><th>Address</th><th>Total Amount</th><th>Rent</th><th>Status</th><th>Collect Amount</th></tr></thead><tbody>';
-    while ($row = $pendingOrders->fetch_assoc()) {
-      echo '<tr>'
-        .'<td>'.htmlspecialchars($row['order_id']).'</td>'
-        .'<td>'.htmlspecialchars($row['name']).'</td>'
-        .'<td>'.htmlspecialchars($row['phone_no']).'</td>'
-        .'<td>'.htmlspecialchars($row['address']).'</td>'
-        .'<td>₹'.number_format((float)$row['total_amount'],2).'</td>'
-        .'<td>₹'.number_format((float)$row['rent_amount'],2).'</td>'
-        .'<td><span class="badge badge-pending">Pending</span></td>'
-        .'<td><input type="number" min="0" step="0.01" name="collect_amount['.htmlspecialchars($row['order_id']).']" class="form-control form-control-sm" placeholder="Enter amount"></td>'
-        .'</tr>';
-    }
-    echo '</tbody></table></div>';
-    echo '<div class="mt-3 text-end"><button type="submit" class="btn btn-success">Submit Collection</button></div></form>';
-  } else {
-    echo '<div class="list-group-item">No pending deliveries.</div>';
-  }
-  ?>
-</div>
-<div id="deliveredOrdersList" style="display:none;">
-  <?php
-  if ($deliveredOrders && $deliveredOrders->num_rows > 0) {
-    echo '<div class="table-responsive"><table class="table table-bordered align-middle mb-0">';
-    echo '<thead class="table-success"><tr><th>Order ID</th><th>Name</th><th>Mobile</th><th>Address</th><th>Status</th></tr></thead><tbody>';
-    while ($row = $deliveredOrders->fetch_assoc()) {
-      echo '<tr>'
-        .'<td>'.htmlspecialchars($row['order_id']).'</td>'
-        .'<td>'.htmlspecialchars($row['name']).'</td>'
-        .'<td>'.htmlspecialchars($row['phone_no']).'</td>'
-        .'<td>'.htmlspecialchars($row['address']).'</td>'
-        .'<td><span class="badge badge-delivered">Delivered</span></td>'
-        .'</tr>';
-    }
-    echo '</tbody></table></div>';
-  } else {
-    echo '<div class="list-group-item">No delivered orders.</div>';
-  }
-  ?>
-</div>
-
 <!-- Styles for dashboard page -->
 <style>
   html, body {
-    overflow: hidden;
+    overflow-x: auto;
     height: 100%;
   }
   body {
@@ -134,7 +217,21 @@ $deliveredOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.addr
   }
   .main-content {
     margin-top: 70px !important;
-    /* padding-top: 0; */
+    width: 100%;
+    max-width: 100vw;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  .card {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+  .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+  }
+  table.table {
+    min-width: 900px;
   }
   .dashboard-header {
     text-align: center;
@@ -226,7 +323,6 @@ $deliveredOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.addr
     color: white;
   }
   .footer {
-    /* Remove fixed positioning for scrollable content */
     position: fixed;
     margin-top: 40px;
     background-color: #212529;
@@ -234,7 +330,6 @@ $deliveredOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.addr
     border-top: 1px solid #444;
     font-size: 0.875rem;
     color: #adb5bd;
-    /* z-index: 1050; */
   }
   .footer a {
     color: #adb5bd;
@@ -243,44 +338,115 @@ $deliveredOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.addr
   .footer a:hover {
     color: #fff;
   }
+  /* Responsive styles */
+  @media (max-width: 900px) {
+    .main-content .card {
+      max-width: 100% !important;
+      padding: 10px !important;
+    }
+    .dashboard-title {
+      font-size: 1.5rem;
+    }
+    .dashboard-header {
+      padding-bottom: 1rem;
+    }
+  }
+  @media (max-width: 600px) {
+    .main-content {
+      margin-top: 30px !important;
+    }
+    .dashboard-title {
+      font-size: 1.1rem;
+    }
+    .dashboard-subtitle {
+      font-size: 0.9rem;
+    }
+    .dashboard-header {
+      padding-bottom: 0.5rem;
+    }
+    .status-btn {
+      font-size: 0.9rem;
+      padding: 0.7rem 0.5rem;
+      gap: 0.3rem;
+    }
+    .btn-count {
+      width: 20px;
+      height: 20px;
+      font-size: 0.7rem;
+      top: 6px;
+      right: 6px;
+    }
+    .table-responsive {
+      overflow-x: auto;
+    }
+    table.table {
+      font-size: 12px;
+      min-width: 600px;
+    }
+    .modal-content {
+      padding: 5px;
+    }
+  }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 <script>
-  document.getElementById('pendingBtn').addEventListener('click', () => showStatusModal('pending'));
-  document.getElementById('deliveredBtn').addEventListener('click', () => showStatusModal('delivered'));
+  // Toggle Pending/Delivered tables so only one is visible at a time
+const pendingBtn = document.getElementById('pendingBtn');
+const deliveredBtn = document.getElementById('deliveredBtn');
+const pendingSection = document.getElementById('pendingSection');
+const deliveredSection = document.getElementById('deliveredSection');
 
-  function showStatusModal(status) {
-    const modal = new bootstrap.Modal(document.getElementById('statusModal'));
-    const modalTitle = document.getElementById('modalTitle');
-    const modalContent = document.getElementById('modalContent');
-    const modalIcon = document.querySelector('.modal-icon');
-    const actionBtn = document.getElementById('actionBtn');
-
-    if (status === 'pending') {
-      modalTitle.textContent = 'Pending Deliveries';
-      modalIcon.className = 'fas fa-clock modal-icon text-primary';
-      modalContent.innerHTML = document.getElementById('pendingOrdersList').innerHTML;
-      actionBtn.textContent = 'Process Orders';
-      actionBtn.className = 'btn btn-primary';
-    } else {
-      modalTitle.textContent = 'Delivered Orders';
-      modalIcon.className = 'fas fa-check-circle modal-icon text-success';
-      modalContent.innerHTML = document.getElementById('deliveredOrdersList').innerHTML;
-      actionBtn.textContent = 'View Reports';
-      actionBtn.className = 'btn btn-success';
-    }
-
-    modal.show();
-  }
-
-  document.getElementById('actionBtn').addEventListener('click', () => {
-  const modalTitle = document.getElementById('modalTitle').textContent;
-  if (modalTitle.includes('Pending')) {
-    window.location.href = "../admin_dashboard/assign_delivery.php";
-  } else {
-    window.location.href = "../admin_dashboard/assign_delivery.php";
-  }
+pendingBtn.addEventListener('click', function() {
+  pendingSection.style.display = '';
+  deliveredSection.style.display = 'none';
+});
+deliveredBtn.addEventListener('click', function() {
+  deliveredSection.style.display = '';
+  pendingSection.style.display = 'none';
 });
 </script>
 </body>
 </html>
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    $action = $_POST['action'];
+
+    if ($action === 'add_payment') {
+        $deliveryId = (int)$_POST['delivery_id'];
+        $amt = (float)$_POST['amount'];
+        $remarks = trim($_POST['remarks'] ?? '');
+
+        if ($amt <= 0) json_exit(false, 'Amount must be >0');
+
+        $stmt = $mysqli->prepare("INSERT INTO delivery_payments (delivery_id, amount_paid, remarks) VALUES (?, ?, ?)");
+        $stmt->bind_param('ids', $deliveryId, $amt, $remarks);
+        $stmt->execute();
+
+        $mysqli->query("UPDATE delivery_orders
+                        SET amount_paid = amount_paid + $amt,
+                            amount_remaining = GREATEST(amount_remaining - $amt, 0),
+                            status = IF(amount_remaining - $amt <= 0, 'Completed', 'Partially Paid')
+                        WHERE delivery_id = $deliveryId");
+
+        json_exit(true, 'Payment saved');
+    }
+
+    if ($action === 'update_item_qty') {
+        $rowId = (int)$_POST['id'];
+        $del = max(0, (int)$_POST['delivered']);
+        $ret = max(0, (int)$_POST['returned']);
+
+        $ord = $mysqli->query("SELECT qty_ordered FROM delivery_items WHERE id = $rowId")->fetch_assoc();
+        if ($del + $ret > $ord['qty_ordered']) json_exit(false, 'Sum exceeds ordered');
+
+        $stmt = $mysqli->prepare("UPDATE delivery_items SET qty_delivered = ?, qty_returned = ? WHERE id = ?");
+        $stmt->bind_param('iii', $del, $ret, $rowId);
+        $stmt->execute();
+
+        json_exit(true, 'Saved');
+    }
+
+    json_exit(false, 'Unknown action');
+}
+
+?>

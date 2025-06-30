@@ -49,6 +49,47 @@ $pending   = $bal['pending']   ?? 0;
 <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+
+<style>
+/* Responsive tweaks for delivery_dashboard.php */
+@media (max-width: 767.98px) {
+    .container-fluid.px-4.py-4 {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+    .row.mb-4 > .col-md-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 1rem;
+    }
+    .card {
+        margin-bottom: 1rem;
+    }
+    .table-responsive {
+        margin-bottom: 1rem;
+    }
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    .btn {
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+    }
+}
+@media (max-width: 575.98px) {
+    .card-title {
+        font-size: 1rem;
+    }
+    h2.mb-0 {
+        font-size: 1.3rem;
+    }
+    .table {
+        font-size: 0.95rem;
+    }
+}
+</style>
 </head>
 <body class="sb-nav-fixed">
 
@@ -75,7 +116,7 @@ $pending   = $bal['pending']   ?? 0;
     <!-- order list -->
     <div class="card mb-4">
         <div class="card-header"><i class="fas fa-truck me-1"></i>Your Deliveries</div>
-        <div class="card-body">
+        <div class="card-body table-responsive">
             <table id="datatablesSimple" class="table table-bordered align-middle">
                 <thead class="table-dark">
                 <tr>
