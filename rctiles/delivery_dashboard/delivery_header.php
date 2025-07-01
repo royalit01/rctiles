@@ -48,6 +48,16 @@
         transition: left 0.3s;
         background: #212529;
     }
+    /* Always show the user icon, even when dropdown is open */
+.navbar-nav .nav-link .fa-user {
+    color: #adb5bd !important;
+    transition: color 0.2s;
+}
+.navbar-nav .nav-link.show .fa-user,
+.navbar-nav .nav-link:focus .fa-user,
+.navbar-nav .nav-link:active .fa-user {
+    color: #fff !important;
+}
     .sb-sidenav {
         background-color: #212529;
         min-height: 100%;
@@ -113,42 +123,68 @@
     }
     @media (max-width: 575.98px) {
         .sb-topnav {
-            height: auto;
-            flex-direction: column;
-        }
+        flex-direction: row !important;
+        height: auto;
+        min-height: 56px;
+        align-items: center;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
         .navbar-brand {
-            font-size: 1.1rem;
-        }
-        #layoutSidenav_nav {
-            width: 180px;
-        }
+        font-size: 1.1rem;
+        padding-left: 0;
+        margin-right: 0.5rem;
+    }
+    #sidebarToggle {
+        margin-right: 0.5rem !important;
+        margin-left: 0 !important;
+        font-size: 1.2rem;
+    }
+    .navbar-nav {
+        flex-direction: row !important;
+        align-items: center;
+        margin-left: auto !important;
+        margin-right: 0 !important;
+    }
+    .navbar-nav .nav-item {
+        margin-left: 0.5rem;
+    }
+      .navbar-nav .dropdown-menu {
+    position: absolute !important;
+    min-width: 8rem;
+    left: auto !important;
+    right: 0 !important;
+    top: 110% !important; /* open below the icon */
+    z-index: 2000 !important;
+  }
+  .navbar-nav {
+    position: relative;
+  }
+  .navbar-nav .nav-link .fa-user {
+   
+    background: transparent;
+  }
     }
 </style>
-<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+<nav class="sb-topnav navbar navbar-expand-lg navbar-dark bg-dark px-2">
     <!-- Navbar Brand-->
-    <a class="navbar-brand ps-3" href="index.html">Delivery Dashboard</a>
+    <a class="navbar-brand" href="index.html">Delivery Dashboard</a>
     <!-- Sidebar Toggle-->
-    <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" type="button">
+    <button class="btn btn-link btn-sm me-2" id="sidebarToggle" type="button">
         <i class="fas fa-bars"></i>
     </button>
-    <!-- Navbar Search-->
-    <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-        <div class="input-group">
-            <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" />
-            <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
-        </div>
-    </form>
-    <!-- Navbar-->
-    <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="#!">Settings</a></li>
-                <li><a class="dropdown-item" href="#!">Activity Log</a></li>
-                <li><hr class="dropdown-divider" /></li>
-                <li><a class="dropdown-item" href="#!">Logout</a></li>
-            </ul>
-        </li>
+    <!-- User Dropdown (always visible, right aligned) -->
+    <ul class="navbar-nav ms-auto">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fas fa-user fa-fw"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+          <li><a class="dropdown-item" href="../admin_dashboard/my_profile.php">My Profile</a></li>
+          <li><hr class="dropdown-divider" /></li>
+          <li><a class="dropdown-item" href="../login.php">Logout</a></li>
+        </ul>
+      </li>
     </ul>
 </nav>
 <div id="layoutSidenav">
@@ -178,3 +214,4 @@
         </nav>
     </div>
     <!-- Do NOT close #layoutSidenav here. The main content and closing div should be in the page file. -->
+     
