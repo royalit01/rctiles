@@ -1,11 +1,32 @@
 <?php
-
+// --- POST processing logic must come first to allow header() redirect ---
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_delivered'])) {
+  include_once '../db_connect.php';
+  $deliveryId = (int)$_POST['mark_delivered'];
+  $orderId = isset($_POST['order_id']) ? (int)$_POST['order_id'] : 0;
+  $amount = isset($_POST['collect_amount']) ? floatval($_POST['collect_amount']) : 0;
+  if ($amount > 0 && $orderId > 0) {
+    $stmt = $mysqli->prepare("INSERT INTO delivery_payments (delivery_id, amount_paid, remarks) VALUES (?, ?, ?)");
+    $empty = '';
+    $stmt->bind_param('ids', $deliveryId, $amount, $empty);
+    $stmt->execute();
+    $mysqli->query("UPDATE delivery_orders SET amount_paid = amount_paid + $amount, amount_remaining = GREATEST(amount_remaining - $amount, 0), status = IF(amount_remaining - $amount <= 0, status, 'Partially Paid') WHERE delivery_id = $deliveryId");
+  }
+  $row = $mysqli->query("SELECT amount_remaining FROM delivery_orders WHERE delivery_id = $deliveryId")->fetch_assoc();
+  if ($row && floatval($row['amount_remaining']) <= 0) {
+    $mysqli->query("UPDATE delivery_orders SET item_delivered = 1, status = 'Completed' WHERE delivery_id = $deliveryId");
+  } else {
+    $mysqli->query("UPDATE delivery_orders SET item_delivered = 1 WHERE delivery_id = $deliveryId");
+  }
+  header("Location: " . $_SERVER['REQUEST_URI']);
+  exit;
+}
 
 include "delivery_header.php"; 
 include "../db_connect.php";
 
-$pendingOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.address, o.final_amount AS total_amount, o.rent_amount, do.delivery_id FROM delivery_orders do JOIN orders o ON do.order_id = o.order_id JOIN customers c ON o.customer_id = c.customer_id WHERE (do.status = 'Assigned' OR do.status = 'Partially Paid') AND do.item_delivered = 0");
-$deliveredOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.address FROM delivery_orders do JOIN orders o ON do.order_id = o.order_id JOIN customers c ON o.customer_id = c.customer_id WHERE do.status = 'Completed'");
+$pendingOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.address, o.final_amount AS total_amount, o.rent_amount, do.delivery_id, do.amount_remaining, do.amount_paid FROM delivery_orders do JOIN orders o ON do.order_id = o.order_id JOIN customers c ON o.customer_id = c.customer_id WHERE (do.status = 'Assigned' OR do.status = 'Partially Paid') AND do.item_delivered = 0");
+$deliveredOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.address FROM delivery_orders do JOIN orders o ON do.order_id = o.order_id JOIN customers c ON o.customer_id = c.customer_id WHERE  do.item_delivered = 1");
 
 ?>
 <!DOCTYPE html>
@@ -141,42 +162,28 @@ $deliveredOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.addr
       while ($drow = $res->fetch_assoc()) {
         $deliveryIds[$drow['order_id']] = $drow['delivery_id'];
       }
-      foreach ($_POST['collect_amount'] as $orderId => $amount) {
-        $amount = floatval($amount);
-        if ($amount > 0 && isset($deliveryIds[$orderId])) {
-          $deliveryId = $deliveryIds[$orderId];
-          // Insert payment
-          $stmt = $mysqli->prepare("INSERT INTO delivery_payments (delivery_id, amount_paid, remarks) VALUES (?, ?, ?)");
-          $empty = '';
-          $stmt->bind_param('ids', $deliveryId, $amount, $empty);
-          $stmt->execute();
-          // Update delivery_orders: Only update amount_paid, amount_remaining, and status to 'Partially Paid' if not fully paid
-          $mysqli->query("UPDATE delivery_orders SET amount_paid = amount_paid + $amount, amount_remaining = GREATEST(amount_remaining - $amount, 0), status = IF(amount_remaining - $amount <= 0, status, 'Partially Paid') WHERE delivery_id = $deliveryId");
-          $successMsg = 'Collection updated successfully.';
-        }
-      }
+      // foreach ($_POST['collect_amount'] as $orderId => $amount) {
+      //   $amount = floatval($amount);
+      //   if ($amount > 0 && isset($deliveryIds[$orderId])) {
+      //     $deliveryId = $deliveryIds[$orderId];
+      //     // Insert payment
+      //     $stmt = $mysqli->prepare("INSERT INTO delivery_payments (delivery_id, amount_paid, remarks) VALUES (?, ?, ?)");
+      //     $empty = '';
+      //     $stmt->bind_param('ids', $deliveryId, $amount, $empty);
+      //     $stmt->execute();
+      //     // Update delivery_orders: Only update amount_paid, amount_remaining, and status to 'Partially Paid' if not fully paid
+      //     $mysqli->query("UPDATE delivery_orders SET amount_paid = amount_paid + $amount, amount_remaining = GREATEST(amount_remaining - $amount, 0), status = IF(amount_remaining - $amount <= 0, status, 'Partially Paid') WHERE delivery_id = $deliveryId");
+      //     $successMsg = 'Collection updated successfully.';
+      //   }
+      // }
       if ($successMsg) {
         echo '<div class="alert alert-success">'.$successMsg.'</div>';
-        // Add this to reload the page after a short delay
-        echo '<script>setTimeout(function(){ window.location.reload(); }, 1200);</script>';
+        // Removed auto reload
+        // echo '<script>setTimeout(function(){ window.location.reload(); }, 1200);</script>';
       }
       if ($errorMsg) echo '<div class="alert alert-danger">'.$errorMsg.'</div>';
     }
     
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_delivered'])) {
-      $deliveryId = (int)$_POST['mark_delivered'];
-      // Check if payment is complete
-      $row = $mysqli->query("SELECT amount_remaining FROM delivery_orders WHERE delivery_id = $deliveryId")->fetch_assoc();
-      if ($row && floatval($row['amount_remaining']) <= 0) {
-        // Set both item_delivered=1 and status='Completed'
-        $mysqli->query("UPDATE delivery_orders SET item_delivered = 1, status = 'Completed' WHERE delivery_id = $deliveryId");
-      } else {
-        // Only set item_delivered=1, keep status as is
-        $mysqli->query("UPDATE delivery_orders SET item_delivered = 1 WHERE delivery_id = $deliveryId");
-      }
-      echo '<div class="alert alert-success">Marked as delivered.</div>';
-      echo '<script>setTimeout(function(){ window.location.reload(); }, 1200);</script>';
-    }
     ?>
 </div>
 
@@ -193,97 +200,100 @@ $deliveredOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.addr
             </div>
             <div class="modal-body">
                 <?php if ($pendingOrders && $pendingOrders->num_rows > 0): ?>
-                    <form id="collectAmountForm" method="post">
-                        <div class="table-responsive">
-                            <table class="table table-bordered align-middle mb-0">
-                                <thead class="table-warning">
-                                    <tr>
-                                        <th>Order ID</th>
-                                        <th>Name</th>
-                                        <th>Mobile</th>
-                                        <th>Address</th>
-                                        <th>Storage Area</th>
-                                        <th>Products</th>
-                                        <th>Amount Details</th>
-                                        <th>Rent</th>
-                                        <th>Collect Amount</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php while ($row = $pendingOrders->fetch_assoc()): ?>
-                                        <?php
-                                        $deliveryIdRes = $mysqli->query("SELECT delivery_id, amount_paid, amount_remaining FROM delivery_orders WHERE order_id = ".(int)$row['order_id']." AND status = 'Assigned' LIMIT 1");
-                                        $deliveryData = $deliveryIdRes ? $deliveryIdRes->fetch_assoc() : null;
-                                        $paid = $deliveryData ? $deliveryData['amount_paid'] : 0;
-                                        $remaining = $deliveryData ? $deliveryData['amount_remaining'] : ($row['total_amount'] + $row['rent_amount']);
-                                        $grand = (float)$row['total_amount'] + (float)$row['rent_amount'];
-                                        
-                                        $storageAreaRes = $mysqli->query("SELECT storage_area_id, product_id FROM minus_stock WHERE order_id = ".(int)$row['order_id']);
-                                        $storageAreaIds = [];
-                                        $productInfo = [];
-                                        if ($storageAreaRes && $storageAreaRes->num_rows > 0) {
-                                            while ($saRow = $storageAreaRes->fetch_assoc()) {
-                                                $storageAreaIds[] = $saRow['storage_area_id'];
-                                                $pid = (int)$saRow['product_id'];
-                                                $pname = '-';
-                                                $qtyOrdered = '-';
-                                                $productRes = $mysqli->query("SELECT product_name FROM products WHERE product_id = $pid LIMIT 1");
-                                                if ($productRes && $productRes->num_rows > 0) {
-                                                    $pname = $productRes->fetch_assoc()['product_name'];
-                                                }
-                                                if (isset($deliveryData['delivery_id'])) {
-                                                    $did = (int)$deliveryData['delivery_id'];
-                                                    $qtyRes = $mysqli->query("SELECT qty_ordered FROM delivery_items WHERE delivery_id = $did AND product_id = $pid LIMIT 1");
-                                                    if ($qtyRes && $qtyRes->num_rows > 0) {
-                                                        $qtyOrdered = $qtyRes->fetch_assoc()['qty_ordered'];
-                                                    }
-                                                }
-                                                $productInfo[] = htmlspecialchars($pname) . ' (Qty: ' . htmlspecialchars($qtyOrdered) . ')';
-                                            }
-                                        }
-                                        $storageAreaIdDisplay = $storageAreaIds ? htmlspecialchars(implode(', ', $storageAreaIds)) : '-';
-                                        $productInfoDisplay = $productInfo ? htmlspecialchars(implode(', ', $productInfo)) : '-';
-                                        ?>
-                                        <tr>
-                                            <td><?= htmlspecialchars($row['order_id']) ?></td>
-                                            <td><?= htmlspecialchars($row['name']) ?></td>
-                                            <td><?= htmlspecialchars($row['phone_no']) ?></td>
-                                            <td><?= htmlspecialchars($row['address']) ?></td>
-                                            <td><?= $storageAreaIdDisplay ?></td>
-                                            <td><?= $productInfoDisplay ?></td>
-                                            <td>
-                                                <div class="border p-2 rounded">
-                                                    <strong>Total: ₹<?= number_format($grand, 2) ?></strong><br>
-                                                    <span class="text-success">Paid: ₹<?= number_format($paid, 2) ?></span><br>
-                                                    <span class="<?= ($remaining > 0 ? 'text-danger' : 'text-muted') ?>">Remaining: ₹<?= number_format($remaining, 2) ?></span>
-                                                </div>
-                                            </td>
-                                            <td>₹<?= number_format((float)$row['rent_amount'], 2) ?></td>
-                                            <td>
-                                                <input type="number" min="0" max="<?= htmlspecialchars($remaining) ?>" step="0.01" 
-                                                       name="collect_amount[<?= htmlspecialchars($row['order_id']) ?>]" 
-                                                       class="form-control form-control-sm" placeholder="Enter amount">
-                                            </td>
-                                            <td>
-                                                <form method="post" class="d-inline">
-                                                    <input type="hidden" name="delivery_id" value="<?= htmlspecialchars($row['delivery_id']) ?>">
-                                                    <button type="submit" name="mark_delivered" class="btn btn-success btn-sm">
-                                                        <i class="fas fa-check"></i> Delivered
-                                                    </button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    <?php endwhile; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="mt-3 text-center">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Submit Collection
-                            </button>
-                        </div>
-                    </form>
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle mb-0">
+                            <thead class="table-warning">
+    <tr>
+        <th>Order ID</th>
+        <th>Name</th>
+        <th>Mobile</th>
+        <th>Address</th>
+        <th>Storage Area</th>
+        <th>Products</th>
+        <th>Total Amount</th>
+        <th>Rent</th>
+        <th>Amount Details</th>
+        
+        <th>Collect Amount</th>
+        <th>Action</th>
+    </tr>
+</thead>
+<tbody>
+    <?php while ($row = $pendingOrders->fetch_assoc()): ?>
+    <?php
+    // Ensure rent_amount and total_amount are always set and numeric
+    $rent_amount = isset($row['rent_amount']) ? (float)$row['rent_amount'] : 0;
+    $total_amount = isset($row['total_amount']) ? (float)$row['total_amount'] : 0;
+    
+    $deliveryIdRes = $mysqli->query("SELECT delivery_id, amount_paid, amount_remaining FROM delivery_orders WHERE order_id = ".(int)$row['order_id']." AND status = 'Assigned' LIMIT 1");
+    $deliveryData = $deliveryIdRes ? $deliveryIdRes->fetch_assoc() : null;
+    $paid = $deliveryData ? $deliveryData['amount_paid'] : 0;
+    $remaining = $row['amount_remaining']+ 0;
+    
+    $storageAreaRes = $mysqli->query("SELECT storage_area_id, product_id FROM minus_stock WHERE order_id = ".(int)$row['order_id']);
+    $storageAreaIds = [];
+    $productInfo = [];
+    if ($storageAreaRes && $storageAreaRes->num_rows > 0) {
+        while ($saRow = $storageAreaRes->fetch_assoc()) {
+            $storageAreaIds[] = $saRow['storage_area_id'];
+            $pid = (int)$saRow['product_id'];
+            $pname = '-';
+            $qtyOrdered = '-';
+            $productRes = $mysqli->query("SELECT product_name FROM products WHERE product_id = $pid LIMIT 1");
+            if ($productRes && $productRes->num_rows > 0) {
+                $pname = $productRes->fetch_assoc()['product_name'];
+            }
+            if (isset($deliveryData['delivery_id'])) {
+                $did = (int)$deliveryData['delivery_id'];
+                $qtyRes = $mysqli->query("SELECT qty_ordered FROM delivery_items WHERE delivery_id = $did AND product_id = $pid LIMIT 1");
+                if ($qtyRes && $qtyRes->num_rows > 0) {
+                    $qtyOrdered = $qtyRes->fetch_assoc()['qty_ordered'];
+                }
+            }
+            $productInfo[] = htmlspecialchars($pname) . ' (Qty: ' . htmlspecialchars($qtyOrdered) . ')';
+        }
+    }
+    $storageAreaIdDisplay = $storageAreaIds ? htmlspecialchars(implode(', ', $storageAreaIds)) : '-';
+    $productInfoDisplay = $productInfo ? htmlspecialchars(implode(', ', $productInfo)) : '-';
+    ?>
+    <tr>
+        <td><?= htmlspecialchars($row['order_id']) ?></td>
+        <td><?= htmlspecialchars($row['name']) ?></td>
+        <td><?= htmlspecialchars($row['phone_no']) ?></td>
+        <td><?= htmlspecialchars($row['address']) ?></td>
+        <td><?= $storageAreaIdDisplay ?></td>
+        <td><?= $productInfoDisplay ?></td>
+        <td>₹<?= number_format(isset($row['total_amount']) ? (float)$row['total_amount'] : 0, 2) ?></td>
+                <td>₹<?= number_format((float)$row['rent_amount'], 2) ?></td>
+
+        <td>
+            <div class="border p-2 rounded">
+                <?php 
+                $total_amount = isset($row['total_amount']) && is_numeric($row['total_amount']) ? (float)$row['total_amount'] : 0;
+                $rent_amount = isset($row['rent_amount']) && is_numeric($row['rent_amount']) ? (float)$row['rent_amount'] : 0;
+                $grand = $total_amount + $rent_amount;
+                ?>
+                <strong>Total: ₹<?= number_format($grand, 2) ?></strong><br>
+                <span class="text-success">Paid: ₹<?= number_format($row['amount_paid'], 2) ?></span><br>
+                <span class="<?= ($row['amount_remaining'] > 0 ? 'text-danger' : 'text-muted') ?>">Remaining: ₹<?= number_format($row['amount_remaining'], 2) ?></span>
+            </div>
+        </td>
+        <td colspan="2">
+            <form method="post" class="d-flex gap-2 align-items-center">
+                <input type="number" min="0" max="<?= htmlspecialchars($remaining) ?>" step="0.01" 
+                       name="collect_amount" 
+                       class="form-control form-control-sm" placeholder="Enter amount">
+                <button type="submit" name="mark_delivered" value="<?= htmlspecialchars($row['delivery_id']) ?>" class="btn btn-success btn-sm">
+                    <i class="fas fa-check"></i> Collect & Deliver
+                </button>
+                <input type="hidden" name="order_id" value="<?= htmlspecialchars($row['order_id']) ?>">
+            </form>
+        </td>
+    </tr>
+    <?php endwhile; ?>
+</tbody>
+                        </table>
+                    </div>
                 <?php else: ?>
                     <div class="no-orders">
                         <i class="fas fa-check-circle fa-3x text-muted mb-3"></i>
@@ -329,15 +339,15 @@ $deliveredOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.addr
                             <tbody>
                                 <?php while ($row = $deliveredOrders->fetch_assoc()): ?>
                                     <?php
-                                    $deliveryIdRes = $mysqli->query("SELECT delivery_id, amount_paid, amount_remaining, rent FROM delivery_orders WHERE order_id = ".(int)$row['order_id']." AND status = 'Completed' LIMIT 1");
-                                    $deliveryData = $deliveryIdRes ? $deliveryIdRes->fetch_assoc() : null;
+                                    $deliveryIdRes = $mysqli->query("SELECT delivery_id, amount_paid, amount_remaining, rent FROM delivery_orders WHERE order_id = ".(int)$row['order_id']);
+                                    $deliveryData = $deliveryIdRes->fetch_assoc();
                                     $paid = $deliveryData ? $deliveryData['amount_paid'] : 0;
                                     $rent = $deliveryData ? $deliveryData['rent'] : 0;
+                                    $remaining = $deliveryData ? $deliveryData['amount_remaining'] : 0;
                                     $orderTotalRes = $mysqli->query("SELECT final_amount FROM orders WHERE order_id = ".(int)$row['order_id']);
                                     $orderTotalData = $orderTotalRes ? $orderTotalRes->fetch_assoc() : null;
                                     $totalAmount = $orderTotalData ? $orderTotalData['final_amount'] : 0;
                                     $grand = (float)$totalAmount + (float)$rent;
-                                    $remaining = $deliveryData ? $deliveryData['amount_remaining'] : 0;
                                     ?>
                                     <tr>
                                         <td><?= htmlspecialchars($row['order_id']) ?></td>
@@ -385,43 +395,3 @@ $deliveredOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.addr
 </script>
 </body>
 </html>
-<?php
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  if (isset($_POST['collect_amount'])) {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['collect_amount'])) {
-      include_once '../db_connect.php';
-      $successMsg = $errorMsg = '';
-      $deliveryIds = [];
-      $res = $mysqli->query("SELECT delivery_id, order_id FROM delivery_orders WHERE status = 'Assigned' OR status = 'Partially Paid'");
-      while ($drow = $res->fetch_assoc()) {
-        $deliveryIds[$drow['order_id']] = $drow['delivery_id'];
-      }
-      foreach ($_POST['collect_amount'] as $orderId => $amount) {
-        $amount = floatval($amount);
-        if ($amount > 0 && isset($deliveryIds[$orderId])) {
-          $deliveryId = $deliveryIds[$orderId];
-          // Insert payment
-          $stmt = $mysqli->prepare("INSERT INTO delivery_payments (delivery_id, amount_paid, remarks) VALUES (?, ?, ?)");
-          $empty = '';
-          $stmt->bind_param('ids', $deliveryId, $amount, $empty);
-          $stmt->execute();
-          // Update delivery_orders: Only update amount_paid, amount_remaining, and status to 'Partially Paid' if not fully paid
-          $mysqli->query("UPDATE delivery_orders SET amount_paid = amount_paid + $amount, amount_remaining = GREATEST(amount_remaining - $amount, 0), status = IF(amount_remaining - $amount <= 0, status, 'Partially Paid') WHERE delivery_id = $deliveryId");
-          $successMsg = 'Collection updated successfully.';
-        }
-      }
-      if ($successMsg) {
-        echo '<div class="alert alert-success">'.$successMsg.'</div>';
-        // Add this to reload the page after a short delay
-        echo '<script>setTimeout(function(){ window.location.reload(); }, 1200);</script>';
-      }
-      if ($errorMsg) echo '<div class="alert alert-danger">'.$errorMsg.'</div>';
-    }
-  }
-  if (isset($_POST['mark_delivered']) && is_numeric($_POST['mark_delivered'])) {
-    $deliveryId = (int)$_POST['mark_delivered'];
-    $mysqli->query("UPDATE delivery_orders SET item_delivered = 1 WHERE delivery_id = $deliveryId");
-    header('Location: ' . $_SERVER['REQUEST_URI']);
-    exit;
-  }
-}
