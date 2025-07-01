@@ -409,6 +409,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_bill'])) {
         }
 
 const logoBase64 = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAYGBgYHBgcICAcKCwoLCg8ODAwODxYQERAREBYiFRkVFRkVIh4kHhweJB42KiYmKjY+NDI0PkxERExfWl98fKcBBgYGBgcGBwgIBwoLCgsKDw4MDA4PFhAREBEQFiIVGRUVGRUiHiQeHB4kHjYqJiYqNj40MjQ+TERETF9aX3x8p//CABEIAfQB9AMBIgACEQEDEQH/xAAxAAEAAwEBAQAAAAAAAAAAAAAABAUGAwIBAQEAAwEBAAAAAAAAAAAAAAAAAgMFBAH/2gAMAwEAAhADEAAAAtUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABU2yNmX83Wfo1rDrMn2cdD50ER5ysMhYeWX4uzgAAAAAAAAAAAAAAAAAAAAAAAAAAIma0ua59bQz4E+3PCdOYj+/nJv61n+F2bp0KbZyB7EAAAAAAAAAAAAAAAAAAAAAAAACJmtLmufWt5sP3Kn3VxVfWta7WSp+U9yuz66xEQlAAAAAAAAAAAAAAAAAAAAAAAAACJmtLmufW0M+BPtz8/X67J1aPXU4/VSp7C7OAIM7yYewAAAAAAAAAAAAAAAAAAAAAAAFdGfTOSotGvf2OXtLOO0rrFPkx8mxpefZ1/3J2FvDeRqmD57L0XDvOgJ84AAAAAAAAAAAAAAAAAAAAAAD59ePL0S8vQD2Lj2ee0MfTK+uiueiVITpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//xAAC/9oADAMBAAIAAwAAACEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABLnAEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAIICgoEAAAAAAAAAAAAAAAAAAAAAAAAAAKoNsEMAAAAAAAAAAAAAAAAAAAAAAAAAAIKUkAAAAAAAAAAAAAAAAAAAAAAAAAAAKm1MUQOAAAAAAAAAAAAAAAAAAAAAAAAAPDAAMMMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/xAAC/9oADAMBAAIAAwAAABDzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz3QZ9DzzzzzzzzzzzzzzzzzzzzzzzzzzzxRf3vDXzzzzzzzzzzzzzzzzzzzzzzzzzxQj2Zx7zzzzzzzzzzzzzzzzzzzzzzzzzxRfzDzzTzzzzzzzzzzzzzzzzzzzzzzzzvXi6Zq1bzzzzzzzzzzzzzzzzzzzzzzzz847y16/wA888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888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";
+function numberToWords(num) {
+    if (isNaN(num) || num === 0) return "Zero Rupees only";
+    var a = [ '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen' ];
+    var b = [ '', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety' ];
+    function inWords(n) {
+        if (n < 20) return a[n];
+        if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? ' ' + a[n % 10] : '');
+        if (n < 1000) return a[Math.floor(n / 100)] + ' Hundred' + (n % 100 ? ' and ' + inWords(n % 100) : '');
+        return '';
+    }
+    var str = '';
+    var crore = Math.floor(num / 10000000);
+    num = num % 10000000;
+    var lakh = Math.floor(num / 100000);
+    num = num % 100000;
+    var thousand = Math.floor(num / 1000);
+    num = num % 1000;
+    var hundred = Math.floor(num / 100);
+    var rest = num % 100;
+    if (crore) str += inWords(crore) + ' Crore ';
+    if (lakh) str += inWords(lakh) + ' Lakh ';
+    if (thousand) str += inWords(thousand) + ' Thousand ';
+    if (hundred) str += inWords(hundred) + ' Hundred ';
+    if (rest) str += (str !== '' ? 'and ' : '') + inWords(rest) + ' ';
+    str = str.trim();
+    // Handle paise (decimal part)
+    var paise = Math.round((num - Math.floor(num)) * 100);
+    if (paise > 0) {
+        str += ` Rupees and ${numberToWords(paise)} Paise only`;
+    } else {
+        str += ' Rupees only';
+    }
+    return str;
+}
 
         function downloadPDF() {
             const { jsPDF } = window.jspdf;
@@ -513,7 +547,7 @@ doc.text("Tax Invoice", 140, invoiceY);
 // Invoice Details (black)
 doc.setFontSize(10).setFont("helvetica", "normal");
 doc.setTextColor(0, 0, 0);
-doc.text("Invoice No.: 20", 140, invoiceY + 7);
+doc.text("Invoice No.: " + <?= (int)$order_id ?>, 140, invoiceY + 7);
 doc.text("Date: " + new Date().toLocaleDateString(), 140, invoiceY + 14);
 
 // Horizontal line separator
@@ -597,7 +631,7 @@ doc.setLineWidth(0.2).line(14, separatorY, 196, separatorY);
             });
 
             // ---------- Tax Summary Table (Smaller and on Right) ----------
-            const taxSummaryY = doc.autoTable.previous.finalY + 10;
+            const taxSummaryY = doc.autoTable.previous.finalY + 3;
             // Calculate dynamic tax summary
 const subTotal = parseFloat(document.getElementById("itemTotal").textContent.replace('₹','')) || 0;
 const grandTotal = parseFloat(document.getElementById("grandTotal").textContent.replace('₹','')) || 0;
@@ -653,9 +687,7 @@ const taxSummaryBody = [
             });
 
           // ---------- All Left-Aligned Content ----------
- const footerY = doc.autoTable.previous.finalY + 15;
-    
-    // 1. Pay To Section
+const footerY = 190;   // 1. Pay To Section
     doc.setFontSize(10).setFont("helvetica", "bold");
     doc.setTextColor(150, 0, 0);
     doc.text("Pay To:", 14, footerY);
@@ -694,10 +726,7 @@ doc.text("Invoice Amount In Words", 14, amountWordsY);
 doc.setFont("helvetica", "normal");
  doc.setTextColor(0, 0, 0);
 const amount = parseFloat(document.getElementById("grandTotal").textContent.replace('₹', ''));
-let amountInWords = "Twenty Five Thousand Rupees only";
-if (amount !== 25000) {
-    amountInWords = "Amount in words would appear here";
-}
+let amountInWords = numberToWords(amount);
 const amountLines = doc.splitTextToSize(amountInWords, 120);
 doc.text(amountLines, 14, amountWordsY + 5);
 

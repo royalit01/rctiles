@@ -144,6 +144,7 @@ CREATE TABLE `delivery_orders` (
   `status` enum('Assigned','Partially Paid','Completed') DEFAULT 'Assigned',
   `assigned_at` datetime DEFAULT current_timestamp(),
   `delivered_at` datetime DEFAULT NULL
+  `item_delivered ` tinyint(1) DEFAULT 0,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
