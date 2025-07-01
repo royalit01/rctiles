@@ -82,7 +82,7 @@ $result = $stmt->get_result();
          <style>
         /* Base font slightly larger for readability */
         body{font-size:1.05rem;}
-@media (max-width: 768px) {
+    @media (max-width: 768px) {
     .table td, .table th {
         font-size: 0.85rem;
         max-width: 100px;
@@ -97,11 +97,11 @@ $result = $stmt->get_result();
         word-break: break-all;
     }
 }
-        @media (max-width: 575.98px){
+   @media (max-width: 575.98px){
             /* card‑style rows on extra‑small screens */
             table.table thead{display:none} /* Hide table headings on mobile */
             .mobile-row-heading {
-        /* display: block; */
+        display: block;
         background: #0d6efd;
         color: #fff;
         color: #000;
@@ -148,6 +148,46 @@ $result = $stmt->get_result();
     table.table tbody tr td[data-label] > * {
         display: inline-block;
         vertical-align: middle;
+    }
+    /* --- OVERRIDE: Keep desktop table style in modal on mobile --- */
+    .modal .table, .modal table.table, .modal table.table thead, .modal table.table tbody tr td, .modal table.table tbody tr td[data-label]::before, .modal .mobile-row-heading {
+        all: unset !important;
+        display: revert !important;
+        background: revert !important;
+        color: revert !important;
+        font-weight: revert !important;
+        border-radius: revert !important;
+        padding: revert !important;
+        margin-bottom: revert !important;
+        font-size: revert !important;
+        letter-spacing: revert !important;
+        text-align: revert !important;
+        flex: revert !important;
+        border: revert !important;
+        position: revert !important;
+        width: revert !important;
+        justify-content: revert !important;
+        align-items: revert !important;
+        white-space: revert !important;
+        text-overflow: revert !important;
+        overflow: revert !important;
+    }
+    .modal .mobile-row-heading {
+        display: none !important;
+    }
+    .modal table.table thead {
+        display: table-header-group !important;
+    }
+    .modal table.table tbody tr td {
+        display: table-cell !important;
+        text-align: left !important;
+        border: 1px solid #dee2e6 !important;
+        padding: 0.75rem !important;
+        font-size: 1rem !important;
+        background: #fff !important;
+    }
+    .modal table.table tbody tr td[data-label]::before {
+        content: none !important;
     }
 }
         .table {
