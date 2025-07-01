@@ -31,7 +31,149 @@ $result = $mysqli->query($query);
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="../css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-         
+         <style>
+            /* Main container styling */
+.container-fluid {
+    padding: 20px;
+   
+}
+
+/* Card styling */
+.card {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 0.75rem;
+    border: none;
+    margin-top: 20px;
+    background-color: white;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+/* Header styling */
+h1 {
+    color: #343a40;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+/* Form styling */
+.form-label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #495057;
+}
+
+.form-select {
+    border-radius: 0.5rem;
+    border: 1px solid #ced4da;
+    padding: 0.5rem 1rem;
+    max-width: 300px;
+    transition: all 0.3s;
+}
+
+.form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Alert styling */
+.alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+    color: #856404;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+/* Table styling */
+.rounded-table {
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid #dee2e6;
+    margin-top: 1.5rem;
+}
+
+.rounded-table thead {
+    background-color: #343a40;
+    color: white;
+}
+
+.rounded-table thead th {
+    border-bottom: 2px solid #495057 !important;
+    padding: 1rem;
+    font-weight: 600;
+}
+
+.rounded-table thead th:first-child {
+    border-top-left-radius: 0.75rem;
+}
+.rounded-table thead th:last-child {
+    border-top-right-radius: 0.75rem;
+}
+.rounded-table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 0.75rem;
+}
+.rounded-table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 0.75rem;
+}
+
+.rounded-table th, 
+.rounded-table td {
+    border-left: 1px solid #dee2e6 !important;
+    border-right: 1px solid #dee2e6 !important;
+    padding: 0.75rem;
+    vertical-align: middle;
+}
+
+.rounded-table tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.rounded-table tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+/* Button styling */
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card {
+        margin: 1rem;
+    }
+    
+    .form-select {
+        max-width: 100%;
+    }
+    
+    .rounded-table {
+        font-size: 0.9rem;
+    }
+}
+
+
+         </style>
     </head>
     <body class="sb-nav-fixed">
     <?php  include 'navbar.php'; ?>
@@ -88,18 +230,7 @@ $result = $mysqli->query($query);
                     </div>
                 </main> 
 
-                <footer class="py-4 bg-light mt-auto">
-                <div class="container-fluid">
-                    <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Your Website 2023</div>
-                        <div>
-                            <a href="#">Privacy Policy</a>
-                            ·
-                            <a href="#">Terms & Conditions</a>
-                        </div>
-                    </div>
-                </div>
-            </footer>
+                
             </div>
          <!-- ---------------------------- -->   
         </div>

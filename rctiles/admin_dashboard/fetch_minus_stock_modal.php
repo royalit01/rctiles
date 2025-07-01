@@ -56,6 +56,7 @@ function fmtPkt($qty,$ppp){
 </div>
 
 <form id="minusForm">
+  
   <div class="modal-body">
     <input type="hidden" name="order_id" value="<?= $order_id ?>">
     <table class="table table-bordered align-middle">

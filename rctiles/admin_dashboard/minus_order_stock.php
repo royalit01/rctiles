@@ -160,6 +160,8 @@ $result = $stmt->get_result();
     overflow: hidden;
     max-width: 100%;
 }
+
+
     </style>
     </head>
     <body class="sb-nav-fixed">

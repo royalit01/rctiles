@@ -70,7 +70,7 @@ $result = $mysqli->query($sql);
             background-color: #f8f9fa;
         }
         #layoutSidenav_content {
-            padding: 20px;
+            padding: 10px;
         }
         .container-box {
             width: 100%;

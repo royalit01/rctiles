@@ -111,7 +111,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_stock'])) {
 
                 <main>
 
-    <div class="container-fluid mt-4">
+    <div class="container-fluid my-4">
         <div class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="max-width: 950px;">
         <h2 class="mt-1 mb-2 fw-bold fs-2 text-center">Add Stock</h2>
 
