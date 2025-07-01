@@ -160,7 +160,13 @@ $result = $stmt->get_result();
     overflow: hidden;
     max-width: 100%;
 }
-
+.modal .table-responsive {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.modal .table {
+  min-width: 1000px; /* Adjust as needed for your columns */
+}
 
     </style>
     </head>

@@ -59,6 +59,7 @@ function fmtPkt($qty,$ppp){
   
   <div class="modal-body">
     <input type="hidden" name="order_id" value="<?= $order_id ?>">
+     <div class="table-responsive">
     <table class="table table-bordered align-middle">
       <thead class="table-secondary">
       <tr>
@@ -108,7 +109,7 @@ function fmtPkt($qty,$ppp){
       </tbody>
     </table>
   </div>
-
+      </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
     <button type="submit" class="btn btn-danger">Confirm Minus Stock</button>
