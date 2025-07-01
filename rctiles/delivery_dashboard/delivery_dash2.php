@@ -18,12 +18,15 @@ $deliveredOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.addr
        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="../css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <style>
+          
+        </style>
 
 </head>
 <body class="sb-nav-fixed">
 <div id="layoutSidenav_content">
 <main class="main-content ">
-  <div class="card border-0 shadow rounded-3 p-4 bg-white mx-auto w-100" style="max-width: 100%;">
+  <div class="card border-0 shadow rounded-3 p-4 bg-white mx-auto" style="min-width: 100%;">
     <div class="dashboard-header mb-4">
       <h2 class="dashboard-title">Delivery Dashboard</h2>
       <p class="dashboard-subtitle">Manage your delivery operations efficiently</p>
@@ -387,8 +390,108 @@ $deliveredOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.addr
       padding: 5px;
     }
   }
+  <style>
+  /* Add these styles to your existing CSS */
+  @media (max-width: 600px) {
+    .main-content {
+      padding: 15px !important;
+      margin-top: 20px !important;
+    }
+    
+    .dashboard-header {
+      text-align: center;
+      padding-bottom: 1rem;
+    }
+    
+    .dashboard-title {
+      font-size: 1.5rem;
+      text-align: center;
+    }
+    
+    .dashboard-subtitle {
+      text-align: center;
+    }
+    
+    .dashboard-actions .row {
+      justify-content: center;
+    }
+    
+    .dashboard-actions .col-md-6 {
+      flex: 0 0 90%;
+      max-width: 90%;
+      margin-bottom: 15px;
+    }
+    
+    .status-btn {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1rem;
+      flex-direction: column;
+      gap: 5px;
+    }
+    
+    .status-btn i {
+      font-size: 1.5rem;
+      margin-bottom: 5px;
+    }
+    
+    .btn-count {
+      position: static;
+      margin-top: 5px;
+      width: auto;
+      height: auto;
+      background: transparent;
+      color: white;
+      font-size: 1rem;
+    }
+    
+    #pendingSection, #deliveredSection {
+      padding: 0 10px;
+    }
+    
+    h4 {
+      text-align: center;
+      margin-bottom: 1rem !important;
+    }
+    
+    .table-responsive {
+      border: 1px solid #dee2e6;
+      border-radius: 5px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    table.table {
+      min-width: 100%;
+      font-size: 14px;
+    }
+    
+    table.table th,
+    table.table td {
+      padding: 8px;
+      text-align: center;
+    }
+    
+    .form-control {
+      width: 100%;
+      text-align: center;
+    }
+    
+    .text-end {
+      text-align: center !important;
+    }
+    
+    .alert {
+      text-align: center;
+    }
+  }
+</style>
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <script src="../js/scripts.js"></script>
+
 <script>
   // Toggle Pending/Delivered tables so only one is visible at a time
 const pendingBtn = document.getElementById('pendingBtn');
