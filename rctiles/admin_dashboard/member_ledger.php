@@ -74,11 +74,23 @@ $riders = $mysqli->query("
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <style>
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+table.table {
+    width: 100%;
+    min-width: unset;
+}
 @media (max-width:575.98px){
  table thead{display:none}
- table tbody tr{display:block;margin-bottom:1rem;border:1px solid #dee2e6;border-radius:.5rem}
- table tbody td{display:flex;justify-content:space-between;padding:.55rem .9rem;font-size:1rem}
- table tbody td:first-child{font-weight:600}
+ table tbody tr{display:block;margin-bottom:1rem;border:1px solid #dee2e6;border-radius:.5rem;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.04);}
+ table tbody td{display:flex;justify-content:space-between;align-items:center;padding:.55rem .9rem;font-size:1rem;border:none;flex-wrap:wrap;}
+ table tbody td:before{content:attr(data-label);font-weight:600;color:#495057;min-width:80px;text-align:left;margin-right:1rem;flex:1 1 40%;}
+ table tbody td{flex:1 1 60%;}
+ .collect-cell { justify-content: flex-end !important; }
+ .collect-cell .input-group { width: auto; margin-top: -25px;}
+ .collect-cell .form-control { width: auto; min-width: 70px; max-width: 100px; margin-left: auto;  }
 }
 </style>
 </head>
@@ -102,11 +114,11 @@ $riders = $mysqli->query("
  <tbody>
  <?php $i=1; while($r=$riders->fetch_assoc()): ?>
    <tr class="rider-row" data-user="<?= $r['user_id'] ?>">
-     <td><?= $i++ ?></td>
-     <td><?= htmlspecialchars($r['rider']) ?></td>
-     <td class="text-end"><?= number_format($r['collected'],2) ?></td>
-     <td class="text-end"><?= number_format($r['admin_collected'],2) ?></td>
-     <td class="text-end">
+     <td data-label="#"><?= $i++ ?></td>
+     <td data-label="Rider"><?= htmlspecialchars($r['rider']) ?></td>
+     <td data-label="Collected (₹)" class="text-end"><?= number_format($r['collected'],2) ?></td>
+     <td data-label="Admin collected (₹)" class="text-end"><?= number_format($r['admin_collected'],2) ?></td>
+     <td data-label="Due (₹)" class="text-end">
          <?php if($r['due']>0): ?>
              <span class="badge bg-warning text-dark">
                  <?= number_format($r['due'],2) ?>
@@ -115,7 +127,7 @@ $riders = $mysqli->query("
              <span class="badge bg-success">0.00</span>
          <?php endif; ?>
      </td>
-     <td class="text-center collect-cell">
+     <td data-label="Collect" class="text-center collect-cell">
         <form method="post" class="d-inline w-100">
           <input type="hidden" name="user_id" value="<?= $r['user_id'] ?>">
           <div class="input-group input-group-sm">

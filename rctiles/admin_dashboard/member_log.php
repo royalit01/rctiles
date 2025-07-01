@@ -87,7 +87,7 @@ $result = $stmt->get_result();
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <style>
         body { font-size: 1.05rem; }
-        @media (max-width: 575.98px) {
+        /* @media (max-width: 575.98px) {
             table.table thead { display: none; }
             table.table tbody tr { 
                 display: block; 
@@ -102,7 +102,7 @@ $result = $stmt->get_result();
                 font-size: 1rem; 
             }
             table.table tbody tr td:first-child { font-weight: 600; }
-        }
+        } */
     </style>
     </head>
     <body class="sb-nav-fixed">

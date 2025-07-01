@@ -4,7 +4,7 @@ include "delivery_header.php";
 
 include "../db_connect.php";
 
-$pendingOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.address, o.final_amount AS total_amount, o.rent_amount FROM delivery_orders do JOIN orders o ON do.order_id = o.order_id JOIN customers c ON o.customer_id = c.customer_id WHERE do.status = 'Assigned'");
+$pendingOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.address, o.final_amount AS total_amount, o.rent_amount, do.delivery_id FROM delivery_orders do JOIN orders o ON do.order_id = o.order_id JOIN customers c ON o.customer_id = c.customer_id WHERE do.status = 'Assigned' AND do.item_delivered = 0");
 $deliveredOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.address FROM delivery_orders do JOIN orders o ON do.order_id = o.order_id JOIN customers c ON o.customer_id = c.customer_id WHERE do.status = 'Completed'");
 
 ?>
@@ -81,9 +81,15 @@ $deliveredOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.addr
       }
       if ($errorMsg) echo '<div class="alert alert-danger">'.$errorMsg.'</div>';
     }
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_delivered'])) {
+      $deliveryId = (int)$_POST['delivery_id'];
+      $mysqli->query("UPDATE delivery_orders SET item_delivered = 1 WHERE delivery_id = $deliveryId");
+      echo '<div class="alert alert-success">Marked as delivered.</div>';
+      echo '<script>setTimeout(function(){ window.location.reload(); }, 100000);</script>';
+    }
     if ($pendingOrders && $pendingOrders->num_rows > 0) {
       echo '<form id="collectAmountForm" method="post"><div class="table-responsive"><table class="table table-bordered align-middle mb-0">';
-      echo '<thead class="table-primary"><tr><th>Order ID</th><th>Name</th><th>Mobile</th><th>Address</th><th>Storage Area ID</th><th>Products</th><th>Total Amount</th><th>Rent</th><th>Status</th><th>Collect Amount</th></tr></thead><tbody>';
+      echo '<thead class="table-primary"><tr><th>Order ID</th><th>Name</th><th>Mobile</th><th>Address</th><th>Storage Area ID</th><th>Products</th><th>Total Amount</th><th>Rent</th><th>Status</th><th>Collect Amount</th><th>Item Delivered</th></tr></thead><tbody>';
       while ($row = $pendingOrders->fetch_assoc()) {
         // Fetch latest paid and remaining for this delivery
         $deliveryIdRes = $mysqli->query("SELECT delivery_id, amount_paid, amount_remaining FROM delivery_orders WHERE order_id = ".(int)$row['order_id']." AND status = 'Assigned' LIMIT 1");
@@ -135,7 +141,13 @@ $deliveredOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.addr
           .'<td>₹'.number_format((float)$row['rent_amount'],2).'</td>'
           .'<td><span class="badge badge-pending">Pending</span></td>'
           .'<td><input type="number" min="0" max="'.htmlspecialchars($remaining).'" step="0.01" name="collect_amount['.htmlspecialchars($row['order_id']).']" class="form-control form-control-sm" placeholder="Enter amount"></td>'
-          .'</tr>';
+          .'<td>';
+        echo '<form method="post" style="display:inline">';
+        echo '<input type="hidden" name="delivery_id" value="'.htmlspecialchars($row['delivery_id']).'">';
+        echo '<button type="submit" name="mark_delivered" class="btn btn-success btn-sm">Mark Delivered</button>';
+        echo '</form>';
+        echo '</td>';
+        echo '</tr>';
       }
       echo '</tbody></table></div>';
       echo '<div class="mt-3 text-end"><button type="submit" class="btn btn-success">Submit Collection</button></div></form>';
