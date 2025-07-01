@@ -113,6 +113,16 @@ $result = $stmt->get_result();
         letter-spacing: 0.5px;
         text-align: left;
     }
+      table.table tbody tr {
+        margin-bottom: 1.2rem;
+        display: block;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        background: #fff;
+    }
+    table.table tbody tr td {
+        border-bottom: none;
+    }
     table.table tbody tr td {
         display: flex;
         flex-direction: row;
