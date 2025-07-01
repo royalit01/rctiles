@@ -126,6 +126,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_bill'])) {
             font-size: 1.08rem;
             padding: 0.6rem 1.5rem;
         }
+        .bill-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        @media (max-width: 600px) {
+            .bill-buttons {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.7rem;
+            }
+            .bill-buttons .btn {
+                width: 100%;
+                margin-right: 0 !important;
+            }
+        }
         @media (max-width: 900px) {
             .bill-container {
                 padding: 1.2rem 0.5rem;
@@ -192,6 +208,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_bill'])) {
             font-size: 1.08rem;
             padding: 0.6rem 1.5rem;
         }
+        .bill-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        @media (max-width: 600px) {
+            .bill-buttons {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.7rem;
+            }
+            .bill-buttons .btn {
+                width: 100%;
+                margin-right: 0 !important;
+            }
+        }
         @media (max-width: 900px) {
             .bill-container {
                 padding: 1.2rem 0.5rem;
@@ -238,9 +270,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_bill'])) {
             </div>
 
             <?php if(isset($_GET['saved'])): ?>
-            <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
-                Bill details saved!
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <!-- Bootstrap Toast for Bill Saved Success -->
+            <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1080;">
+                <div id="billSavedToast" class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="fas fa-check-circle me-2"></i>Bill saved successfully!
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
             </div>
             <?php endif; ?>
 
@@ -291,7 +330,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_bill'])) {
                 </table>
             </div>
 
-            <div class="text-center mt-4">
+            <div class="text-center mt-4 bill-buttons">
                 <button class="btn btn-success shadow me-2" type="button" onclick="downloadPDF()">
                     <i class="fas fa-download me-2"></i>Download PDF
                 </button>
@@ -301,6 +340,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_bill'])) {
             </div>
         </form>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             setTimeout(applyFinalPrice, 100);

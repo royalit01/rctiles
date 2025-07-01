@@ -99,19 +99,57 @@ $result = $stmt->get_result();
 }
         @media (max-width: 575.98px){
             /* card‑style rows on extra‑small screens */
-            table.table thead{display:none}
-            table.table tbody tr{display:block;margin-bottom:1rem;border:1px solid #dee2e6;border-radius:.5rem}
-table.table tbody tr td {
+            table.table thead{display:none} /* Hide table headings on mobile */
+            .mobile-row-heading {
+        /* display: block; */
+        background: #0d6efd;
+        color: #fff;
+        color: #000;
+        font-weight: bold;
+        border-radius: .5rem .5rem 0 0;
+        padding: 0.5rem 0.9rem 0.5rem 0.9rem;
+        margin-bottom: 0.2rem;
+        font-size: 1.05em;
+        letter-spacing: 0.5px;
+        text-align: left;
+    }
+    table.table tbody tr td {
         display: flex;
+        flex-direction: row;
         justify-content: space-between;
-        width: 100%; /* Add this */
+        align-items: center;
+        width: 100%;
         padding: .55rem .9rem;
         font-size: 1rem;
-        border: none; /* Add this to remove cell borders */
+        border: none;
+        border-bottom: 1px solid #e9ecef;
+        background: none;
+        text-align: right;
+        position: relative;
     }
-                table.table tbody tr td:first-child{font-weight:600}
-            
-        }
+    table.table tbody tr td:last-child {
+        border-bottom: none;
+    }
+    table.table tbody tr td[data-label]::before {
+        content: attr(data-label);
+        display: block;
+        font-weight: 600;
+        color: #0d6efd;
+        margin-bottom: 0;
+        font-size: 0.97em;
+        text-align: left;
+        flex: 1 1 auto;
+    }
+    table.table tbody tr td > * {
+        margin-left: auto;
+        text-align: right;
+    }
+    /* Ensure anchor and button content does not overlap label */
+    table.table tbody tr td[data-label] > * {
+        display: inline-block;
+        vertical-align: middle;
+    }
+}
         .table {
     table-layout: auto !important;
     width: 100% !important;
@@ -120,7 +158,7 @@ table.table tbody tr td {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    max-width: 150px;
+    max-width: 100%;
 }
     </style>
     </head>
@@ -169,36 +207,36 @@ table.table tbody tr td {
                     </thead>
                     <tbody>
                     <?php $i = 1 + $offset; while ($row = $result->fetch_assoc()): ?>
-                        <tr>
-                            <td><?= $i++ ?></td>
-                            <td><?= htmlspecialchars($row['customer']) ?></td>
-                            <td>
-                                <a href="tel:<?= $row['phone_no'] ?>" class="text-decoration-none">
-                                    <?= htmlspecialchars($row['phone_no']) ?>
-                                </a>
-                            </td>
-                            <td>₹<?= number_format($row['total_price'], 2) ?></td>
-                           <td class="text-nowrap">
-                                <?php if ($row['stock_done']): ?>
-                                    <span class="badge bg-success">Stock Updated</span>
-                                    <button type="button"
-                                            class="btn btn-sm btn-outline-danger ms-1 delete-order"
-                                            data-order="<?= $row['order_id'] ?>"
-                                            title="Remove record">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                <?php else: ?>
-                                    <button type="button"
-                                            class="btn btn-sm btn-danger minus-stock-btn"
-                                            data-order="<?= $row['order_id'] ?>">
-                                        <i class="fa fa-minus me-1"></i>Minus Stock
-                                    </button>
-                                <?php endif; ?>
-                            </td>
-
-                        </tr>
-                    <?php endwhile; ?>
-                    </tbody>
+<tr>
+    <td colspan="5" class="mobile-row-heading" style="display:none;"># | Customer | Phone | Total Price | Actions</td>
+    <td data-label="#"><?= $i++ ?></td>
+    <td data-label="Customer"><?= htmlspecialchars($row['customer']) ?></td>
+    <td data-label="Phone">
+        <a href="tel:<?= $row['phone_no'] ?>" class="text-decoration-none">
+            <?= htmlspecialchars($row['phone_no']) ?>
+        </a>
+    </td>
+    <td data-label="Total Price">₹<?= number_format($row['total_price'], 2) ?></td>
+    <td data-label="Actions" class="text-nowrap">
+        <?php if ($row['stock_done']): ?>
+            <span class="badge bg-success mb-1">Stock Updated</span>
+            <button type="button"
+                    class="btn btn-sm btn-outline-danger ms-1 delete-order mb-1"
+                    data-order="<?= $row['order_id'] ?>"
+                    title="Remove record">
+                <i class="fa fa-trash"></i>
+            </button>
+        <?php else: ?>
+            <button type="button"
+                    class="btn btn-sm btn-danger minus-stock-btn mb-1"
+                    data-order="<?= $row['order_id'] ?>">
+                <i class="fa fa-minus me-1"></i>Minus Stock
+            </button>
+        <?php endif; ?>
+    </td>
+</tr>
+<?php endwhile; ?>
+</tbody>
                 </table>
                 <!-- Pagination controls -->
                 <nav aria-label="Page navigation">

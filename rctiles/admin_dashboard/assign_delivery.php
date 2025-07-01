@@ -123,7 +123,6 @@ $result = $stmt->get_result();
       @media (max-width: 575.98px) {
     /* card-style rows with headers for each data cell */
     table.table thead { display: none; }
-    
     table.table tbody tr {
         display: block;
         margin-bottom: 1.5rem;
@@ -133,49 +132,146 @@ $result = $stmt->get_result();
         background: white;
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
-    
     table.table tbody tr td {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         width: 100%;
         padding: .5rem .75rem;
         font-size: 0.95rem;
         border: none;
         flex-wrap: wrap;
+        text-align: right; /* Align value to right */
     }
-    
     table.table tbody tr td:before {
         content: attr(data-label);
         font-weight: 600;
         color: #495057;
         margin-right: 1rem;
         min-width: 120px;
+        text-align: left;
+        flex: 1 1 50%;
     }
-    
-    /* Special styling for action buttons */
+    table.table tbody tr td[data-label="Actions"] {
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        text-align: left;
+        flex-shrink: 2; /* Prevent shrinking of Actions column */
+    }
     table.table tbody tr td[data-label="Actions"] .btn {
-        width: 100%;
-        margin-top: 0.5rem;
+        width: 48%;
+        min-width: 90px;
+        margin-bottom: 0;
+        margin-top: 0;
     }
-    
-    /* Stack form elements in delivery person column */
+    table.table tbody tr td[data-label="Actions"] .btn-outline-info {
+        margin-left: auto;
+        margin-right: 0;
+    }
+    table.table tbody tr td[data-label="Actions"] .btn-outline-primary {
+        margin-right: auto;
+        margin-left: 0;
+    }
     table.table tbody tr td[data-label="Delivery Person"] form {
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
         width: 100%;
     }
-    
     table.table tbody tr td[data-label="Delivery Person"] select {
         width: 100% !important;
         margin-right: 0 !important;
     }
-    
-    /* Make status badges full width */
+    table.table tbody tr td[data-label="Status"] {
+        align-items: center;
+        justify-content: space-between;
+        text-align: right;
+    }
+    table.table tbody tr td[data-label="Status"] .badge,
+    table.table tbody tr td[data-label="Status"] small {
+        display: inline-block;
+        margin-left: 0.5rem;
+        margin-bottom: 0;
+        vertical-align: middle;
+    }
+}
+@media (min-width: 576px) {
+    /* Reset mobile styles for larger screens */
+    table.table thead { display: table-header-group; }
+    table.table tbody tr {
+        display: table-row;
+        margin-bottom: 0;
+        border: none;
+        border-radius: 0;
+        padding: 0;
+        background: inherit;
+        box-shadow: none;
+    }
+    table.table tbody tr td {
+        display: table-cell;
+        justify-content: unset;
+        align-items: unset;
+        width: unset;
+        padding: .5rem;
+        font-size: 1.05rem;
+        border: 1px solid #dee2e6;
+        flex-wrap: unset;
+    }
+    table.table tbody tr td[data-label="Actions"] {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.5rem;
+        text-align: right;
+        flex-shrink: 0; /* Prevent shrinking of Actions column */
+    }
+    table.table tbody tr td[data-label="Actions"] .btn {
+        width: auto;
+        margin-top: 0;
+        min-width: 90px;
+    }
+    table.table tbody tr td[data-label="Actions"] .btn-outline-primary {
+        margin-right: auto;
+        margin-left: 0;
+    }
+    table.table tbody tr td[data-label="Actions"] .btn-outline-info {
+        margin-left: auto;
+        margin-right: 0;
+    }
+    table.table tbody tr td[data-label="Delivery Person"] form {
+        display: flex;
+        flex-direction: row;
+        gap: 0.5rem;
+        width: auto;
+    }
+    table.table tbody tr td[data-label="Delivery Person"] select {
+        width: auto !important;
+        margin-right: .5rem !important;
+    }
     table.table tbody tr td[data-label="Status"] .badge {
-        display: block;
-        text-align: center;
-        margin-bottom: 0.25rem;
+        display: inline-block;
+        text-align: left;
+        margin-bottom: 0;
+        width: auto;
+    }
+}
+.table-responsive {
+    overflow-x: auto;
+    width: 100%;
+}
+table.table {
+    width: 100%;
+    min-width: unset;
+}
+@media (max-width: 991.98px) and (min-width: 576px) {
+    .table-responsive {
+        overflow-x: auto;
+    }
+    table.table {
+        width: 100%;
+        min-width: 700px; /* or adjust as needed for your columns */
     }
 }
     </style>
@@ -216,7 +312,8 @@ $result = $stmt->get_result();
             <thead class="table-dark">
             <tr>
                 <th>#</th>
-                <th>Customer / Phone</th>
+                <th>Customer</th>
+                <th>Phone</th>
                 <th>Total (₹)</th>
                 <th>Rent (₹)</th>
                 <th>Delivery Person</th>
@@ -229,14 +326,14 @@ $result = $stmt->get_result();
                 $grand = (float)$row['discounted_amount'] + (float)$row['transport_rent'];
             ?>
                 <tr>
-                    <td ><?= $i++ ?></td>
-                  <td data-label="Customer / Phone">
-    <div class="d-flex flex-column">
-        <strong><?= htmlspecialchars($row['customer']) ?></strong>
-        <a href="tel:<?= $row['phone_no'] ?>" class="text-decoration-none small text-muted"><?= htmlspecialchars($row['phone_no']) ?></a>
-    </div>
-</td>
-                     <td data-label="Total (₹)"><?= number_format((float)$row['discounted_amount'],2) ?></td>
+                    <td><?= $i++ ?></td>
+                    <td data-label="Customer">
+                        <strong><?= htmlspecialchars($row['customer']) ?></strong>
+                    </td>
+                    <td data-label="Phone">
+                        <a href="tel:<?= $row['phone_no'] ?>" class="text-decoration-none small text-muted"><?= htmlspecialchars($row['phone_no']) ?></a>
+                    </td>
+                    <td data-label="Total (₹)"><?= number_format((float)$row['discounted_amount'],2) ?></td>
                     <td data-label="Rent (₹)"><?= number_format($row['transport_rent'],2) ?></td>
                     <td data-label="Delivery Person">
                         <?php if(!$row['delivery_id']): ?>
@@ -254,7 +351,7 @@ $result = $stmt->get_result();
                             <?= htmlspecialchars($mysqli->query("SELECT name FROM users WHERE user_id=".$row['delivery_user_id'])->fetch_column()) ?>
                         <?php endif; ?>
                     </td>
-                    <td>
+                    <td data-label="Status">
                         <?php if(!$row['delivery_id']): ?>
                             <span class="badge bg-secondary">Pending Assignment</span>
                         <?php else: ?>
@@ -266,13 +363,13 @@ $result = $stmt->get_result();
                             <?php endif; ?>
                         <?php endif; ?>
                     </td>
-                    <td class="text-nowrap">
-                        <a class="btn btn-sm btn-outline-info" target="_blank" href="view_bill.php?order_id=<?= $row['order_id'] ?>"><i class="fa fa-file-invoice"></i> Bill</a>
+                    <td data-label="Actions" class="text-nowrap d-flex flex-row justify-content-between align-items-center text-end">
                         <?php if($row['delivery_id']): ?>
-                            <button class="btn btn-sm btn-outline-primary ms-1 open-delivery" data-delivery="<?= $row['delivery_id'] ?>">
+                            <button class="btn btn-sm btn-outline-primary open-delivery me-2" data-delivery="<?= $row['delivery_id'] ?>">
                                 <i class="fa fa-truck"></i> Update
                             </button>
                         <?php endif; ?>
+                        <a class="btn btn-sm btn-outline-info" target="_blank" href="view_bill.php?order_id=<?= $row['order_id'] ?>"><i class="fa fa-file-invoice"></i> Bill</a>
                     </td>
                 </tr>
             <?php endwhile; ?>
