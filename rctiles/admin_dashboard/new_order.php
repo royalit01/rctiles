@@ -1551,7 +1551,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div id="layoutSidenav_content">
             <main>
             <div class="container ">
-                <div class="container-box">
+                <div class="container-box mt-4">
                     <h2 class="text-center mb-3">Create New Order</h2>
                         <form id="orderForm" action="submit_order.php" method="post">
 
@@ -1805,7 +1805,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <!-- 🔹 Bill Container (Hidden Initially) -->
 <!-- Full-Screen Bill Modal -->
-<script src="../js/scripts.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+
+
+
+
 <!-- ✅ Ensure the modal is placed before closing body tag -->
 </body>
 </html>
