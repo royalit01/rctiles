@@ -225,6 +225,7 @@ CREATE TABLE `orders` (
   `customer_id` int(11) DEFAULT NULL,
   `total_amount` decimal(10,2) NOT NULL,
   `discounted_amount` decimal(10,2) DEFAULT NULL,
+  `final_amount` decimal(10,2) DEFAULT NULL,
   `transport_rent` decimal(10,2) DEFAULT 0.00,
   `stock_done` tinyint(1) DEFAULT 0,
   `deleted` tinyint(1) DEFAULT 0

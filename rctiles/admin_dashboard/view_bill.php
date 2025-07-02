@@ -24,6 +24,8 @@ $stmt->execute();
 $order = $stmt->get_result()->fetch_assoc();
 if (!$order) die("Order not found");
 
+
+
 // Fetch products
 $stmt = $mysqli->prepare("
     SELECT p.product_name, po.quantity, po.original_price, po.custom_price
@@ -36,6 +38,7 @@ $stmt->execute();
 $products = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 $total = $order['final_amount'] + $order['transport_rent'];
+
 ?>
 
 <!DOCTYPE html>
@@ -165,6 +168,7 @@ $total = $order['final_amount'] + $order['transport_rent'];
                 </tfoot>
             </table>
         </div>
+        
 
         <div class="text-center mt-4">
             <button class="btn btn-success shadow" onclick="downloadPDF()">
@@ -175,19 +179,261 @@ $total = $order['final_amount'] + $order['transport_rent'];
 
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <script>
-        function downloadPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            doc.text("RC Mall – Customer Bill", 105, 10, { align: "center" });
-            doc.autoTable({
-                head: [['#', 'Item', 'Qty', 'Original ₹', 'Custom ₹', 'Total ₹']],
-                body: <?= json_encode(array_map(function($i, $p) {
-                    return [$i, $p['product_name'], $p['quantity'], number_format($p['original_price'],2), number_format($p['custom_price']/$p['quantity'],2), number_format($p['custom_price'],2)];
-                }, range(1, count($products)), $products)) ?>,
-                startY: 20
-            });
-            doc.save("RCMall_Bill.pdf");
+    const billData = {
+        customerName: <?= json_encode($order['name']) ?>,
+        customerPhone: <?= json_encode($order['phone_no']) ?>,
+        customerAddress: <?= json_encode($order['address'] . ', ' . $order['city']) ?>,
+        finalAmount: <?= json_encode($order['final_amount']) ?>,
+        rentAmount: <?= json_encode($order['transport_rent']) ?>,
+        grandTotal: <?= json_encode($total) ?>
+    };
+
+   const logoBase64 = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAYGBgYH..."; // your logo
+
+function numberToWords(num) {
+    if (typeof num !== "number" || isNaN(num)) return "Zero";
+    const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+    const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+    const g = ["", "Thousand", "Lakh", "Crore"];
+    if (num === 0) return "Zero";
+    let str = "";
+    let i = 0;
+    function inWords(n) {
+        let s = "";
+        if (n > 19) {
+            s += b[Math.floor(n / 10)] + (n % 10 ? " " + a[n % 10] : "");
+        } else if (n > 0) {
+            s += a[n];
         }
+        return s;
+    }
+    function group(n) {
+        let out = [];
+        out.push(n % 1000); n = Math.floor(n / 1000);
+        out.push(n % 100); n = Math.floor(n / 100);
+        out.push(n % 100); n = Math.floor(n / 100);
+        out.push(n);
+        return out;
+    }
+    let parts = num.toFixed(2).split(".");
+    let n = parseInt(parts[0]);
+    let dec = parseInt(parts[1]);
+    let grps = group(n);
+    for (let j = grps.length - 1; j >= 0; j--) {
+        if (grps[j]) {
+            if (str !== "") str += " ";
+            str += inWords(grps[j]) + (g[j] ? " " + g[j] : "");
+        }
+    }
+    if (str === "") str = "Zero";
+    if (dec > 0) {
+        str += ` and ${inWords(dec)} Paise`;
+    }
+    return str + " Only";
+}
+
+function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: "p", unit: "mm", format: "a4" });
+
+    // Header background and logo
+    doc.setFillColor(220, 38, 38);
+    doc.rect(0, 0, 210, 30, 'F');
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const logoWidth = 30;
+    const logoHeight = 20;
+    const logoX = (pageWidth - logoWidth) / 2;
+    const logoY = 5;
+doc.addImage(logoBase64, 'JPEG', logoX, logoY, logoWidth, logoHeight);
+    doc.setFontSize(10).setFont("helvetica", "bold");
+    doc.setTextColor(255, 255, 255);
+    doc.text("RC INDUSTRIES", 15, 12);
+    doc.setFontSize(8).setFont("helvetica", "normal");
+    doc.text("GSTIN: 23AAKFRB273NTZJ", 15, 17);
+    doc.text("State: 23-Madhya Pradesh", 15, 22);
+    doc.setFontSize(10);
+    doc.text("Phone: 1234567890", 195, 12, { align: "right" });
+    doc.text("Email: rc@gmail.com", 195, 17, { align: "right" });
+    doc.text("Address: 7671 MAXI ROAD LIDYOSPUR", 195, 22, { align: "right" });
+
+    // Bill To section
+    const startY = 40;
+    doc.setFontSize(10).setFont("helvetica", "bold");
+    doc.setTextColor(220, 38, 38);
+    doc.text("Bill To", 14, startY);
+    doc.setFontSize(15).setFont("helvetica", "bold");
+    doc.setTextColor(0, 0, 0);
+    let customerName = document.querySelector(".customer-info-box .col-md-4:nth-child(1)")?.innerText.replace('Name:', '').trim() || "";
+    let customerPhone = document.querySelector(".customer-info-box .col-md-4:nth-child(2)")?.innerText.replace('Phone:', '').trim() || "";
+    let customerAddress = document.querySelector(".customer-info-box .col-md-4:nth-child(3)")?.innerText.replace('Address:', '').trim() || "";
+    doc.text(customerName, 14, startY + 7);
+    doc.setFontSize(10).setFont("helvetica", "normal");
+    doc.text(customerPhone, 14, startY + 13);
+    const addressLines = doc.splitTextToSize(customerAddress, 80);
+    let addressY = startY + 19;
+    addressLines.forEach(line => {
+        doc.text(line, 14, addressY);
+        addressY += 6;
+    });
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(10, 10, 10);
+    doc.text("GSTIN Number: ", 14, addressY + 1);
+    doc.text("State: ", 14, addressY + 8);
+    doc.setFont("helvetica", "normal");
+    const gstinX = 14 + doc.getTextWidth("GSTIN Number: ");
+    const stateX = 14 + doc.getTextWidth("State: ");
+    doc.text(" 23AAYCAG150A1ZV", gstinX, addressY + 1);
+    doc.text(" 23-Madhya Pradesh", stateX, addressY + 8);
+
+    // Tax Invoice section
+    const invoiceY = startY + 5;
+    doc.setFontSize(10).setFont("helvetica", "bold");
+    doc.setTextColor(220, 38, 38);
+    doc.text("Tax Invoice", 140, invoiceY);
+    doc.setFontSize(10).setFont("helvetica", "normal");
+    doc.setTextColor(0, 0, 0);
+    doc.text("Invoice No.: " + <?= (int)$order_id ?>, 140, invoiceY + 7);
+    doc.text("Date: " + new Date().toLocaleDateString(), 140, invoiceY + 14);
+    const separatorY = startY + 37;
+    doc.setLineWidth(0.2).line(14, separatorY, 196, separatorY);
+
+    // Product Table
+    const tableBody = [];
+    document.querySelectorAll("table tbody tr").forEach((tr) => {
+        const cells = tr.querySelectorAll("td");
+        if (cells.length === 6) {
+            tableBody.push([
+                cells[0].innerText,
+                cells[1].innerText,
+                cells[2].innerText,
+                "Box",
+                cells[4].innerText.replace('₹', ''),
+                cells[5].innerText.replace('₹', '')
+            ]);
+        }
+    });
+    doc.autoTable({
+        head: [["#", "Item Name", "Quantity", "Unit", "Price/ Unit", "Amount"]],
+        body: tableBody,
+        startY: 80,
+        margin: { left: 14 },
+        styles: {
+            fontSize: 9,
+            cellPadding: 3,
+            valign: 'middle',
+            lineColor: [0, 0, 0],
+            lineWidth: 0.1,
+            textColor: [0, 0, 0]
+        },
+        headStyles: {
+            fillColor: [220, 38, 38],
+            textColor: 255,
+            fontStyle: 'bold',
+            cellPadding: {top: 5, right: 2, bottom: 5, left: 2},
+            halign: 'center'
+        },
+        columnStyles: {
+            0: { cellWidth: 8, halign: 'center' },
+            1: { cellWidth: 'auto' },
+            2: { cellWidth: 17, halign: 'center' },
+            3: { cellWidth: 15, halign: 'center' },
+            4: { cellWidth: 20, halign: 'right' },
+            5: { cellWidth: 25, halign: 'right' }
+        }
+    });
+
+    // Tax Summary Table
+    const tfootRows = document.querySelectorAll("table tfoot tr");
+    let subTotal = 0, rentAmount = 0, grandTotal = 0;
+    if (tfootRows.length >= 3) {
+        subTotal = parseFloat(tfootRows[0].querySelector('th:last-child')?.innerText.replace('₹','')) || 0;
+        rentAmount = parseFloat(tfootRows[1].querySelector('th:last-child')?.innerText.replace('₹','')) || 0;
+        grandTotal = parseFloat(tfootRows[2].querySelector('th:last-child')?.innerText.replace('₹','')) || 0;
+    }
+    const taxSummaryBody = [
+       ["Final Amount Paid", `₹${parseFloat(billData.finalAmount).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`],
+        ["Rent", `₹${parseFloat(billData.rentAmount).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`],
+        ["Grand Total", `₹${parseFloat(billData.grandTotal).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`]
+  ];
+    const taxSummaryY = doc.autoTable.previous.finalY + 3;
+    doc.autoTable({
+        head: [["Description", "Amount"]],
+        body: taxSummaryBody,
+        startY: taxSummaryY,
+        margin: { left: 130 },
+        styles: {
+            fontSize: 9,
+            cellPadding: 3,
+            valign: 'middle',
+            lineColor: [0, 0, 0],
+            lineWidth: 0.1,
+            textColor: [0, 0, 0]
+        },
+        headStyles: {
+            fillColor: [220, 38, 38],
+            textColor: 255,
+            fontStyle: 'bold'
+        },
+        columnStyles: {
+            0: { cellWidth: 28, halign: 'left' },
+        }
+    });
+
+    // Pay To section
+    const footerY = 190;
+    doc.setFontSize(10).setFont("helvetica", "bold");
+    doc.setTextColor(220, 38, 38);
+    doc.text("Pay To:", 14, footerY);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(0, 0, 0);
+    doc.text("Bank Name: Uco Bank, Subzi Mandi - Ujjain", 14, footerY + 5);
+    doc.text("Bank Account No.: 06860510000335", 14, footerY + 10);
+    doc.text("Bank IFSC code: UCBA0000686", 14, footerY + 15);
+    doc.text("Account Holder's Name: RC Industries", 14, footerY + 20);
+
+    // Description section
+    const descY = footerY + 29;
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(220, 38, 38);
+    doc.text("Description", 14, descY);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(0, 0, 0);
+    const descriptionLines = [
+        "Alankar Speciality Cables Pvt Ltd",
+        "Shipping address: Plot no. 69 DMIC Vikram Udyogpuri",
+        "Near Village Narwar, Ujjain M.P. 456664"
+    ];
+    descriptionLines.forEach((line, index) => {
+        doc.text(line, 14, descY + 5 + (index * 5));
+    });
+
+    // Amount in words
+    const amountWordsY = descY + (descriptionLines.length * 5) + 10;
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(220, 38, 38);
+    doc.text("Invoice Amount In Words", 14, amountWordsY);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(0, 0, 0);
+let amountInWords = numberToWords(parseFloat(billData.grandTotal));
+let amountLines = doc.splitTextToSize(amountInWords, 120);
+doc.text(amountLines, 14, amountWordsY + 5);
+
+    // Signature section
+    const signY = amountWordsY + 15;
+    doc.setFillColor("white");
+    doc.roundedRect(14, signY, 60, 30, 2, 2, 'F');
+    doc.setDrawColor(220, 38, 38);
+    doc.setLineWidth(0.5);
+    doc.roundedRect(14, signY, 60, 30, 2, 2, 'S');
+    doc.setFontSize(10).setFont("helvetica", "normal");
+    doc.text("For: RC Industries", 19, signY + 10);
+    doc.text("Authorized Signatory", 19, signY + 20);
+    doc.setDrawColor(220, 38, 38);
+    doc.circle(80, signY + 15, 10);
+
+    // Save the PDF
+    doc.save(`RC_Industries_Invoice_${new Date().toISOString().slice(0,10)}.pdf`);
+}
         // Helper for PHP's number_format in JS
         function number_format(number, decimals) {
             return parseFloat(number).toLocaleString('en-IN', {minimumFractionDigits: decimals, maximumFractionDigits: decimals});

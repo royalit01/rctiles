@@ -484,7 +484,6 @@ doc.setTextColor(255, 255, 255); // White text
 const rightMargin = 195;
 doc.text("Phone: 1234567890", rightMargin, 12, { align: "right" });
 doc.text("Email: rc@gmail.com", rightMargin, 17, { align: "right" });
-doc.text("Address: 7671 MAXI ROAD LIDYOSPUR", rightMargin, 22, { align: "right" });
 
 
             // ---------- Document Header Sections ----------
@@ -569,14 +568,12 @@ doc.setLineWidth(0.2).line(14, separatorY, 196, separatorY);
             });
 
             // Add totals row
-            tableBody.push([
-                "",
-                "Total",
-                document.querySelectorAll("#billTable tr")[0].querySelector("td:nth-child(3)").innerText, // Quantity
-                "",
-                "",
-                document.getElementById("grandTotal").textContent.replace('₹', '')
-            ]);
+            // tableBody.push([
+            //     "",
+            //     "",
+            //     "",
+            //     "",
+            // ]);
 
             // Custom table styling for rounded borders
             doc.autoTable({
@@ -609,11 +606,11 @@ doc.setLineWidth(0.2).line(14, separatorY, 196, separatorY);
                     6: { cellWidth: 25, halign: 'right' }
                 },
                 didDrawCell: (data) => {
-                    if (data.section === 'body' && data.row.index === tableBody.length - 1) {
-                        doc.setFillColor(220, 38, 38); // Red for total row
-                        doc.roundedRect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 1, 1, 'F');
-                        doc.setTextColor(255, 255, 255); // White text for total row
-                    }
+                    // if (data.section === 'body' && data.row.index === tableBody.length - 1) {
+                    //     doc.setFillColor(220, 38, 38); // Red for total row
+                    //     doc.roundedRect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 1, 1, 'F');
+                    //     doc.setTextColor(255, 255, 255); // White text for total row
+                    // }
                     // Draw inner borders
                     doc.setDrawColor(200, 200, 200);
                     doc.setLineWidth(0.1);
