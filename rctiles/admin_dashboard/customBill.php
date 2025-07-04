@@ -89,7 +89,7 @@ if ($stmt = $mysqli->prepare("SELECT category_id, category_name FROM category"))
                             <input type="text" class="form-control" placeholder="Enter Phone number" id="PhoneNumber">
                         </div>
                         <div class="col-md-4 mb-3 fw-bold">
-                            <label for="customerName">Rent:</label>
+                            <label for="customerName">Freight:</label>
                             <input type="text" class="form-control" placeholder="Enter Rent" id="Rent">
                         </div>
                         <div class="col-md-4 mb-3 fw-bold">

@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_bill'])) {
                         <input type="number" class="form-control" id="finalAmountPaid" value="<?php echo $order['final_amount']; ?>" oninput="calculateTotals()">
                     </div>
                     <div class="col-md-4">
-                        <label class="fw-bold">Rent:</label>
+                        <label class="fw-bold">Freight:</label>
                         <input type="number" class="form-control" id="rentAmount" value="0" oninput="calculateTotals()">
                     </div>
                     <div class="col-md-4">
@@ -186,7 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_bill'])) {
                             </tfoot> -->
                             <tfoot>
                                 <tr><th colspan="5" class="text-end">Item&nbsp;Total:</th><th id="itemTotal">₹0.00</th></tr>
-                                <tr><th colspan="5" class="text-end">Rent:</th><th id="rentDisplay">₹0.00</th></tr>
+                                <tr><th colspan="5" class="text-end">Freight:</th><th id="rentDisplay">₹0.00</th></tr>
                                 <!-- <tr><th colspan="5" class="text-end">GST:</th><th id="gstDisplay">₹0.00</th></tr> -->
                                 <tr><th colspan="5" class="text-end">Discount:</th><th id="discountDisplay">₹0.00</th></tr>
                                 <tr class="table-dark"><th colspan="5" class="text-end fw-bold">Grand&nbsp;Total:</th><th id="grandTotal" class="fw-bold">₹0.00</th></tr>

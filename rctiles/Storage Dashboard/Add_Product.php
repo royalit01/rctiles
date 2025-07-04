@@ -48,10 +48,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     try {
 
-        // Require product image upload
-    if (!isset($_FILES['productImage']) || $_FILES['productImage']['error'] != 0) {
-        throw new Exception("Product image is required.");
-    }
+    //     // Require product image upload
+    // if (!isset($_FILES['productImage']) || $_FILES['productImage']['error'] != 0) {
+    //     throw new Exception("Product image is required.");
+    // }
 
     // Handle file upload if an image is provided
     if (isset($_FILES['productImage']) && $_FILES['productImage']['error'] == 0) {
@@ -294,9 +294,13 @@ $mysqli->close();
                                 <input type="number" class="form-control rounded-3 py-2" id="minStockLevel" name="minStockLevel" value="7" required>
                             </div>
                             <div class="mb-3">
-                                <label for="productImage" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Product Image <span style="color:red">*</span> </label>
-                                <input type="file" class="form-control custom-file-input" id="productImage" name="productImage" required >
+                                <label for="productImage" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Product Image  </label>
+                                <input type="file" class="form-control custom-file-input" id="productImage" name="productImage" >
                             </div>
+                            <div class="mb-3">
+    <label for="insertArea" class="form-label fw-medium text-secondary" style="font-weight: 550;">Insert Area</label>
+    <input type="text" class="form-control rounded-3 py-2" id="insertArea" name="insertArea" required>
+</div>
                             <div class="text-center">
                             <button type="submit" class="btn gradient-btn btn-primary mb-4"><i class="fas fa-plus text-white me-2"></i>Add Product</button>
                             </div>

@@ -217,7 +217,7 @@ $deliveredOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.addr
         <th>Storage Area</th>
         <th>Products</th>
         <th>Total Amount</th>
-        <th>Rent</th>
+        <th>Freight</th>
         <th>Amount Details</th>
         
         <th>Collect Amount</th>

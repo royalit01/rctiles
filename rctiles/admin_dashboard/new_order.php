@@ -142,30 +142,30 @@ include '../db_connect.php';
 
             <div class="row">
                 <div class="col-md-4">
-                    <label class="form-label">Wall Length (m) </label>
+                    <label class="form-label">Wall Length (ft²) </label>
                     <input type="number" class="form-control" name="wall_lengths[]" step="0.1" min="0" oninput="calculateAreas(this)">
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Wall Width (m) </label>
+                    <label class="form-label">Wall Width (ft²) </label>
                     <input type="number" class="form-control" name="wall_widths[]" step="0.1" min="0" oninput="calculateAreas(this)">
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Wall Height (m) </label>
+                    <label class="form-label">Wall Height (ft²) </label>
                     <input type="number" class="form-control" name="wall_heights[]" step="0.1" min="0" oninput="calculateAreas(this)">
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Door Area (m²) </label>
+                    <label class="form-label">Door Area (ft²) </label>
                     <input type="number" class="form-control" name="door_areas[]" step="0.1" min="0" oninput="calculateAreas(this)">
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Window Area (m²) </label>
+                    <label class="form-label">Window Area (ft²) </label>
                     <input type="number" class="form-control" name="window_areas[]" step="0.1" min="0" oninput="calculateAreas(this)">
                 </div>
             
             </div>
         
 
-            <p class="mt-2"><strong>Wall Area:</strong> <span class="wall-area">0.00 m²</span></p>
+            <p class="mt-2"><strong>Wall Area:</strong> <span class="wall-area">0.00 ft²</span></p>
 
             <div class="mb-2">
                 <label class="form-label">Select Wall Category</label>
@@ -182,11 +182,11 @@ include '../db_connect.php';
 
             <div class="row mt-2">
                 <div class="col-md-4">
-                    <label class="form-label">Floor Length (m)</label>
+                    <label class="form-label">Floor Length (ft²)</label>
                     <input type="number" class="form-control" name="floor_lengths[]" step="0.1" min="0" oninput="calculateAreas(this)">
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Floor Width (m)</label>
+                    <label class="form-label">Floor Width (ft²)</label>
                     <input type="number" class="form-control" name="floor_widths[]" step="0.1" min="0" oninput="calculateAreas(this)">
                 </div>
             </div>
@@ -206,7 +206,7 @@ include '../db_connect.php';
                 </div>
             </div>
 
-            <p class="mt-2"><strong>Floor Area:</strong> <span class="floor-area">0.00 m²</span></p>
+            <p class="mt-2"><strong>Floor Area:</strong> <span class="floor-area">0.00 ft²</span></p>
 
             <button type="button" class="btn btn-primary mt-2" onclick="openProductModal(this, 'floor')">Choose Floor Tile</button>
             <!-- <button type="button" class="btn btn-warning mt-2" onclick="enableEditSelection(this)">Edit Selection</button> -->
@@ -1562,10 +1562,10 @@ document.addEventListener("DOMContentLoaded", () => {
                                     <label class="form-label">Customer Name <span style="color:red">*</span> </label>
                                     <input type="text" class="form-control" name="customer_name" required>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Phone Number <span style="color:red">*</span> </label>
+                                <!-- <div class="mb-3">
+                                    <label class="form-label">Phone Number <span style="color:red">*</span> </label> -->
                                     <!-- <input type="tel" class="form-control" name="phone_no" pattern="\d{10}" title="Please enter exactly 10 digits" required> -->
-                                    <input type="tel" class="form-control" name="phone_no" pattern="\d{10}" title="Please enter exactly 10 digits" required oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
+                                    <!-- <input type="tel" class="form-control" name="phone_no" pattern="\d{10}" title="Please enter exactly 10 digits" required oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Address <span style="color:red">*</span> </label>
@@ -1574,7 +1574,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <div class="mb-3">
                                     <label class="form-label">City <span style="color:red">*</span> </label>
                                     <input type="text" class="form-control" name="city" required>
-                                </div>
+                                </div> -->
                                 <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
                             </div>
 
@@ -1597,6 +1597,19 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <!-- Step 3: Summary Page -->
                                 <div class="form-step" id="step3">
                                     <h5>Selected Products Summary</h5>
+
+                                     <div class="mb-3">
+                                    <label class="form-label">Phone Number <span style="color:red">*</span> </label>
+                                     <input type="tel" class="form-control" name="phone_no" pattern="\d{10}" title="Please enter exactly 10 digits" required oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Address <span style="color:red">*</span> </label>
+                                    <input type="text" class="form-control" name="address" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">City <span style="color:red">*</span> </label>
+                                    <input type="text" class="form-control" name="city" required>
+                                </div>
                                     <table class="table table-bordered summary-table">
                                         <thead>
                                             <tr>
@@ -1627,7 +1640,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                         placeholder="Enter final amount"
                                         oninput="this.value = this.value.replace(/[^0-9.]/g, ''); applyFinalPrice(); updateGrandAmount();">
 
-                                    <label for="RentAmount" class="form-label"><strong>Rent Paid (₹):</strong></label>
+                                    <label for="RentAmount" class="form-label"><strong>Freight Paid (₹):</strong></label>
                                     <input type="text" class="form-control" id="RentAmount" name="rent_amount"
                                      placeholder="Enter rent amount" value="0"
                                      oninput="this.value = this.value.replace(/[^0-9.]/g, ''); applyFinalPrice(); updateGrandAmount();">
@@ -1739,7 +1752,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                         placeholder="Enter final amount"
                                         oninput="this.value = this.value.replace(/[^0-9.]/g, ''); applyFinalPrice(); updateGrandAmount();">
 
-                                    <label for="RentAmount" class="form-label"><strong>Rent Paid (₹):</strong></label>
+                                    <label for="RentAmount" class="form-label"><strong>Freight Paid (₹):</strong></label>
                                     <input type="text" class="form-control" id="RentAmount" name="rent_amount"
                                      placeholder="Enter rent amount" value="0"
                                      oninput="this.value = this.value.replace(/[^0-9.]/g, ''); applyFinalPrice(); updateGrandAmount();">

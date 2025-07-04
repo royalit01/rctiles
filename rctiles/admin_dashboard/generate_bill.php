@@ -260,7 +260,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_bill'])) {
                     <input type="number" class="form-control" id="finalAmountPaid" value="<?= $order['final_amount']; ?>" oninput="calculateTotals()" disabled>
                 </div>
                 <div class="col-md-4 mb-2">
-                    <label class="fw-bold">Rent:</label>
+                    <label class="fw-bold">Freight:</label>
                     <input type="number" class="form-control" id="rentAmount" value="<?= $order['transport_rent']; ?>" oninput="calculateTotals()"  disabled >
                 </div>
                 <div class="col-md-4 mb-2">
@@ -319,7 +319,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_bill'])) {
                     </tbody>
                     <tfoot>
                         <tr><th colspan="5" class="text-end">Item&nbsp;Total:</th><th id="itemTotal">₹0.00</th></tr>
-                        <tr><th colspan="5" class="text-end">Rent:</th><th id="rentDisplay">₹0.00</th></tr>
+                        <tr><th colspan="5" class="text-end">Freight:</th><th id="rentDisplay">₹0.00</th></tr>
                         <tr><th colspan="5" class="text-end">Discount:</th><th id="discountDisplay">₹0.00</th></tr>
                         <tr class="table-dark"><th colspan="5" class="text-end fw-bold">Grand&nbsp;Total:</th><th id="grandTotal" class="fw-bold">₹0.00</th></tr>
                     </tfoot>
@@ -482,7 +482,7 @@ doc.addImage(logoBase64, 'JPEG', logoX, logoY, logoWidth, logoHeight);
 doc.setFontSize(10).setFont("helvetica", "normal");
 doc.setTextColor(255, 255, 255); // White text
 const rightMargin = 195;
-doc.text("Phone: 1234567890", rightMargin, 12, { align: "right" });
+doc.text("Phone:  096303 48683", rightMargin, 12, { align: "right" });
 doc.text("Email: rc@gmail.com", rightMargin, 17, { align: "right" });
 doc.text("Address: 7671 MAXI ROAD LIDYOSPUR", rightMargin, 22, { align: "right" });
 
@@ -643,7 +643,7 @@ const remainingAmount = Math.max(grandTotal - paidAmount, 0);
 
 const taxSummaryBody = [
     ["Sub Total", `₹${subTotal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`],
-    ["Rent", `₹${rentAmount.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`],
+    ["Freight", `₹${rentAmount.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`],
     ["Discount", `₹${discountAmt.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`],
    ["Total", `₹${total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`],
      ["Paid Amount", `₹${paidAmount.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`],
@@ -708,9 +708,9 @@ doc.text("Description", 14, descY);
 doc.setFont("helvetica", "normal");
  doc.setTextColor(0, 0, 0);
 const descriptionLines = [
-    "Alankar Speciality Cables Pvt Ltd",
-    "Shipping address: Plot no. 69 DMIC Vikram Udyogpuri",
-    "Near Village Narwar, Ujjain M.P. 456664"
+    "Ram Shyam Ceramic Mall",
+    "Shipping address: 10, Bada Teliwada, Chauraha",
+    "Ujjain, Madhya Pradesh 456006"
 ];
 
 descriptionLines.forEach((line, index) => {
