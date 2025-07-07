@@ -122,6 +122,16 @@ include '../db_connect.php';
             prevStep.classList.add('active-step');
         }
     }
+    
+    function updateFinalAmount() {
+    const grandAmount = parseFloat(document.getElementById('grandAmountPaid').value) || 0;
+    const rentAmount = parseFloat(document.getElementById('RentAmount').value) || 0;
+    const finalAmount = grandAmount - rentAmount;
+    document.getElementById('finalAmountPaid').value = finalAmount.toFixed(2);
+}
+ 
+
+ 
 
     function addDetail() {
         const container = document.getElementById('orderDetailsContainer');
@@ -142,7 +152,7 @@ include '../db_connect.php';
 
    
 <!-- REMOVE the following block (Wall/Floor input row): -->
-<!--
+
 <div class="row">
     <div class="col-md-4">
         <label class="form-label">Wall Length (ft²) </label>
@@ -165,7 +175,7 @@ include '../db_connect.php';
         <input type="number" class="form-control" name="window_areas[]" step="0.1" min="0" oninput="calculateAreas(this)">
     </div>
 </div>
--->
+
         
 
             <p class="mt-2"><strong>Wall Area:</strong> <span class="wall-area">0.00 ft²</span></p>
@@ -334,6 +344,7 @@ include '../db_connect.php';
         const productModal = new bootstrap.Modal(document.getElementById('productModal'));
         productModal.show();
     }
+  
 
     function fetchProducts(categoryId, totalArea, preSelectedProducts = []) {
         fetch(`fetch_products.php?category_id=${categoryId}&total_area=100`)
@@ -371,7 +382,7 @@ include '../db_connect.php';
                         </td>
                         <td>
                             <input type="checkbox" class="product-checkbox" data-product-id="${product.id}"
-                            onchange="toggleProductSelection(this, ${product.id}, '${product.name.replace(/'/g, "\\'")}', ${product.price !== 'N/A' ? parseFloat(product.price) : 0})">
+                        onchange="toggleProductSelection(this, ${product.id}, '${product.name.replace(/'/g, "\\'")}', ${product.price !== 'N/A' ? parseFloat(product.price) : 0}, ${product.area_per_unit})"
                         </td>
                     `;
                     tbody.appendChild(row);
@@ -380,14 +391,16 @@ include '../db_connect.php';
             .catch(error => console.error('❌ Error fetching products:', error));
     }
 
-    function toggleProductSelection(checkbox, productId, productName, unitPrice) {
+    function toggleProductSelection(checkbox, productId, productName, unitPrice, areaPerUnit) {
         let quantityInput = checkbox.closest("tr").querySelector(".product-quantity");
         let quantity = parseInt(quantityInput.value) || 1;
         let totalPrice = quantity * unitPrice;
+        let totalArea = quantity * (areaPerUnit || 0);
 
         let selectedList = currentSelectionType === 'wall' ? selectedProductsWall : selectedProductsFloor;
+        console.log(selectedList)
         let existingProductIndex = selectedList.findIndex(p => p.id === productId);
-
+        
         if (checkbox.checked) {
             if (existingProductIndex === -1) {
                 selectedList.push({
@@ -396,7 +409,10 @@ include '../db_connect.php';
                     unitPrice: unitPrice,
                     quantity: quantity,
                     totalPrice: totalPrice,
-                    customPrice: unitPrice
+                    customPrice: unitPrice,
+                    area : areaPerUnit,
+                    totalArea: totalArea
+                  
                 });
             } else {
                 selectedList[existingProductIndex].quantity = quantity;
@@ -454,24 +470,31 @@ include '../db_connect.php';
     
     function updateSelectedProductsUI(container, selectedList) {
         container.innerHTML = ""; // Clear previous content
-
+        console.log("🔄 Updating selected products UI...", selectedList);
         if (selectedList.length === 0) {
             container.innerHTML = `<p class="text-muted">No products selected yet.</p>`;
             return;
         }
-
+        console.log("🔄 Updating UI with selected products:", selectedList);
         selectedList.forEach(product => {
             let productRow = document.createElement("div");
             productRow.classList.add("selected-product-item", "border", "p-2", "rounded", "mb-2", "d-flex", "justify-content-between");
 
             productRow.innerHTML = `
-                <span><strong>${product.name}</strong> - ${product.quantity} pcs @ ${product.unitPrice.toFixed(2)} per unit</span>
-                <span class="badge bg-success">Total: ${product.totalPrice.toFixed(2)}</span>
+                <span><strong>${product.name}</strong> - ${product.quantity} pcs @ ${product.area.toFixed(2)} per unit</span>
+                <span class="badge bg-success">Total: ${product.totalArea.toFixed(2)}</span>
             `;
             container.appendChild(productRow);
         });
+        let totalAreaSum = selectedList.reduce((sum, product) => sum + (product.totalArea || 0), 0);
+        let totalAreaRow = document.createElement("div");
+totalAreaRow.classList.add("selected-product-total-area", "mt-2", "fw-bold", "text-end");
+totalAreaRow.innerHTML = `Total Area: <span class="text-primary">${totalAreaSum.toFixed(2)} m²</span>`;
+container.appendChild(totalAreaRow);
 
-        console.log("✅ UI Updated with selected products:", selectedList);
+
+
+    console.log("✅ UI Updated with selected products:", selectedList);
     }
 
     function updateMultiplication(input) {
@@ -1036,6 +1059,13 @@ function removeDetail(button) {
         console.log(`🔄 Updated product quantities with multiplier (${multiplier}x)`);
     }
     
+    function updateFinalAndRentFromGrand() {
+    let grand = parseFloat(document.getElementById('grandAmountPaid').value) || 0;
+    let rent = parseFloat(document.getElementById('RentAmount').value) || 0;
+    let final = grand - rent;
+    document.getElementById('finalAmountPaid').value = final.toFixed(2);
+    applyFinalPrice();
+}
      
     function enableEditSelection(button) {
         console.log("🛠 Enabling Edit Mode...");
@@ -1140,90 +1170,7 @@ document.addEventListener("DOMContentLoaded", function() {
     addDetail(); // Add the first detail section automatically
 });
 
-// document.getElementById("orderForm").addEventListener("submit", function(event) {
-//     let form = this;
 
-//     // Validate final amount
-//     let finalAmount = parseFloat(document.getElementById("finalAmountPaid").value) || 0;
-//     let totalAmount = parseFloat(document.getElementById("totalAmount").textContent.replace("₹", "")) || 0;
-
-//     if (finalAmount <= 0) {
-//         alert("Final amount must be greater than 0");
-//         event.preventDefault();
-//         return;
-//     }
-
-//     // Check if we have any products selected
-//     let hasProducts = false;
-//     Object.values(selectedProductsData).forEach(section => {
-//         if (section.wall.length > 0 || section.floor.length > 0) {
-//             hasProducts = true;
-//         }
-//     });
-
-//     if (!hasProducts) {
-//         alert("No products selected. Please add at least one product.");
-//         event.preventDefault();
-//         return;
-//     }
-
-//     // Remove any previously added hidden inputs
-//     document.querySelectorAll(".hidden-product-input").forEach(input => input.remove());
-
-//     let productsArray = [];
-
-//     // Create a map of product IDs to their final prices from the summary table
-//     let productFinalPrices = {};
-//     document.querySelectorAll('.final-price').forEach(cell => {
-//         const productId = cell.getAttribute('data-id');
-//         const finalPrice = parseFloat(cell.textContent.replace('₹', '')) || 0;
-//         productFinalPrices[productId] = finalPrice;
-//     });
-
-//     Object.entries(selectedProductsData).forEach(([sectionId, section]) => {
-//         let detailGroup = document.querySelector(`[data-section-id="${sectionId}"]`);
-//         let multiplier = parseInt(detailGroup?.querySelector(".multiply-order")?.value) || 1;
-
-//         [...section.wall, ...section.floor].forEach(product => {
-//             // Use the current price from the table if available, otherwise use product's total price
-//             const finalPrice = productFinalPrices[product.id] !== undefined
-//                 ? productFinalPrices[product.id]
-//                 : product.totalPrice;
-
-//             productsArray.push({
-//                 id: product.id,
-//                 name: product.name,
-//                 quantity: product.quantity,
-//                 unitPrice: product.unitPrice,
-//                 totalPrice: finalPrice, // Use the final price after any discounts
-//                 multiplier: multiplier
-//             });
-//         });
-//     });
-
-//     // Debugging: Log what's being sent
-//     console.log("📌 Products being sent:", productsArray);
-//     console.log("📌 Final amount being sent:", finalAmount);
-
-//     if (productsArray.length === 0) {
-//         alert("No products found to submit. Please add at least one product.");
-//         event.preventDefault();
-//         return;
-//     }
-
-//     // Add a single hidden field with all products JSON
-//     let input = document.createElement("input");
-//     input.type = "hidden";
-//     input.className = "hidden-product-input";
-//     input.name = "products";
-//     input.value = JSON.stringify(productsArray);
-//     form.appendChild(input);
-
-//     // Make sure the final_price field is set correctly
-//     document.getElementById("final_price").value = finalAmount;
-
-//     console.log("Form submitted with products:", productsArray);
-// });
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -1250,36 +1197,47 @@ document.addEventListener("DOMContentLoaded", () => {
         let productsArray = [];
 
         // Build products array from all detail sections
-        Object.entries(selectedProductsData).forEach(([sectionId, section]) => {
-            let detailGroup = document.querySelector(`[data-section-id="${sectionId}"]`);
-            let multiplier = parseInt(detailGroup?.querySelector(".multiply-order")?.value) || 1;
+      Object.entries(selectedProductsData).forEach(([sectionId, section]) => {
+    console.log("Section ID:", sectionId, "Section Data:", section);
+    let detailGroup = document.querySelector(`[data-section-id="${sectionId}"]`);
+    console.log("Detail Group for section", sectionId, ":", detailGroup);
+    let multiplier = parseInt(detailGroup?.querySelector(".multiply-order")?.value) || 1;
+    console.log("Multiplier for section", sectionId, ":", multiplier);
 
-            // Process both wall and floor products
-            ['wall', 'floor'].forEach(type => {
-                if (section[type] && section[type].length > 0) {
-                    hasProducts = true;
-                    
-                    section[type].forEach(product => {
-                        // Find the corresponding final price from the summary table
-                        let finalPrice = 0;
-                        document.querySelectorAll('.final-price').forEach(cell => {
-                            if (cell.getAttribute('data-id') == product.id) {
-                                finalPrice = parseFloat(cell.textContent.replace('₹', '')) || product.totalPrice;
-                            }
-                        });
+    // Process both wall and floor products
+    ['wall', 'floor'].forEach(type => {
+        console.log("Processing type:", type, "for section", sectionId);
+        if (section[type] && section[type].length > 0) {
+            console.log("Found products for type", type, ":", section[type]);
+            hasProducts = true;
 
-                        productsArray.push({
-                            id: product.id,
-                            name: product.name,
-                            quantity: product.quantity,
-                            unitPrice: product.unitPrice,
-                            totalPrice: finalPrice,
-                            multiplier: multiplier
-                        });
-                    });
-                }
+            section[type].forEach(product => {
+                console.log("Processing product:", product);
+                // Find the corresponding final price from the summary table
+                let finalPrice = 0;
+                document.querySelectorAll('.final-price').forEach(cell => {
+                    if (cell.getAttribute('data-id') == product.id) {
+                        finalPrice = parseFloat(cell.textContent.replace('₹', '')) || product.totalPrice;
+                        console.log("Matched product id", product.id, "with cell", cell, "Final price:", finalPrice);
+                    }
+                });
+
+                let productObj = {
+                    id: product.id,
+                    name: product.name,
+                    quantity: product.quantity,
+                    unitPrice: product.unitPrice,
+                    totalPrice: finalPrice,
+                    multiplier: multiplier
+                };
+                console.log("Pushing product to productsArray:", productObj);
+                productsArray.push(productObj);
             });
-        });
+        } else {
+            console.log("No products found for type", type, "in section", sectionId);
+        }
+    });
+});
 
         if (!hasProducts) {
             alert("No products selected. Please add at least one product.");
@@ -1322,175 +1280,7 @@ document.addEventListener("DOMContentLoaded", () => {
 }); 
 
 
-    //by agrima same.new end
-
-
-    //by agrima
-    // function updateProductPrice(input) {
-    //     const productId = input.getAttribute("data-id");
-    //     const newUnitPrice = parseFloat(input.value) || 0;
-    //     const quantity = parseFloat(input.getAttribute("data-quantity")) || 0;
-        
-    //     // Update the final price immediately
-    //     const row = input.closest('tr');
-    //     const finalPriceCell = row.querySelector('.final-price');
-    //     const newFinalPrice = quantity * newUnitPrice;
-    //     finalPriceCell.textContent = `₹${newFinalPrice.toFixed(2)}`;
-        
-    //     // Update all instances of this product in selectedProductsData
-    //     Object.values(selectedProductsData).forEach(section => {
-    //         [...section.wall, ...section.floor].forEach(product => {
-    //             if (product.id === productId) {
-    //                 product.unitPrice = newUnitPrice;
-    //                 product.totalPrice = product.quantity * newUnitPrice;
-    //             }
-    //         });
-    //     });
-
-    //     // Update the total amount
-    //     updateTotalAmount();
-        
-    //     // Reapply any existing discount
-    //     const finalAmount = document.getElementById("finalAmountPaid").value;
-    //     if (finalAmount && parseFloat(finalAmount) > 0) {
-    //         applyFinalPrice();
-    //     }
-    // }
-
-
-    //by agrima
-    // function updateTotalAmount() {
-    //     let total = 0;
-    //     document.querySelectorAll('.final-price').forEach(cell => {
-    //         total += parseFloat(cell.textContent.replace('₹', '')) || 0;
-    //     });
-    //     document.getElementById("totalAmount").textContent = `₹${total.toFixed(2)}`;
-    //     document.getElementById("finalAmountPaid").value = total.toFixed(2);
-    //     document.getElementById("final_price").value = total.toFixed(2);
-    // }
-
-    //by divya
-    // function applyFinalPrice() {
-    //     let finalAmount = parseFloat(document.getElementById("finalAmountPaid").value) || 0;
-    //     document.getElementById("final_price").value = finalAmount;
-    //     let totalAmount = parseFloat(document.getElementById("totalAmount").textContent.replace("₹", "")) || 0;
-
-    //     if (finalAmount > totalAmount || finalAmount <= 0) {
-    //         console.warn("Invalid final amount. Discount not applied.");
-    //         return;
-    //     }
-
-    //     let discount = totalAmount - finalAmount;
-    //     let allProducts = document.querySelectorAll(".final-price");
-    //     let prices = Array.from(allProducts).map(row => parseFloat(row.getAttribute("data-original-price")) || 0);
-    //     let totalOriginalAmount = prices.reduce((sum, price) => sum + price, 0);
-
-    //     let remainingDiscount = discount;
-    //     let lastIndex = allProducts.length - 1;
-
-    //     allProducts.forEach((row, index) => {
-    //         let originalPrice = prices[index];
-    //         let discountShare = (originalPrice / totalOriginalAmount) * discount;
-
-    //         if (index === lastIndex) {
-    //             discountShare = remainingDiscount; // Adjust the last item's discount
-    //         }
-
-    //         let newPrice = Math.max(originalPrice - discountShare, 0);
-    //         row.textContent = `₹${newPrice.toFixed(2)}`;
-    //         row.setAttribute("data-final-price", newPrice.toFixed(2));
-    //         remainingDiscount -= discountShare;
-    //     });
-
-    //     console.log(`✅ Discount of ₹${discount.toFixed(2)} applied across products.`);
-    // }
-
-    //by agrima
-    // function applyFinalPrice() {
-    //     let finalAmount = parseFloat(document.getElementById("finalAmountPaid").value) || 0;
-    //     document.getElementById("final_price").value = finalAmount;
-    //     let totalAmount = parseFloat(document.getElementById("totalAmount").textContent.replace("₹", "")) || 0;
-
-    //     if (finalAmount > totalAmount || finalAmount <= 0) {
-    //         console.warn("Invalid final amount. Discount not applied.");
-    //         return;
-    //     }
-
-    //     let discount = totalAmount - finalAmount;
-    //     let allProducts = document.querySelectorAll(".final-price");
-    //     let prices = Array.from(allProducts).map(row => parseFloat(row.textContent.replace('₹', '')) || 0);
-    //     let totalOriginalAmount = prices.reduce((sum, price) => sum + price, 0);
-
-    //     let remainingDiscount = discount;
-    //     let lastIndex = allProducts.length - 1;
-
-    //     allProducts.forEach((row, index) => {
-    //         let originalPrice = prices[index];
-    //         let discountShare = (originalPrice / totalOriginalAmount) * discount;
-
-    //         if (index === lastIndex) {
-    //             discountShare = remainingDiscount;
-    //         }
-
-    //         let newPrice = Math.max(originalPrice - discountShare, 0);
-    //         row.textContent = `₹${newPrice.toFixed(2)}`;
-    //         remainingDiscount -= discountShare;
-    //     });
-    // }
-
-    
-
-
-
-    
-
-    //by divya
-    // ✅ Store selected products globally
-     // Store the current detail group for selection
-        // let selectedProductsData = {}; // Store selected products per detail group
-        // let selectedProducts = []; // Store selected products
-        // let selectedProductsWall = [];
-        // let selectedProductsFloor = [];
-        // let currentSelectionType = ''; // 'wall' or 'floor'
-
-    // by divya
-    // document.getElementById("orderForm").addEventListener("submit", function(event) {
-    //     let form = this;
-       
-    //     // ✅ Remove any previously added hidden inputs
-    //     document.querySelectorAll(".hidden-product-input").forEach(input => input.remove());
-
-    //     let productsArray = [];
-
-    //     Object.entries(selectedProductsData).forEach(([sectionId, section]) => {
-    //         let detailGroup = document.querySelector(`[data-section-id="${sectionId}"]`);
-    //         let multiplier = parseInt(detailGroup?.querySelector(".multiply-order")?.value) || 1; // ✅ Fetch multiplier (default 1)
-
-    //         [...section.wall, ...section.floor].forEach(product => {
-    //             productsArray.push({
-    //                 id: product.id,
-    //                 name: product.name,
-    //                 quantity: product.quantity, // ✅ Keep base quantity
-    //                 unitPrice: product.unitPrice,
-    //                 totalPrice: product.totalPrice,
-    //                 multiplier: multiplier // ✅ Ensure multiplier is included
-    //             });
-    //         });
-    //     });
-
-    //     // ✅ Debugging: Check if multiplier is included before submitting
-    //     console.log("📌 Products being sent with multiplier:", productsArray);
-
-    //     // ✅ Add a single hidden field with all products JSON
-    //     let input = document.createElement("input");
-    //     input.type = "hidden";
-    //     input.className = "hidden-product-input";
-    //     input.name = "products";
-    //     input.value = JSON.stringify(productsArray);
-    //     form.appendChild(input);
-
-    //     console.log("🚀 Form Submitted with Products:", productsArray);
-    // });
+ 
 
     </script>
     <style>
@@ -1648,9 +1438,9 @@ document.addEventListener("DOMContentLoaded", () => {
                                      placeholder="Enter rent amount" value="0"
                                      oninput="this.value = this.value.replace(/[^0-9.]/g, ''); applyFinalPrice(); updateGrandAmount();">
  
-<label for="grandAmountPaid" class="form-label"><strong>Grand Amount Paid (₹):</strong></label>
-<input type="text" class="form-control" id="grandAmountPaid" name="grand_amount_paid"
-    placeholder="Grand amount" readonly>                                    </div>
+                                     <label for="grandAmountPaid" class="form-label"><strong>Grand Amount Paid (₹):</strong></label>
+                                     <input type="text" class="form-control" id="grandAmountPaid" name="grand_amount_paid" 
+                                         oninput="this.value = this.value.replace(/[^0-9.]/g, ''); updateFinalAndRentFromGrand();">
                                     <input type="hidden" name="final_price" id="final_price">
                                     <button type="button" class="btn btn-secondary" onclick="prevStep()">Previous</button>
                                     <button type="submit" class="btn btn-success">Submit Order</button>
@@ -1761,9 +1551,9 @@ document.addEventListener("DOMContentLoaded", () => {
                                      oninput="this.value = this.value.replace(/[^0-9.]/g, ''); applyFinalPrice(); updateGrandAmount();">
  
 <label for="grandAmountPaid" class="form-label"><strong>Grand Amount Paid (₹):</strong></label>
-<input type="text" class="form-control" id="grandAmountPaid" name="grand_amount_paid"
-    placeholder="Grand amount" readonly>                                    </div>
-                                    <input type="hidden" name="final_price" id="final_price">
+<input type="text" class="form-control" id="grandAmountPaid" name="grand_amount_paid" 
+oninput="this.value = this.value.replace(/[^0-9.]/g, ''); applyFinalPrice(); updateFinalAmount();">        
+                            <input type="hidden" name="final_price" id="final_price">
                                     <button type="button" class="btn btn-secondary" onclick="prevStep()">Previous</button>
                                     <button type="submit" class="btn btn-success">Submit Order</button>
                                 </div>
