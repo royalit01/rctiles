@@ -158,7 +158,7 @@ $total = $order['final_amount'] + $order['transport_rent'];
                         <th>₹<?= number_format($order['final_amount'],2) ?></th>
                     </tr>
                     <tr>
-                        <th colspan="5" class="text-end">Rent:</th>
+                        <th colspan="5" class="text-end">Freight:</th>
                         <th>₹<?= number_format($order['transport_rent'],2) ?></th>
                     </tr>
                     <tr class="table-dark">

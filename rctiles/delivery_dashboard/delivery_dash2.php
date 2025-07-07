@@ -51,15 +51,20 @@ $deliveredOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.addr
             padding: 20px;
         }
         .status-btn {
-            height: 120px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.2rem;
-            border-radius: 10px !important;
-            position: relative;
-        }
+    width: 100%;
+    min-width: 250px;
+    height: 120px;
+    font-size: 1.4rem;
+    padding: 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px !important;
+    position: relative;
+    margin: 0 auto;
+    margin-right: 45px;
+}
         .btn-count {
             position: absolute;
             top: 10px;
@@ -212,7 +217,7 @@ $deliveredOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.addr
         <th>Storage Area</th>
         <th>Products</th>
         <th>Total Amount</th>
-        <th>Rent</th>
+        <th>Freight</th>
         <th>Amount Details</th>
         
         <th>Collect Amount</th>

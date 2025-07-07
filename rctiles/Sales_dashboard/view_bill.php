@@ -65,7 +65,7 @@ $total = $order['final_amount'] + $order['transport_rent'];
             <?php endforeach ?>
         </tbody>
         <tfoot>
-            <tr><th colspan="5" class="text-end">Rent:</th><th>₹<?= number_format($order['transport_rent'],2) ?></th></tr>
+            <tr><th colspan="5" class="text-end">Freight:</th><th>₹<?= number_format($order['transport_rent'],2) ?></th></tr>
             <tr><th colspan="5" class="text-end">Final Amount Paid:</th><th>₹<?= number_format($order['final_amount'],2) ?></th></tr>
             <tr class="table-dark"><th colspan="5" class="text-end">Grand Total:</th><th>₹<?= number_format($total,2) ?></th></tr>
         </tfoot>

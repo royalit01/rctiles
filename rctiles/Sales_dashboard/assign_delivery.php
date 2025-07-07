@@ -131,7 +131,7 @@ $result = $stmt->get_result();
                 <th>#</th>
                 <th>Customer / Phone</th>
                 <th>Total (₹)</th>
-                <th>Rent (₹)</th>
+                <th>Freight (₹)</th>
                 <th>Delivery Person</th>
                 <th>Status</th>
                 <th class="text-center">Actions</th>

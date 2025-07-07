@@ -145,7 +145,7 @@ $sql = "SELECT o.order_id, c.name customer, c.phone_no, o.discounted_amount, o.t
                 <th>#</th>
                 <th>Customer / Phone</th>
                 <th>Total (₹)</th>
-                <th>Rent (₹)</th>
+                <th>Freight (₹)</th>
                 <th>Delivery Person</th>
                 <th>Status</th>
                 <th class="text-center">Actions</th>
