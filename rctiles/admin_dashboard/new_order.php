@@ -303,15 +303,15 @@ include '../db_connect.php';
             ? parseFloat(detailGroup.querySelector('.wall-area').textContent) || 0 
             : parseFloat(detailGroup.querySelector('.floor-area').textContent) || 0;
 
-        if (!selectedCategory) {
-            alert(`Please select a ${type} category before choosing a product.`);
-            return;
-        }
+        // if (!selectedCategory) {
+        //     alert(`Please select a ${type} category before choosing a product.`);
+        //     return;
+        // }
 
-        if (totalArea <= 0) {
-            alert(`Total ${type} area must be greater than 0 to choose a product.`);
-            return;
-        }
+        // if (totalArea <= 0) {
+        //     alert(`Total ${type} area must be greater than 0 to choose a product.`);
+        //     return;
+        // }
 
         document.getElementById("selectedCategoryName").textContent = categorySelect.options[categorySelect.selectedIndex].text;
         document.getElementById("selectedTotalArea").textContent = totalArea.toFixed(2) + " m²";
@@ -331,7 +331,7 @@ include '../db_connect.php';
     }
 
     function fetchProducts(categoryId, totalArea, preSelectedProducts = []) {
-        fetch(`fetch_products.php?category_id=${categoryId}&total_area=${totalArea}`)
+        fetch(`fetch_products.php?category_id=${categoryId}&total_area=100`)
             .then(response => response.json())
             .then(data => {
                 console.log("📦 Fetched Products:", data);
@@ -1622,7 +1622,8 @@ document.addEventListener("DOMContentLoaded", () => {
                                         <tbody id="summaryBody"></tbody>
                                         <tfoot>
                                             <tr>
-                                                <th colspan="3" class="text-end">Total Amount:</th>
+                                                    <td colspan="2" class="border-0"></td> 
+                                                <th  class="text-end">Total Amount:</th>
                                                 <th id="totalAmount">₹0.00</th>
                                             </tr>
                                         </tfoot>
