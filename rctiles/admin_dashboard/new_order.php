@@ -61,46 +61,46 @@ include '../db_connect.php';
     // Step 2: Order Details validation
     if (currentStep.id === 'step2') {
         let allValid = true;
-        document.querySelectorAll('.dimension-group').forEach(group => {
-            // --- Wall area fields ---
-            const wallLength = parseFloat(group.querySelector('input[name="wall_lengths[]"]').value) || 0;
-            const wallWidth = parseFloat(group.querySelector('input[name="wall_widths[]"]').value) || 0;
-            const wallHeight = parseFloat(group.querySelector('input[name="wall_heights[]"]').value) || 0;
-            const wallCategory = group.querySelector('.wall-category-select').value;
+        // document.querySelectorAll('.dimension-group').forEach(group => {
+        //     // --- Wall area fields ---
+        //     const wallLength = parseFloat(group.querySelector('input[name="wall_lengths[]"]').value) || 0;
+        //     const wallWidth = parseFloat(group.querySelector('input[name="wall_widths[]"]').value) || 0;
+        //     const wallHeight = parseFloat(group.querySelector('input[name="wall_heights[]"]').value) || 0;
+        //     const wallCategory = group.querySelector('.wall-category-select').value;
 
-            // --- Floor area fields ---
-            const floorLength = parseFloat(group.querySelector('input[name="floor_lengths[]"]').value) || 0;
-            const floorWidth = parseFloat(group.querySelector('input[name="floor_widths[]"]').value) || 0;
-            const floorCategory = group.querySelector('.floor-category-select').value;
+        //     // --- Floor area fields ---
+        //     const floorLength = parseFloat(group.querySelector('input[name="floor_lengths[]"]').value) || 0;
+        //     const floorWidth = parseFloat(group.querySelector('input[name="floor_widths[]"]').value) || 0;
+        //     const floorCategory = group.querySelector('.floor-category-select').value;
 
-            // --- Check if wall area is filled properly ---
-            const wallFilled = (wallLength > 0 && wallWidth > 0 && wallHeight > 0 && wallCategory);
+        //     // --- Check if wall area is filled properly ---
+        //     const wallFilled = (wallLength > 0 && wallWidth > 0 && wallHeight > 0 && wallCategory);
 
-            // --- Check if floor area is filled properly ---
-            const floorFilled = (floorLength > 0 && floorWidth > 0 && floorCategory);
+        //     // --- Check if floor area is filled properly ---
+        //     const floorFilled = (floorLength > 0 && floorWidth > 0 && floorCategory);
 
-            // --- At least one (wall or floor) must be filled properly ---
-            if (!wallFilled && !floorFilled) {
-                allValid = false;
-                // Highlight missing fields (optional)
-                if (!wallFilled) {
-                    group.querySelectorAll('input[name="wall_lengths[]"], input[name="wall_widths[]"], input[name="wall_heights[]"]').forEach(inp => inp.classList.add('is-invalid'));
-                    group.querySelector('.wall-category-select').classList.add('is-invalid');
-                }
-                if (!floorFilled) {
-                    group.querySelectorAll('input[name="floor_lengths[]"], input[name="floor_widths[]"]').forEach(inp => inp.classList.add('is-invalid'));
-                    group.querySelector('.floor-category-select').classList.add('is-invalid');
-                }
-            } else {
-                // Remove highlights if valid
-                group.querySelectorAll('input, select').forEach(inp => inp.classList.remove('is-invalid'));
-            }
-        });
+        //     // --- At least one (wall or floor) must be filled properly ---
+        //     if (!wallFilled && !floorFilled) {
+        //         allValid = false;
+        //         // Highlight missing fields (optional)
+        //         if (!wallFilled) {
+        //             group.querySelectorAll('input[name="wall_lengths[]"], input[name="wall_widths[]"], input[name="wall_heights[]"]').forEach(inp => inp.classList.add('is-invalid'));
+        //             group.querySelector('.wall-category-select').classList.add('is-invalid');
+        //         }
+        //         if (!floorFilled) {
+        //             group.querySelectorAll('input[name="floor_lengths[]"], input[name="floor_widths[]"]').forEach(inp => inp.classList.add('is-invalid'));
+        //             group.querySelector('.floor-category-select').classList.add('is-invalid');
+        //         }
+        //     } else {
+        //         // Remove highlights if valid
+        //         group.querySelectorAll('input, select').forEach(inp => inp.classList.remove('is-invalid'));
+        //     }
+        // });
 
-        if (!allValid) {
-            alert("(Items must have complete wall OR floor specifications with their category.");
-            return;
-        }
+        // if (!allValid) {
+        //     alert("(Items must have complete wall OR floor specifications with their category.");
+        //     return;
+        // }
 
         // Move to next step if valid
         let nextStep = currentStep.nextElementSibling;
@@ -140,29 +140,32 @@ include '../db_connect.php';
                 <input type="text" class="form-control" name="titles[]" placeholder="Enter location name" required>
             </div>
 
-            <div class="row">
-                <div class="col-md-4">
-                    <label class="form-label">Wall Length (ft²) </label>
-                    <input type="number" class="form-control" name="wall_lengths[]" step="0.1" min="0" oninput="calculateAreas(this)">
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Wall Width (ft²) </label>
-                    <input type="number" class="form-control" name="wall_widths[]" step="0.1" min="0" oninput="calculateAreas(this)">
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Wall Height (ft²) </label>
-                    <input type="number" class="form-control" name="wall_heights[]" step="0.1" min="0" oninput="calculateAreas(this)">
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Door Area (ft²) </label>
-                    <input type="number" class="form-control" name="door_areas[]" step="0.1" min="0" oninput="calculateAreas(this)">
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Window Area (ft²) </label>
-                    <input type="number" class="form-control" name="window_areas[]" step="0.1" min="0" oninput="calculateAreas(this)">
-                </div>
-            
-            </div>
+   
+<!-- REMOVE the following block (Wall/Floor input row): -->
+<!--
+<div class="row">
+    <div class="col-md-4">
+        <label class="form-label">Wall Length (ft²) </label>
+        <input type="number" class="form-control" name="wall_lengths[]" step="0.1" min="0" oninput="calculateAreas(this)">
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Wall Width (ft²) </label>
+        <input type="number" class="form-control" name="wall_widths[]" step="0.1" min="0" oninput="calculateAreas(this)">
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Wall Height (ft²) </label>
+        <input type="number" class="form-control" name="wall_heights[]" step="0.1" min="0" oninput="calculateAreas(this)">
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Door Area (ft²) </label>
+        <input type="number" class="form-control" name="door_areas[]" step="0.1" min="0" oninput="calculateAreas(this)">
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Window Area (ft²) </label>
+        <input type="number" class="form-control" name="window_areas[]" step="0.1" min="0" oninput="calculateAreas(this)">
+    </div>
+</div>
+-->
         
 
             <p class="mt-2"><strong>Wall Area:</strong> <span class="wall-area">0.00 ft²</span></p>
@@ -299,17 +302,14 @@ include '../db_connect.php';
         }
 
         const selectedCategory = categorySelect.value;
-        const totalArea = type === 'wall' 
-            ? parseFloat(detailGroup.querySelector('.wall-area').textContent) || 0 
-            : parseFloat(detailGroup.querySelector('.floor-area').textContent) || 0;
+        // Allow area to be zero or missing, but default to 1 if not a number
+        let totalArea = type === 'wall' 
+            ? parseFloat(detailGroup.querySelector('.wall-area')?.textContent) 
+            : parseFloat(detailGroup.querySelector('.floor-area')?.textContent);
+        if (isNaN(totalArea) || totalArea < 0) totalArea = 1;
 
         if (!selectedCategory) {
             alert(`Please select a ${type} category before choosing a product.`);
-            return;
-        }
-
-        if (totalArea <= 0) {
-            alert(`Total ${type} area must be greater than 0 to choose a product.`);
             return;
         }
 
@@ -331,7 +331,7 @@ include '../db_connect.php';
     }
 
     function fetchProducts(categoryId, totalArea, preSelectedProducts = []) {
-        fetch(`fetch_products.php?category_id=${categoryId}&total_area=${totalArea}`)
+        fetch(`fetch_products.php?category_id=${categoryId}`)
             .then(response => response.json())
             .then(data => {
                 console.log("📦 Fetched Products:", data);
@@ -1130,8 +1130,6 @@ function removeDetail(button) {
 
         console.log("✅ Edit Mode Disabled. Selections Saved.");
     }
-//by divya end
-
 //by agrima same.new start
 document.addEventListener("DOMContentLoaded", function() {
     addDetail(); // Add the first detail section automatically
@@ -1597,7 +1595,6 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <!-- Step 3: Summary Page -->
                                 <div class="form-step" id="step3">
                                     <h5>Selected Products Summary</h5>
-
                                      <div class="mb-3">
                                     <label class="form-label">Phone Number <span style="color:red">*</span> </label>
                                      <input type="tel" class="form-control" name="phone_no" pattern="\d{10}" title="Please enter exactly 10 digits" required oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">

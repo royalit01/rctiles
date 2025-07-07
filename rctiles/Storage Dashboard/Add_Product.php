@@ -39,6 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $piecesPerPacket = $_POST['piecesPerPacket'];
     $quantity = $_POST['quantity'];
     $storageAreaId = $_POST['storageArea'];
+    $area = $_POST['insertArea'];
     $minStockLevel = $_POST['minStockLevel'];
     $uploadPath = '../uploads/default_img.png'; // Set default image path
 
@@ -81,10 +82,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         // Insert product into the `products` table
-        $product_sql = "INSERT INTO products (product_name, description, category_id, supplier_id, price, cost_price,product_image, status)
-                        VALUES (?, ?, ?, ?, ?, ?,?, ?)";
+        $product_sql = "INSERT INTO products (product_name, description, category_id, supplier_id, price, cost_price,product_image, area, status)
+                        VALUES (?, ?, ?, ?, ?, ?,?,?, ?)";
         $product_stmt = $mysqli->prepare($product_sql);
-        $product_stmt->bind_param("ssiiidss", $productName, $description, $category_id, $supplier_id, $price, $costPrice,$uploadPath, $status);
+        // Corrected bind_param order and types for 9 fields: product_name, description, category_id, supplier_id, price, cost_price, product_image, area, status
+        $product_stmt->bind_param("ssiiidsss", $productName, $description, $category_id, $supplier_id, $price, $costPrice, $uploadPath, $area, $status);
         if (!$product_stmt->execute()) {
             throw new Exception("Error adding product: " . $mysqli->error);
         }
@@ -289,6 +291,10 @@ $mysqli->close();
                                     <?php endforeach; ?>
                                 </select>
                             </div>
+                                                    <div class="mb-3">
+    <label for="insertArea" class="form-label fw-medium text-secondary" style="font-weight: 550;">Insert Area</label>
+    <input type="text" class="form-control rounded-3 py-2" id="insertArea" name="insertArea" required>
+</div>
                             <div class="mb-3">
                                 <label for="minStockLevel" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Minimum Stock Level</label>
                                 <input type="number" class="form-control rounded-3 py-2" id="minStockLevel" name="minStockLevel" value="7" required>
@@ -297,10 +303,7 @@ $mysqli->close();
                                 <label for="productImage" class="form-label fw-medium text-secondary" style=" font-weight: 550;">Product Image  </label>
                                 <input type="file" class="form-control custom-file-input" id="productImage" name="productImage" >
                             </div>
-                            <div class="mb-3">
-    <label for="insertArea" class="form-label fw-medium text-secondary" style="font-weight: 550;">Insert Area</label>
-    <input type="text" class="form-control rounded-3 py-2" id="insertArea" name="insertArea" required>
-</div>
+    
                             <div class="text-center">
                             <button type="submit" class="btn gradient-btn btn-primary mb-4"><i class="fas fa-plus text-white me-2"></i>Add Product</button>
                             </div>
