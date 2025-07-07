@@ -63,21 +63,29 @@ if ($filter_user) {
     $types       .= 'i';
 }
 if ($search_text !== '') {
-    // search across product_name, description, user_name
-    $conditions[] = "(p.product_name LIKE ? OR t.description LIKE ? OR u.name LIKE ?)";
+    $conditions[] = "(p.product_name LIKE ? OR t.description LIKE ? OR u.name LIKE ? OR c.category_name LIKE ?)";
     $like         = "%{$search_text}%";
     $params[]     = $like;
     $params[]     = $like;
     $params[]     = $like;
-    $types       .= 'sss';
+    $params[]     = $like;
+    $types       .= 'ssss'; 
 }
+
 
 if ($conditions) {
     $query .= ' WHERE ' . implode(' AND ', $conditions);
 }
 
 // For pagination: get total count
-$count_query = "SELECT COUNT(*) as total FROM transactions t ";
+$count_query = "
+  SELECT COUNT(*) as total 
+  FROM transactions t
+  JOIN users u   ON t.user_id = u.user_id
+  LEFT JOIN products p  ON t.product_id = p.product_id
+  LEFT JOIN category c  ON p.category_id = c.category_id
+  LEFT JOIN storage_areas s ON t.storage_area_id = s.storage_area_id
+";
 if ($conditions) {
     $count_query .= ' WHERE ' . implode(' AND ', $conditions);
 }
