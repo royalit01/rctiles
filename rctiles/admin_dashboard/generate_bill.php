@@ -477,7 +477,7 @@ function downloadPDF() {
 
     
     // Company Name beside logo
-    doc.setFont("NanoSansDevanagari", "bold").setFontSize(24);
+    doc.setFont("NanoSansDevanagari", "bold").setFontSize(28);
     doc.text("राम-श्याम सेरािमक मॉल", logoX + logoWidth + 10, 20);
 
     // Slogan
@@ -486,14 +486,14 @@ function downloadPDF() {
     doc.text("टाइल्स एवं सेनेटरी के होलसेल और िरटेल व्यापारी", logoX + logoWidth + 10, 28);
 
     // Phone numbers on top right
-doc.setFontSize(13); // Slightly larger
-doc.setTextColor(30, 64, 175); // Tailwind 'blue-800' = dark blue
+      doc.setFontSize(13); // Slightly larger
+     doc.setTextColor(30, 64, 175); // Tailwind 'blue-800' = dark blue
 
-doc.text("83193-73859, 96911-69666", 190, 8, { align: "right" }); // Moved up from y=10 to y=8
-doc.text("88390-02043, 79744-79003", 190, 13, { align: "right" });
+     doc.text("83193-73859, 96911-69666", 190, 8, { align: "right" }); // Moved up from y=10 to y=8
+     doc.text("88390-02043, 79744-79003", 190, 13, { align: "right" });
 
     const marginX = 14;
-const barWidth = 210 - marginX * 2;
+     const barWidth = 210 - marginX * 2;
     // Bottom red bar for address
     doc.setFillColor(220, 38, 38); // Slightly darker red
     doc.rect(marginX, 40, barWidth, 10, 'F');
@@ -588,7 +588,7 @@ const barWidth = 210 - marginX * 2;
             font: "NanoSansDevanagari"
         },
         headStyles: {
-            fillColor: [220, 38, 38],
+            fillColor: [30, 64, 175],
             textColor: 255,
             fontStyle: 'bold',
             cellPadding: {top: 5, right: 2, bottom: 5, left: 2},
@@ -638,7 +638,7 @@ const barWidth = 210 - marginX * 2;
             font: "NanoSansDevanagari"
         },
         headStyles: {
-            fillColor: [220, 38, 38], // Vibrant red
+            fillColor: [30, 64, 175], // Vibrant red
             textColor: 255,
             fontStyle: 'bold'
         },
@@ -647,7 +647,7 @@ const barWidth = 210 - marginX * 2;
         },
         didParseCell: function (data) {
             if (data.section === 'body' && data.row.index === 3) {
-                data.cell.styles.fillColor = [220, 38, 38]; // Red for total row
+                data.cell.styles.fillColor = [30, 64, 175]; // Red for total row
                 data.cell.styles.textColor = 255; // White text
                 data.cell.styles.fontStyle = 'bold';
             }
@@ -676,30 +676,34 @@ const barWidth = 210 - marginX * 2;
     //  doc.setTextColor(220, 38, 38);
     //  doc.text("िववरण", 14, footerY); // Hindi translation
 
-    doc.setFont("NanoSansDevanagari", "bold");
-    doc.setTextColor(220, 38, 38);
-    const descriptionLines = [
-        "*फ्लोर टाइल्स चेक करके लगायें, लगाने के बाद हमारी कोई भी  िजम्मेदारी नहीं रहेगी।", // Hindi translation
-        "*माल वापसी का समय 2 से 4 बजे तक। ( बेचा हुआ माल 15  िदन के अंदर स्टॉक होने पर ही वापस होगा।)", // Hindi translation
-        "*माल दुकान पर वापसी करने पर लो िडग-अनलो िडग का भाड़ा देना होगा।" // Hindi translation
-    ];
+   // Signature Section comes FIRST
+doc.setFont("NanoSansDevanagari", "normal");
+const signY = descY; // Use original descY for signature placement
+doc.setFillColor(240, 240, 240);
+doc.roundedRect(14, signY, 60, 30, 2, 2, 'F');
+doc.setDrawColor(150, 0, 0);
+doc.setLineWidth(0.5);
+doc.roundedRect(14, signY, 60, 30, 2, 2, 'S');
 
-    descriptionLines.forEach((line, index) => {
-        doc.text(line, 14, descY  + (index * 5));
-    });
+doc.setFontSize(10).setTextColor(0, 0, 0);
+doc.text("के िलए - राम श्याम सिरेमिक मॉल", 19, signY + 10);
+doc.text("अधिकृत हस्ताक्षर", 19, signY + 20);
 
-    // Signature Section
-    const signY = descY + 18; // Increased spacing
-    doc.setFillColor(240, 240, 240);
-    doc.roundedRect(14, signY, 60, 30, 2, 2, 'F');
-    doc.setDrawColor(150, 0, 0);
-    doc.setLineWidth(0.5);
-    doc.roundedRect(14, signY, 60, 30, 2, 2, 'S');
+// Now add the bullet/description lines AFTER signature
+doc.setFont("NanoSansDevanagari", "bold");
+doc.setTextColor(220, 38, 38);
 
-    doc.setFontSize(10).setFont("NanoSansDevanagari", "normal");
-    doc.setTextColor(0, 0, 0);
-    doc.text("के िलए - राम श्याम सिरेमिक मॉल", 19, signY + 10); // Hindi translation
-    doc.text("अधिकृत हस्ताक्षर", 19, signY + 20); // Hindi translation
+const descriptionY = signY + 38; // Add spacing after signature box
+const descriptionLines = [
+    "*फ्लोर टाइल्स चेक करके लगायें, लगाने के बाद हमारी कोई भी  िजम्मेदारी नहीं रहेगी।",
+    "*माल वापसी का समय 2 से 4 बजे तक। ( बेचा हुआ माल 15  िदन के अंदर स्टॉक होने पर ही वापस होगा।)",
+    "*माल दुकान पर वापसी करने पर लो िडग-अनलो िडग का भाड़ा देना होगा।"
+];
+
+descriptionLines.forEach((line, index) => {
+    doc.text(line, 14, descriptionY + (index * 5));
+});
+// Hindi translation
 
     
 
