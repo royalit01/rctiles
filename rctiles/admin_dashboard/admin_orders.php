@@ -299,11 +299,11 @@ $result = $mysqli->query($sql);
                             </div>
                             <div class="card-row">
                                 <span class="card-label">Original Price:</span>
-                                <span class="card-value">₹<?= number_format($row['custom_total'], 2) ?></span>
+                                <span class="card-value">₹<?= number_format($row['total_amount'], 2) ?></span>
                             </div>
                             <div class="card-row">
                                 <span class="card-label">Custom Price:</span>
-                                <span class="card-value">₹<?= number_format($row['total_amount'], 2) ?></span>
+                                <span class="card-value">₹<?= number_format($row['custom_total'], 2) ?></span>
                             </div>
                             <div class="card-row">
                                 <span class="card-label">Status:</span>

@@ -33,6 +33,15 @@ if (isset($_POST['updateCategory'])) {
     }
 }
 
+// Fetch all categories from the database
+
+$result = $mysqli->query("SELECT * FROM category");
+
+// Calculate total category count
+$countResult = $mysqli->query("SELECT COUNT(*) as total FROM category");
+$totalCategories = $countResult->fetch_assoc()['total'];
+// ...existing code...
+
 ?>
 
 
@@ -64,9 +73,11 @@ if (isset($_POST['updateCategory'])) {
 
                         <button class="btn btn-primary btn-sm mb-3" style="max-width: 200px;min-height:40px" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
   <i class="fas fa-plus me-1"></i> Add New Category
-</button>
+</button>         <p class="fw-bold mb-2" style="font-size: 1.5rem;">Total Categories: <?php echo $totalCategories; ?></p>
+
                         <!-- Add Category Modal -->
                         <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+                            
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header">

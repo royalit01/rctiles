@@ -147,7 +147,7 @@ include '../db_connect.php';
             
             <div class="mb-2">
                 <label class="form-label">Title (e.g., Washroom 1, Kitchen, etc.) </label>
-                <input type="text" class="form-control" name="titles[]" placeholder="Enter location name" required>
+                <input type="text" class="form-control" name="titles[]" placeholder="Enter location name">
             </div>
 
    
@@ -1120,8 +1120,9 @@ function removeDetail(button) {
     let finalAmount = parseFloat(document.getElementById('finalAmountPaid').value) || 0;
     let rentAmount = parseFloat(document.getElementById('RentAmount').value) || 0;
     let grandAmount = finalAmount + rentAmount;
-    document.getElementById('grandAmountPaid').value = grandAmount.toFixed(2);
-    }
+    // ...inside updateGrandAmount()...
+    document.getElementById('grandAmountPaid').value = grandAmount ? grandAmount : '';
+   }
 
     function saveEditedSelection(button) {
         console.log("✅ Saving Edited Selection...");
