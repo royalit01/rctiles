@@ -1337,6 +1337,9 @@ document.addEventListener("DOMContentLoaded", () => {
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
+        .summary-table tfoot tr {
+    border-bottom: none; /* Remove only the bottom border */
+}
     </style>
 </head>
 

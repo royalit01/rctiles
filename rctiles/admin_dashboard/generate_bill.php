@@ -459,48 +459,57 @@ function downloadPDF() {
     doc.addFont("NanoSansDevanagari-Bold.ttf", "NanoSansDevanagari", "bold");
     doc.setFont("NanoSansDevanagari");
 
-    // ---------- Top Header Section with Dark Gray Background ----------
-    doc.setFillColor(220, 38, 38); // Dark gray background
-    doc.rect(0, 0, 210, 40, 'F');
+    // Set red background header
+    doc.setFillColor(255, 255, 255); // Tailwind red-600
+    doc.rect(0, 0, 210, 40, 'F'); // Full width header
 
-    // Left side content (gray bar)
-    doc.setFontSize(10).setFont("NanoSansDevanagari", "bold");
-    doc.setTextColor(255, 255, 255); // White text
-
-    // RC Industries name (left side)
-    doc.text("आरसी इंडस्ट्रीज", 15, 12); // Hindi translation
-
-    // GST and State (left side)
-    doc.setFontSize(8).setFont("NanoSansDevanagari", "bold");
-    doc.text("GSTIN: 23AAKFRB273NTZJ", 15, 17);
-    doc.text("राज्य: 23-मध्य प्रदेश", 15, 22); // Hindi translation
-
-    // Center the logo (if needed)
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const logoWidth = 30;
-    const logoHeight = 20;
-    const logoX = (pageWidth - logoWidth) / 2;
+    // Logo on the left
+    const logoX = 10;
     const logoY = 5;
-
-    // Add logo if you have it
+    
+    const logoWidth = 25;
+    const logoHeight = 20;
     doc.addImage(logoBase64, 'JPEG', logoX, logoY, logoWidth, logoHeight);
 
-    // Right-aligned contact information
-    doc.setFontSize(10).setFont("NanoSansDevanagari", "normal");
-    doc.setTextColor(255, 255, 255); // White text
-    const rightMargin = 195;
-    doc.text("फोन:  096303 48683", rightMargin, 12, { align: "right" }); // Hindi translation
-    doc.text("ईमेल: rc@gmail.com", rightMargin, 17, { align: "right" }); // Hindi translation
+    // SINCE 1996 below logo
+    doc.setFont("NanoSansDevanagari", "normal").setFontSize(8).setTextColor(220, 38, 38);
+    doc.text("SINCE 1996", logoX + 8, logoY + logoHeight + 4);
+
+    
+    // Company Name beside logo
+    doc.setFont("NanoSansDevanagari", "bold").setFontSize(28);
+    doc.text("राम-श्याम सेरािमक मॉल", logoX + logoWidth + 10, 20);
+
+    // Slogan
+    doc.setFont("NanoSansDevanagari", "bold").setFontSize(12);
+    doc.setTextColor(30, 64, 175);
+    doc.text("टाइल्स एवं सेनेटरी के होलसेल और िरटेल व्यापारी", logoX + logoWidth + 10, 28);
+
+    // Phone numbers on top right
+      doc.setFontSize(13); // Slightly larger
+     doc.setTextColor(30, 64, 175); // Tailwind 'blue-800' = dark blue
+
+     doc.text("83193-73859, 96911-69666", 190, 8, { align: "right" }); // Moved up from y=10 to y=8
+     doc.text("88390-02043, 79744-79003", 190, 13, { align: "right" });
+
+    const marginX = 14;
+     const barWidth = 210 - marginX * 2;
+    // Bottom red bar for address
+    doc.setFillColor(220, 38, 38); // Slightly darker red
+    doc.rect(marginX, 40, barWidth, 10, 'F');
+
+    doc.setTextColor(255, 255, 255).setFontSize(10).setFont("NanoSansDevanagari", "bold");
+    doc.text("बड़ा तेलीवाड़ा चौराहा, अंकपात मार्ग, उज्जैन (म.प्र.)", 105, 46.5, { align: "center" });
 
     // ---------- Document Header Sections ----------
-    const startY = 40; // Added top margin
+    const startY = 59; // Added top margin
     doc.setFontSize(10).setFont("NanoSansDevanagari", "bold");
-    doc.setTextColor(150, 0, 0); // Reddish header
-    doc.text("बिल के लिए", 14, startY); // Hindi translation
+    doc.setTextColor(220, 38, 38); // Reddish header
+    doc.text("िबल", 14, startY); // Hindi translation
 
     // Dynamic Customer Details
-    try {
-        doc.setFontSize(15).setFont("NanoSansDevanagari", "bold");
+    // try {
+        doc.setFontSize(10).setFont("NanoSansDevanagari", "normal");
         doc.setTextColor(0, 0, 0);
         const customerName = document.querySelector(".col-md-4.col-12.mb-2 strong").nextSibling.nodeValue.trim();
         doc.text(customerName, 14, startY + 7);
@@ -517,34 +526,34 @@ function downloadPDF() {
         });
 
         // GSTIN and State
-        doc.setFont("NanoSansDevanagari", "bold");
-        doc.setTextColor(10, 10, 10);
-        doc.text("GSTIN नंबर: ", 14, addressY + 1); // Hindi translation
-        doc.text("राज्य: ", 14, addressY + 8); // Hindi translation
+        // doc.setFont("NanoSansDevanagari", "bold");
+        // doc.setTextColor(10, 10, 10);
+        // doc.text("GSTIN नंबर: ", 14, addressY + 1); // Hindi translation
+        // doc.text("राज्य: ", 14, addressY + 8); // Hindi translation
 
-        doc.setFont("NanoSansDevanagari", "normal");
-        const gstinX = 14 + doc.getTextWidth("GSTIN नंबर: ");
-        const stateX = 14 + doc.getTextWidth("राज्य: ");
+        // doc.setFont("NanoSansDevanagari", "normal");
+        // const gstinX = 14 + doc.getTextWidth("GSTIN नंबर: ");
+        // const stateX = 14 + doc.getTextWidth("राज्य: ");
 
-        doc.text("23AAYCAG150A1ZV", gstinX, addressY + 1);
-        doc.text("23-मध्य प्रदेश", stateX, addressY + 8);
+        // doc.text("23AAYCAG150A1ZV", gstinX, addressY + 1);
+        // doc.text("23-मध्य प्रदेश", stateX, addressY + 8);
 
-    } catch (e) {
-        console.error("Error loading customer data:", e);
-        doc.setFontSize(12).setFont("NanoSansDevanagari", "semibold");
-        doc.text("ग्राहक डेटा लोडिंग त्रुटि", 14, startY + 7); // Hindi translation
-    }
+    // } catch (e) {
+    //     console.error("Error loading customer data:", e);
+    //     doc.setFontSize(12).setFont("NanoSansDevanagari", "semibold");
+    //     doc.text("ग्राहक डेटा लोडिंग त्रुटि", 14, startY + 7); // Hindi translation
+    // }
 
     // ---------- Tax Invoice Box ----------
-    const invoiceY = startY + 5;
+    const invoiceY = startY;
     doc.setFontSize(10).setFont("NanoSansDevanagari", "bold");
-    doc.setTextColor(150, 0, 0);
+    doc.setTextColor(220, 38, 38);
     doc.text("कर चालान", 140, invoiceY); // Hindi translation
 
     doc.setFontSize(10).setFont("NanoSansDevanagari", "normal");
     doc.setTextColor(0, 0, 0);
     doc.text("चालान संख्या: " + <?= (int)$order_id ?>, 140, invoiceY + 7); // Dynamic invoice number
-    doc.text("तारीख: " + new Date().toLocaleDateString(), 140, invoiceY + 14); // Current date
+    doc.text("िदनांक: " + new Date().toLocaleDateString(), 140, invoiceY + 14); // Current date
 
     // Horizontal line separator
     const separatorY = startY + 32;
@@ -565,7 +574,7 @@ function downloadPDF() {
     });
 
     doc.autoTable({
-        head: [["#", "आइटम का नाम", "मात्रा", "इकाई", "प्रति इकाई मूल्य", "राशि"]], // Hindi translations
+        head: [["#", "िववरण", "मात्रा", "इकाई", "रेट", "रािश"]], // Hindi translations
         body: tableBody,
         startY: 80,
         margin: { left: 14 },
@@ -579,7 +588,7 @@ function downloadPDF() {
             font: "NanoSansDevanagari"
         },
         headStyles: {
-            fillColor: [220, 38, 38],
+            fillColor: [30, 64, 175],
             textColor: 255,
             fontStyle: 'bold',
             cellPadding: {top: 5, right: 2, bottom: 5, left: 2},
@@ -610,12 +619,12 @@ function downloadPDF() {
         ["भाड़ा", `₹${rentAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`],
         ["छूट", `₹${discountAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`],
         ["कुल", `₹${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`],
-        ["भुगतान की गई राशि", `₹${paidAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`],
-        ["शेष राशि", `₹${remainingAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`],
+        ["भुगतान की गई रािश", `₹${paidAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`],
+        ["शेष रािश", `₹${remainingAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`],
     ];
 
     doc.autoTable({
-        head: [["विवरण", "राशि"]],
+        head: [["िववरण", "रािश"]],
         body: taxSummaryBody,
         startY: taxSummaryY,
         margin: { left: 130 },
@@ -629,7 +638,7 @@ function downloadPDF() {
             font: "NanoSansDevanagari"
         },
         headStyles: {
-            fillColor: [220, 38, 38], // Vibrant red
+            fillColor: [30, 64, 175], // Vibrant red
             textColor: 255,
             fontStyle: 'bold'
         },
@@ -638,7 +647,7 @@ function downloadPDF() {
         },
         didParseCell: function (data) {
             if (data.section === 'body' && data.row.index === 3) {
-                data.cell.styles.fillColor = [220, 38, 38]; // Red for total row
+                data.cell.styles.fillColor = [30, 64, 175]; // Red for total row
                 data.cell.styles.textColor = 255; // White text
                 data.cell.styles.fontStyle = 'bold';
             }
@@ -649,51 +658,54 @@ function downloadPDF() {
     });
 
     // ---------- Footer Section ----------
-    const footerY = 190; // Position for footer
-    doc.setFontSize(10).setFont("NanoSansDevanagari", "bold");
-    doc.setTextColor(150, 0, 0);
-    doc.text("भुगतान करें:", 14, footerY); // Hindi translation
+    const footerY = 210; // Position for footer
+    // doc.setFontSize(10).setFont("NanoSansDevanagari", "bold");
+    // doc.setTextColor(150, 0, 0);
+    // doc.text("भुगतान करें:", 14, footerY); // Hindi translation
 
-    doc.setFont("NanoSansDevanagari", "normal");
-    doc.setTextColor(0, 0, 0);
-    doc.text("बैंक का नाम: Uco Bank, सब्जी मंडी - उज्जैन", 14, footerY + 5); // Hindi translation
-    doc.text("बैंक खाता संख्या: 06860510000335", 14, footerY + 10); // Hindi translation
-    doc.text("बैंक IFSC कोड: UCBA0000686", 14, footerY + 15); // Hindi translation
-    doc.text("खाता धारक का नाम: आरसी इंडस्ट्रीज", 14, footerY + 20); // Hindi translation
+    // doc.setFont("NanoSansDevanagari", "normal");
+    // doc.setTextColor(0, 0, 0);
+    // doc.text("बैंक का नाम: Uco Bank, सब्जी मंडी - उज्जैन", 14, footerY + 5); // Hindi translation
+    // doc.text("बैंक खाता संख्या: 06860510000335", 14, footerY + 10); // Hindi translation
+    // doc.text("बैंक IFSC कोड: UCBA0000686", 14, footerY + 15); // Hindi translation
+    // doc.text("खाता धारक का नाम: आरसी इंडस्ट्रीज", 14, footerY + 20); // Hindi translation
 
     // Description Section
-    const descY = footerY + 29; // Space after Pay To
-    doc.setFont("NanoSansDevanagari", "bold");
-    doc.setTextColor(150, 0, 0);
-    doc.text("विवरण", 14, descY); // Hindi translation
+    const descY = footerY + 15   // Space after Pay To   
+    // doc.setFont("NanoSansDevanagari", "bold");
+    //  doc.setTextColor(220, 38, 38);
+    //  doc.text("िववरण", 14, footerY); // Hindi translation
 
-    doc.setFont("NanoSansDevanagari", "normal");
-    doc.setTextColor(0, 0, 0);
-    const descriptionLines = [
-        "राम श्याम सिरेमिक मॉल", // Hindi translation
-        "शिपिंग पता: 10, बड़ा तेलीवाड़ा, चौराहा", // Hindi translation
-        "उज्जैन, मध्य प्रदेश 456006" // Hindi translation
-    ];
+   // Signature Section comes FIRST
+doc.setFont("NanoSansDevanagari", "normal");
+const signY = descY; // Use original descY for signature placement
+doc.setFillColor(240, 240, 240);
+doc.roundedRect(14, signY, 60, 30, 2, 2, 'F');
+doc.setDrawColor(150, 0, 0);
+doc.setLineWidth(0.5);
+doc.roundedRect(14, signY, 60, 30, 2, 2, 'S');
 
-    descriptionLines.forEach((line, index) => {
-        doc.text(line, 14, descY + 5 + (index * 5));
-    });
+doc.setFontSize(10).setTextColor(0, 0, 0);
+doc.text("के िलए - राम श्याम सिरेमिक मॉल", 19, signY + 10);
+doc.text("अधिकृत हस्ताक्षर", 19, signY + 20);
 
-    // Signature Section
-    const signY = descY + 25; // Increased spacing
-    doc.setFillColor(240, 240, 240);
-    doc.roundedRect(14, signY, 60, 30, 2, 2, 'F');
-    doc.setDrawColor(150, 0, 0);
-    doc.setLineWidth(0.5);
-    doc.roundedRect(14, signY, 60, 30, 2, 2, 'S');
+// Now add the bullet/description lines AFTER signature
+doc.setFont("NanoSansDevanagari", "bold");
+doc.setTextColor(220, 38, 38);
 
-    doc.setFontSize(10).setFont("NanoSansDevanagari", "normal");
-    doc.text("के लिए: आरसी इंडस्ट्रीज", 19, signY + 10); // Hindi translation
-    doc.text("अधिकृत हस्ताक्षर", 19, signY + 20); // Hindi translation
+const descriptionY = signY + 38; // Add spacing after signature box
+const descriptionLines = [
+    "*फ्लोर टाइल्स चेक करके लगायें, लगाने के बाद हमारी कोई भी  िजम्मेदारी नहीं रहेगी।",
+    "*माल वापसी का समय 2 से 4 बजे तक। ( बेचा हुआ माल 15  िदन के अंदर स्टॉक होने पर ही वापस होगा।)",
+    "*माल दुकान पर वापसी करने पर लो िडग-अनलो िडग का भाड़ा देना होगा।"
+];
 
-    // Seal/Stamp
-    doc.setDrawColor(150, 0, 0);
-    doc.circle(80, signY + 15, 10);
+descriptionLines.forEach((line, index) => {
+    doc.text(line, 14, descriptionY + (index * 5));
+});
+// Hindi translation
+
+    
 
     // Save the PDF
     doc.save(`RC_Industries_Invoice_${new Date().toISOString().slice(0, 10)}.pdf`);
