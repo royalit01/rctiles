@@ -487,9 +487,20 @@ include '../db_connect.php';
             container.appendChild(productRow);
         });
         let totalAreaSum = selectedList.reduce((sum, product) => sum + (product.totalArea || 0), 0);
-        let totalAreaRow = document.createElement("div");
+     let totalAreaRow = document.createElement("div");
 totalAreaRow.classList.add("selected-product-total-area", "mt-2", "fw-bold", "text-end");
-totalAreaRow.innerHTML = `Total Area: <span class="text-primary">${totalAreaSum.toFixed(2)} m²</span>`;
+
+// Get the required area from the modal (removing " m²" and parsing as float)
+let requiredArea = 0;
+const selectedTotalAreaElem = document.getElementById("selectedTotalArea");
+if (selectedTotalAreaElem) {
+    requiredArea = parseFloat(selectedTotalAreaElem.textContent) || 0;
+}
+
+// Decide color: red if totalAreaSum >= requiredArea, else blue
+let areaColor = totalAreaSum >= requiredArea ? 'blue' : 'red';
+
+totalAreaRow.innerHTML = `Total Area: <span style="color:${areaColor}">${totalAreaSum.toFixed(2)} m²</span>`;
 container.appendChild(totalAreaRow);
 
 
@@ -1119,10 +1130,11 @@ function removeDetail(button) {
     function updateGrandAmount() {
     let finalAmount = parseFloat(document.getElementById('finalAmountPaid').value) || 0;
     let rentAmount = parseFloat(document.getElementById('RentAmount').value) || 0;
-    let grandAmount = finalAmount + rentAmount;
-    // ...inside updateGrandAmount()...
+    let returnAmount = parseFloat(document.getElementById('returnAmount').value) || 0;
+    let grandAmount = finalAmount + rentAmount - returnAmount;
     document.getElementById('grandAmountPaid').value = grandAmount ? grandAmount : '';
-   }
+    document.getElementById('totalAmount').textContent = finalAmount ? `₹${finalAmount.toFixed(2)}` : '₹0.00';
+}
 
     function saveEditedSelection(button) {
         console.log("✅ Saving Edited Selection...");
@@ -1175,15 +1187,30 @@ document.addEventListener("DOMContentLoaded", function() {
 
 document.addEventListener("DOMContentLoaded", () => {
 
-/* -------------------------------------------------
-   ALL your existing code that starts with
-   document.getElementById("orderForm").addEventListener…
-   paste it here unchanged
--------------------------------------------------- */
+    // Intercept the submit button to show the confirmation modal
+    const submitBtn = document.querySelector('#orderForm button[type="submit"]');
+    if (submitBtn) {
+        submitBtn.type = "button";
+        submitBtn.id = "openConfirmModalBtn";
+    }
+
+    // Show confirmation modal on submit button click
+    document.getElementById('openConfirmModalBtn').addEventListener('click', function() {
+        // Optionally, you can run validation here before showing the modal
+        var confirmModal = new bootstrap.Modal(document.getElementById('confirmSubmitModal'));
+        confirmModal.show();
+    });
+
+    // On confirm, trigger the form submit handler
+    document.getElementById('confirmSubmitBtn').addEventListener('click', function() {
+        document.getElementById('orderForm').dispatchEvent(new Event('submit', {cancelable: true, bubbles: true}));
+    });
+
+    // Main form submit handler
     document.getElementById("orderForm").addEventListener("submit", function(event) {
         // Prevent default form submission
         event.preventDefault();
-        
+
         console.log("Form submission initiated");
 
         // Validate final amount
@@ -1198,89 +1225,76 @@ document.addEventListener("DOMContentLoaded", () => {
         let productsArray = [];
 
         // Build products array from all detail sections
-      Object.entries(selectedProductsData).forEach(([sectionId, section]) => {
-    console.log("Section ID:", sectionId, "Section Data:", section);
-    let detailGroup = document.querySelector(`[data-section-id="${sectionId}"]`);
-    console.log("Detail Group for section", sectionId, ":", detailGroup);
-    let multiplier = parseInt(detailGroup?.querySelector(".multiply-order")?.value) || 1;
-    console.log("Multiplier for section", sectionId, ":", multiplier);
+        Object.entries(selectedProductsData).forEach(([sectionId, section]) => {
+            console.log("Section ID:", sectionId, "Section Data:", section);
+            let detailGroup = document.querySelector(`[data-section-id="${sectionId}"]`);
+            console.log("Detail Group for section", sectionId, ":", detailGroup);
+            let multiplier = parseInt(detailGroup?.querySelector(".multiply-order")?.value) || 1;
+            console.log("Multiplier for section", sectionId, ":", multiplier);
 
-    // Process both wall and floor products
-    ['wall', 'floor'].forEach(type => {
-        console.log("Processing type:", type, "for section", sectionId);
-        if (section[type] && section[type].length > 0) {
-            console.log("Found products for type", type, ":", section[type]);
-            hasProducts = true;
+            // Process both wall and floor products
+            ['wall', 'floor'].forEach(type => {
+                console.log("Processing type:", type, "for section", sectionId);
+                if (section[type] && section[type].length > 0) {
+                    console.log("Found products for type", type, ":", section[type]);
+                    hasProducts = true;
 
-            section[type].forEach(product => {
-                console.log("Processing product:", product);
-                // Find the corresponding final price from the summary table
-                let finalPrice = 0;
-                document.querySelectorAll('.final-price').forEach(cell => {
-                    if (cell.getAttribute('data-id') == product.id) {
-                        finalPrice = parseFloat(cell.textContent.replace('₹', '')) || product.totalPrice;
-                        console.log("Matched product id", product.id, "with cell", cell, "Final price:", finalPrice);
-                    }
-                });
+                    section[type].forEach(product => {
+                        console.log("Processing product:", product);
+                        // Find the corresponding final price from the summary table
+                        let finalPrice = 0;
+                        document.querySelectorAll('.final-price').forEach(cell => {
+                            if (cell.getAttribute('data-id') == product.id) {
+                                finalPrice = parseFloat(cell.textContent.replace('₹', '')) || product.totalPrice;
+                                console.log("Matched product id", product.id, "with cell", cell, "Final price:", finalPrice);
+                            }
+                        });
 
-                let productObj = {
-                    id: product.id,
-                    name: product.name,
-                    quantity: product.quantity,
-                    unitPrice: product.unitPrice,
-                    totalPrice: finalPrice,
-                    multiplier: multiplier
-                };
-                console.log("Pushing product to productsArray:", productObj);
-                productsArray.push(productObj);
+                        let productObj = {
+                            id: product.id,
+                            name: product.name,
+                            quantity: product.quantity,
+                            unitPrice: product.unitPrice,
+                            totalPrice: finalPrice,
+                            multiplier: multiplier
+                        };
+                        console.log("Pushing product to productsArray:", productObj);
+                        productsArray.push(productObj);
+                    });
+                } else {
+                    console.log("No products found for type", type, "in section", sectionId);
+                }
             });
-        } else {
-            console.log("No products found for type", type, "in section", sectionId);
-        }
-    });
-});
+        });
 
         if (!hasProducts) {
             alert("No products selected. Please add at least one product.");
             return;
         }
 
-        // Debug output
-        console.log("Products to submit:", productsArray);
-        console.log("Final amount:", finalAmount);
+        // Remove any previously added hidden inputs
+        document.querySelectorAll(".hidden-product-input").forEach(input => input.remove());
 
-        try {
-            // Remove any previously added hidden inputs
-            document.querySelectorAll(".hidden-product-input").forEach(input => input.remove());
+        // Add products as a hidden input
+        let productsInput = document.createElement("input");
+        productsInput.type = "hidden";
+        productsInput.name = "products";
+         productsInput.className = "hidden-product-input";
+        productsInput.value = JSON.stringify(productsArray);
+        this.appendChild(productsInput);
 
-            // Add products as a hidden input
-            let productsInput = document.createElement("input");
-            productsInput.type = "hidden";
-            productsInput.name = "products";
-            productsInput.className = "hidden-product-input";
-            productsInput.value = JSON.stringify(productsArray);
-            this.appendChild(productsInput);
-
-            // Verify form data before submission
-            const formData = new FormData(this);
-            console.log("FormData contents:");
-            for (let [key, value] of formData.entries()) {
-                console.log(key, value);
-            }
-
-            // Submit the form programmatically
-            console.log("Submitting form...");
-            this.submit();
-            
-        } catch (error) {
-            console.error("Error during form submission:", error);
-            alert("An error occurred while preparing the order data. Please try again.");
+        // Verify form data before submission
+        const formData = new FormData(this);
+        console.log("FormData contents:");
+        for (let [key, value] of formData.entries()) {
+            console.log(key, value);
         }
+
+        // Actually submit the form now (bypass this handler)
+        this.submit();
     });
 
-}); 
-
-
+});
  
 
     </script>
@@ -1432,6 +1446,11 @@ document.addEventListener("DOMContentLoaded", () => {
                                     </div>
                                     <input type="hidden" name="final_price" id="final_price"> -->
                                     <div class="mb-3">
+<label for="returnAmount" class="form-label"><strong>Return Amount (₹):</strong></label>
+<input type="text" class="form-control" id="returnAmount" name="return_amount"
+    placeholder="Enter return amount"
+    oninput="this.value = this.value.replace(/[^0-9.]/g, ''); updateGrandAmount();">
+
                                     <label for="finalAmountPaid" class="form-label"><strong>Final Amount Paid (₹):</strong></label>
                                     <input type="text" class="form-control" id="finalAmountPaid" name="final_amount_paid"
                                         placeholder="Enter final amount"
@@ -1447,14 +1466,31 @@ document.addEventListener("DOMContentLoaded", () => {
                                          oninput="this.value = this.value.replace(/[^0-9.]/g, ''); updateFinalAndRentFromGrand();">
                                     <input type="hidden" name="final_price" id="final_price">
                                     <button type="button" class="btn btn-secondary" onclick="prevStep()">Previous</button>
-                                    <button type="submit" class="btn btn-success">Submit Order</button>
-                                </div>
+<button type="button" class="btn btn-success" id="openConfirmModalBtn">Submit Order</button>                                </div>
                     </form>
                 </div>
             </div>
         </main>
     </div>
 
+    <!-- Confirmation Modal -->
+<div class="modal fade" id="confirmSubmitModal" tabindex="-1" aria-labelledby="confirmSubmitModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmSubmitModalLabel">Confirm Order Submission</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to submit this order?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-success" id="confirmSubmitBtn">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 <!-- Product Selection Modal -->
@@ -1470,8 +1506,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <div class="modal-body">
                 <p><strong>Selected Category:</strong> <span id="selectedCategoryName"></span></p>
-                <p><strong>Total Area:</strong> <span id="selectedTotalArea">0.00 m²</span></p>
-
+<p><strong>Total Area:</strong> <span id="selectedTotalArea" class="area-value">0.00 m²</span></p>
                 <!-- Warning Message -->
                 <div id="quantityWarning" class="alert alert-warning d-none" role="alert"></div>
 
@@ -1544,6 +1579,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                     </div>
                                     <input type="hidden" name="final_price" id="final_price"> -->
                                     <div class="mb-3">
+                                     
                                     <label for="finalAmountPaid" class="form-label"><strong>Final Amount Paid (₹):</strong></label>
                                     <input type="text" class="form-control" id="finalAmountPaid" name="final_amount_paid"
                                         placeholder="Enter final amount"

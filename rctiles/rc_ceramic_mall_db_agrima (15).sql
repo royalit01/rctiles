@@ -228,7 +228,8 @@ CREATE TABLE `orders` (
   `final_amount` decimal(10,2) DEFAULT NULL,
   `transport_rent` decimal(10,2) DEFAULT 0.00,
   `stock_done` tinyint(1) DEFAULT 0,
-  `deleted` tinyint(1) DEFAULT 0
+  `deleted` tinyint(1) DEFAULT 0,
+  `rent_amount` decimal(10,2) DEFAULT 0.00,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
