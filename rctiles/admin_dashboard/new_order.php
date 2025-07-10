@@ -1464,7 +1464,7 @@ document.addEventListener("DOMContentLoaded", () => {
 <label for="returnAmount" class="form-label"><strong>Return Amount (₹):</strong></label>
 <input type="text" class="form-control" id="returnAmount" name="return_amount"
     placeholder="Enter return amount"
-    oninput="this.value = this.value.replace(/[^0-9.]/g, ''); updateGrandAmount();">
+    oninput="this.value = this.value.replace(/[^0-9.]/g, ''); applyFinalPrice(); updateGrandAmount();">
 
                                     <label for="finalAmountPaid" class="form-label"><strong>Final Amount Paid (₹):</strong></label>
                                     <input type="text" class="form-control" id="finalAmountPaid" name="final_amount_paid"
