@@ -142,7 +142,7 @@ include '../db_connect.php';
         detailDiv.setAttribute("data-section-id", detailIndex); // Assign unique ID to track selections
 
         detailDiv.innerHTML = `
-            <h6>Detail ${detailIndex + 1}</h6>
+            <h6 class="fw-bold">Detail ${detailIndex + 1}</h6>
             
             
             <div class="mb-2">
@@ -206,9 +206,6 @@ include '../db_connect.php';
 
             <div class="row mt-2">
                 
-
-                
-            
 
             
                 <div class="mb-2">
@@ -373,7 +370,7 @@ include '../db_connect.php';
                     row.innerHTML = `
                         <td><img src="${productImage}" alt="Product Image" width="50" onerror="this.src='../assets/img/default_img.jpg';"></td>
                         <td>${product.name}</td>
-                        <td>${product.description}</td>
+                        <!--<td>${product.description}</td> -->
                         <td>${product.area_per_unit !== "N/A" ? product.area_per_unit : "Not Specified"} m²</td>
                         <td>
                             <input type="number" class="form-control product-quantity" min="1" 
@@ -481,7 +478,8 @@ include '../db_connect.php';
             productRow.classList.add("selected-product-item", "border", "p-2", "rounded", "mb-2", "d-flex", "justify-content-between");
 
             productRow.innerHTML = `
-                <span><strong>${product.name}</strong> - ${product.quantity} pcs @ ${product.area.toFixed(2)} per unit</span>
+                <span><strong>${product.name}</strong> - ${product.quantity} pcs </span>
+                <!--<span><strong>${product.name}</strong> - ${product.quantity} pcs @ ${product.area.toFixed(2)} per unit</span>-->
                 <span class="badge bg-success">Total: ${product.totalArea.toFixed(2)}</span>
             `;
             container.appendChild(productRow);
@@ -972,6 +970,7 @@ function updateSummary() {
             } else {
                 allProductsSummary[product.id].quantity += adjustedQuantity;
                 allProductsSummary[product.id].totalPrice += adjustedTotalPrice;
+                
                 allProductsSummary[product.id].originalTotalPrice += adjustedTotalPrice;
                 allProductsSummary[product.id].currentTotalPrice += adjustedTotalPrice;
             }
@@ -989,14 +988,17 @@ function updateSummary() {
             <tr>
                 <td>${product.name}</td>
                 <td>${product.quantity} pcs</td>
+                 <td>  ${product.unitPrice.toFixed(2)}
+    </td>
                 <td>
                     <input type="number" class="form-control original-price-input"
                         value="${product.unitPrice.toFixed(2)}" step="0.01" min="0"
                         data-id="${product.id}"
                         data-quantity="${product.quantity}"
-                        onchange="updateProductPrice(this)">
+                        onchange="updateProductPrice(this)"  >
                 </td>
                 <td class="final-price" data-id="${product.id}"
+                    
                     data-original-price="${product.originalTotalPrice.toFixed(2)}"
                     data-current-price="${product.currentTotalPrice.toFixed(2)}">
                     ₹${product.currentTotalPrice.toFixed(2)}
@@ -1354,6 +1356,17 @@ document.addEventListener("DOMContentLoaded", () => {
         .summary-table tfoot tr {
     border-bottom: none; /* Remove only the bottom border */
 }
+/* Always show number input controls */
+.product-quantity::-webkit-outer-spin-button,
+.product-quantity::-webkit-inner-spin-button {
+    opacity: 1;
+    margin: 0;
+}
+
+/* For Firefox */
+.product-quantity {
+    -moz-appearance: textfield;
+}
     </style>
 </head>
 
@@ -1420,11 +1433,13 @@ document.addEventListener("DOMContentLoaded", () => {
                                     <label class="form-label">City <span style="color:red">*</span> </label>
                                     <input type="text" class="form-control" name="city" required>
                                 </div>
+                                <div class="table-responsive-sm">
                                     <table class="table table-bordered summary-table">
                                         <thead>
                                             <tr>
                                                 <th>Product</th>
                                                 <th>Quantity</th>
+                                                 <th>Fixed Price</th>
                                                 <th>Original Price</th>
                                                 <th>Final Price</th>
                                             </tr>
@@ -1432,13 +1447,13 @@ document.addEventListener("DOMContentLoaded", () => {
                                         <tbody id="summaryBody"></tbody>
                                         <tfoot>
                                             <tr>
-                                                    <td colspan="2" class="border-0"></td> 
+                                                    <td colspan="3" class="border-0"></td> 
                                                 <th  class="text-end">Total Amount:</th>
                                                 <th id="totalAmount">₹0.00</th>
                                             </tr>
                                         </tfoot>
                                     </table>
-
+</div>
                                     <!-- ✅ Custom Final Price Input (Placed Correctly Below Table) -->
                                     <!-- <div class="mb-3">
                                         <label for="finalAmountPaid" class="form-label"><strong>Final Amount Paid (₹):</strong></label>
@@ -1465,8 +1480,9 @@ document.addEventListener("DOMContentLoaded", () => {
                                      <input type="text" class="form-control" id="grandAmountPaid" name="grand_amount_paid" 
                                          oninput="this.value = this.value.replace(/[^0-9.]/g, ''); updateFinalAndRentFromGrand();">
                                     <input type="hidden" name="final_price" id="final_price">
-                                    <button type="button" class="btn btn-secondary" onclick="prevStep()">Previous</button>
-<button type="button" class="btn btn-success" id="openConfirmModalBtn">Submit Order</button>                                </div>
+                                    <button type="button" class="btn btn-secondary my-2" onclick="prevStep()">Previous</button>
+                                    <button type="submit" class="btn btn-success">Submit Order</button>
+                                </div>
                     </form>
                 </div>
             </div>
@@ -1517,7 +1533,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             <tr>
                                 <th>Image</th>
                                 <th>Product Name</th>
-                                <th>Description</th>
+                                <!-- <th>Description</th> -->
                                 <th>Area per Unit</th>
                                 <th>Quantity</th>
                                 <th>Select</th>
@@ -1559,6 +1575,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                             <tr>
                                                 <th>Product</th>
                                                 <th>Quantity</th>
+                                                 <th>Fixed Price</th>
                                                 <th>Original Price</th>
                                                 <th>Final Price</th>
                                             </tr>
@@ -1630,7 +1647,7 @@ oninput="this.value = this.value.replace(/[^0-9.]/g, ''); applyFinalPrice(); upd
                             <tr>
                                 <th>Image</th>
                                 <th>Product Name</th>
-                                <th>Description</th>
+                                <!-- <th>Description</th> -->
                                 <th>Area per Unit</th>
                                 <th>Quantity</th>
                                 <th>Select</th>
