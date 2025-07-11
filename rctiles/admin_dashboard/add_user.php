@@ -331,6 +331,171 @@ $storageResult = $mysqli->query($storageQuery);
   <label for="userImage" class="form-label">User Image:</label>
   <input type="file" class="form-control" id="userImage" name="user_image" accept="image/*">
 </div>
+
+<!-- Admin Access -->
+<div class="mb-3 position-relative">
+  <button type="button" class="btn btn-outline-primary w-100" id="adminAccessBtn">
+    Admin Access
+  </button>
+  <div id="adminAccessOptions" class="dropdown-menu p-3" style="width:100%; max-height: 200px; overflow-y: auto; display: none;">
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="dashboard" id="admin_dashboard">
+      <label class="form-check-label" for="admin_dashboard">Admin Dashboard</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="members" id="admin_members">
+      <label class="form-check-label" for="admin_users">Add Member</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="edit_n_view" id="edit_n_view">
+      <label class="form-check-label" for="admin_reports">Edit & View Member</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="create" id="create_order">
+      <label class="form-check-label" for="admin_reports">Create Order</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="view" id="view_order">
+      <label class="form-check-label" for="admin_reports">View Order</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="estimate" id="view_estimate">
+      <label class="form-check-label" for="admin_reports">View Estimate</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="minus" id="minus_order">
+      <label class="form-check-label" for="admin_reports">Minus Stock Order</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="delivery" id="assign_delivery">
+      <label class="form-check-label" for="admin_reports">Assign Delivery</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="createbill" id="create_bill">
+      <label class="form-check-label" for="admin_reports">Create Bill</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="custombill" id="custom_bill">
+      <label class="form-check-label" for="admin_reports">Custom Bill</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="log" id="members_log">
+      <label class="form-check-label" for="admin_reports">Members Log</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="bin" id="recycle_bin">
+      <label class="form-check-label" for="admin_reports">Recycle Bin</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="delete" id="delete_order">
+      <label class="form-check-label" for="admin_reports">Delete Order</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="ledger" id="cutomer_ledger">
+      <label class="form-check-label" for="admin_reports">Customer Ledger</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="ledger2" id="member_ledger">
+      <label class="form-check-label" for="admin_reports">Member Ledger</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="payment" id="delivery_payment">
+      <label class="form-check-label" for="admin_reports">Delivery Payment</label>
+    </div>
+  </div>
+</div>
+
+<!-- Storage Access -->
+<div class="mb-3 position-relative">
+  <button type="button" class="btn btn-outline-primary w-100" id="storageAccessBtn">
+    Storage Access
+  </button>
+  <div id="storageAccessOptions" class="dropdown-menu p-3" style="width:100%; max-height: 200px; overflow-y: auto; display: none;">
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="product" id="product">
+      <label class="form-check-label" for="storage_1">Product</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="transaction" id="transaction">
+      <label class="form-check-label" for="storage_2">Transaction</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="stock" id="add_stock">
+      <label class="form-check-label" for="storage_3">Add Stock</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="stock2" id="minus_stock">
+      <label class="form-check-label" for="storage_3">Minus Stock</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="addproduct" id="add_product">
+      <label class="form-check-label" for="storage_3">Add Product</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="editproduct" id="edit_product">
+      <label class="form-check-label" for="storage_3">Edit Product</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="category" id="edit_category">
+      <label class="form-check-label" for="storage_3">Edit Category</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="supplier" id="edit_supplier">
+      <label class="form-check-label" for="storage_3">Edit Supplier</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="storage" id="edit_storage">
+      <label class="form-check-label" for="storage_3">Edit Storage Area</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="stocktransfer" id="stock_transfer">
+      <label class="form-check-label" for="storage_3">Stock Transfer</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="excel" id="excel">
+      <label class="form-check-label" for="storage_3">Stock Update Excel</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="report" id="total_stock_report">
+      <label class="form-check-label" for="storage_3">Total Stock Report</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="report2" id="low_stock_report">
+      <label class="form-check-label" for="storage_3">Stock Update Excel</label>
+    </div>
+    
+  </div>
+</div>
+
+<!-- Delivery Access -->
+<div class="mb-3 position-relative">
+  <button type="button" class="btn btn-outline-primary w-100" id="storageAccessBtn">
+    Delivery Access
+  </button>
+  <div id="storageAccessOptions" class="dropdown-menu p-3" style="width:100%; max-height: 200px; overflow-y: auto; display: none;">
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="dash1" id="dash1">
+      <label class="form-check-label" for="storage_1">dash1</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="dash2" id="dash2">
+      <label class="form-check-label" for="storage_2">dash2</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="dash3" id="dash3">
+      <label class="form-check-label" for="storage_3">dash3</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="dash4" id="dash4">
+      <label class="form-check-label" for="storage_3">dash4</label>
+    </div>
+    
+  </div>
+</div>
+
 <div class="d-flex justify-content-center">
   <button type="submit" class="btn btn-primary">Add User</button>
 </div>                        </form>
@@ -410,4 +575,30 @@ $storageResult = $mysqli->query($storageQuery);
         <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
         <script src="../js/datatables-simple-demo.js"></script>
     </body>
+
+<script>
+            
+        document.addEventListener('DOMContentLoaded', function () {
+        const toggleDropdown = (buttonId, dropdownId) => {
+            const btn = document.getElementById(buttonId);
+            const dropdown = document.getElementById(dropdownId);
+
+            btn.addEventListener('click', function () {
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+            });
+
+            // Optional: Hide dropdown if clicked outside
+            document.addEventListener('click', function (e) {
+            if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+            });
+        };
+
+        toggleDropdown('adminAccessBtn', 'adminAccessOptions');
+        toggleDropdown('storageAccessBtn', 'storageAccessOptions');
+        });
+</script>
+
+
 </html>
