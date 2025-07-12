@@ -170,7 +170,7 @@ $result = $mysqli->query($sql);
             max-height: 400px;
             overflow-y: auto;
         }
-    </style>
+    </style>   
 </head>
 <body class="sb-nav-fixed">
     <div id="layoutSidenav_content">
