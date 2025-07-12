@@ -1,18 +1,29 @@
 <?php
-// if (session_status() == PHP_SESSION_NONE) {
-//     session_start();
-// }
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 
-// if(!isset($_SESSION['user_id']) || $_SESSION['role_id'] != 1) {
-//     header("Location: ../login.php");
-//     exit;
-// }
+if(!isset($_SESSION['user_id']) || $_SESSION['role_id'] != 1) {
+    header("Location: ../login.php");
+    exit;
+}
 
 
 
 // Now you can check the role if you want:
+include "../db_connect.php";
+$userId = $_SESSION['user_id'];
+$userQuery = $mysqli->query("SELECT sidebar_index FROM users WHERE user_id = $userId");
+$userRow = $userQuery->fetch_assoc();
+$allowedIndexes = json_decode($userRow['sidebar_index'], true) ?? [];
 
+// Helper function to show nav link only if allowed
+function showNav($index, $html, $allowedIndexes) {
+    if (in_array((string)$index, $allowedIndexes)) {
+        echo str_replace('{INDEX}', $index, $html);
+    }
+}
 ?>
 
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -48,135 +59,175 @@
                 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                     <div class="sb-sidenav-menu">
                         <div class="nav">
-                                                       <?= ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2  ) ? '
+    <?php
+    // 1. Admin Dashboard
+    showNav(1, '
+        <a class="nav-link" href="admin_dashboard.php">
+            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+            1. Admin Dashboard
+        </a>
+    ', $allowedIndexes);
 
-                            <div class="sb-sidenav-menu-heading">Dashboard</div>
-                            <a class="nav-link" href="admin_dashboard.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Admin Dashboard
-                            </a>
-                            <a class="nav-link" href="../Storage Dashboard/Product.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Storage Dashboard
-                            </a>
-                            ' : '' ?>
+    // 2. Storage Dashboard
+    showNav(2, '
+        <a class="nav-link" href="../Storage Dashboard/Product.php">
+            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+            2. Storage Dashboard
+        </a>
+    ', $allowedIndexes);
 
-                                                                                   <?= ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2  ) ? '
+    // 3. Add Member
+    showNav(3, '
+        <a class="nav-link" href="add_user.php">
+            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+            3. Add Member
+        </a>
+    ', $allowedIndexes);
 
-                            <div class="sb-sidenav-menu-heading">Members</div>
-                            <a class="nav-link" href="add_user.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Add Member
-                            </a>
-                            <a class="nav-link" href="edit_user.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Edit & View Member
-                            </a>
-                            ' : '' ?>
-                                                       <?= ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2  ) ? '
+    // 4. Edit & View Member
+    showNav(4, '
+        <a class="nav-link" href="edit_user.php">
+            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+            4. Edit & View Member
+        </a>
+    ', $allowedIndexes);
 
-                            <div class="sb-sidenav-menu-heading">Orders</div>
-                            <a class="nav-link" href="new_order.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Create Order
-                            </a>
-                            <a class="nav-link" href="admin_orders.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                View Order
-                            </a>
-                            <a class="nav-link" href="estimate.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                View Estimate
-                            </a>
-                            <a class="nav-link" href="minus_order_stock.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Minus Order Stock
-                            </a>
-                            <a class="nav-link" href="assign_delivery.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Assign Delivery
-                            </a>
-                            <a class="nav-link" href="approved_orders.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Create Bill
-                            </a>
-                            <a class="nav-link" href="customBill.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Custom Bill
-                            </a>
-                            ' : '' ?>
+    // 5. Create Order
+    showNav(5, '
+        <a class="nav-link" href="new_order.php">
+            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+            5. Create Order
+        </a>
+    ', $allowedIndexes);
 
-                                                       <?= ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2  ) ? '
+    // 6. View Order
+    showNav(6, '
+        <a class="nav-link" href="admin_orders.php">
+            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+            6. View Order
+        </a>
+    ', $allowedIndexes);
 
-                            <div class="sb-sidenav-menu-heading">Log</div>
-                            <a class="nav-link" href="member_log.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Members Log
-                            </a>
-                            <a class="nav-link" href="../Storage Dashboard/Transaction.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Storage Log
-                            </a>
-                            ' : '' ?>
+    // 7. View Estimate
+    showNav(7, '
+        <a class="nav-link" href="estimate.php">
+            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+            7. View Estimate
+        </a>
+    ', $allowedIndexes);
 
-                                                       <?= ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2  ) ? '
+    // 8. Minus Order Stock
+    showNav(8, '
+        <a class="nav-link" href="minus_order_stock.php">
+            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+            8. Minus Order Stock
+        </a>
+    ', $allowedIndexes);
 
-                            <div class="sb-sidenav-menu-heading">Inventory</div>
-                            <a class="nav-link" href="../Storage Dashboard/Report.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                View Stock
-                            </a>
-                            <a class="nav-link" href="../Storage Dashboard/Low_Stock.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Low Stock 
-                            </a>
-                            <!--<a class="nav-link" href="add_product.php">-->
-                            <!--    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>-->
-                            <!--    Share Inventory-->
-                            <!--</a>-->
-                            ' : '' ?>
+    // 9. Assign Delivery
+    showNav(9, '
+        <a class="nav-link" href="assign_delivery.php">
+            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+            9. Assign Delivery
+        </a>
+    ', $allowedIndexes);
 
-                                                       <?= ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2  ) ? '
+    // 10. Create Bill
+    showNav(10, '
+        <a class="nav-link" href="approved_orders.php">
+            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+            10. Create Bill
+        </a>
+    ', $allowedIndexes);
 
-                            <div class="sb-sidenav-menu-heading">others</div>
-                            <a class="nav-link" href="recycle_bin.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Recycle Bin
-                            </a>
-                            <a class="nav-link" href="delete_orders.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Delete Orders
-                            </a>
-                           ' : '' ?>
-                                                                                  <?= ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2  ) ? '
+    // 11. Custom Bill
+    showNav(11, '
+        <a class="nav-link" href="customBill.php">
+            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+            11. Custom Bill
+        </a>
+    ', $allowedIndexes);
 
-                            <div class="sb-sidenav-menu-heading">Report</div>
-                            <!--<a class="nav-link" href="add_storagearea.php">-->
-                            <!--    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>-->
-                            <!--    Order report-->
-                            <!--</a>-->
-                            <a class="nav-link" href="../Storage Dashboard/Low_Stock_Report.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Low Stock Report
-                            </a>
-                            ' : '' ?>
-                            
-                                                                                   <?= ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2  ) ? '
+    // 12. Members Log
+    showNav(12, '
+        <a class="nav-link" href="member_log.php">
+            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+            12. Members Log
+        </a>
+    ', $allowedIndexes);
 
-                            <div class="sb-sidenav-menu-heading">Ledger</div>
-                            <a class="nav-link" href="customer_ledger.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Customer Ledger
-                            </a>
-                            <a class="nav-link" href="member_ledger.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Member Ledger
-                            </a>
-                            <a class="nav-link" href="delivery_payment.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Delivery Payment
-                            </a>
-                            ' : '' ?>
+    // 13. Storage Log
+    showNav(13, '
+        <a class="nav-link" href="../Storage Dashboard/Transaction.php">
+            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+            13. Storage Log
+        </a>
+    ', $allowedIndexes);
+
+    // 14. View Stock
+    showNav(14, '
+        <a class="nav-link" href="../Storage Dashboard/Report.php">
+            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+            14. View Stock
+        </a>
+    ', $allowedIndexes);
+
+    // 15. Low Stock
+    showNav(15, '
+        <a class="nav-link" href="../Storage Dashboard/Low_Stock.php">
+            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+            15. Low Stock 
+        </a>
+    ', $allowedIndexes);
+
+    // 16. Recycle Bin
+    showNav(16, '
+        <a class="nav-link" href="recycle_bin.php">
+            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+            16. Recycle Bin
+        </a>
+    ', $allowedIndexes);
+
+    // 17. Delete Orders
+    showNav(17, '
+        <a class="nav-link" href="delete_orders.php">
+            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+            17. Delete Orders
+        </a>
+    ', $allowedIndexes);
+
+    // 18. Low Stock Report
+    showNav(18, '
+        <a class="nav-link" href="../Storage Dashboard/Low_Stock_Report.php">
+            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+            18. Low Stock Report
+        </a>
+    ', $allowedIndexes);
+
+    // 19. Customer Ledger
+    showNav(19, '
+        <a class="nav-link" href="customer_ledger.php">
+            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+            19. Customer Ledger
+        </a>
+    ', $allowedIndexes);
+
+    // 20. Member Ledger
+    showNav(20, '
+        <a class="nav-link" href="member_ledger.php">
+            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+            20. Member Ledger
+        </a>
+    ', $allowedIndexes);
+
+    // 21. Delivery Payment
+    showNav(21, '
+        <a class="nav-link" href="delivery_payment.php">
+            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+            21. Delivery Payment
+        </a>
+    ', $allowedIndexes);
+    ?>
                     <div class="sb-sidenav-footer">
                         <div class="small">Logged in as:</div>
                         <!-- <?= $_SESSION['role_name'] ?> -->

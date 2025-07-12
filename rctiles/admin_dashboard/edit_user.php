@@ -57,6 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['user_id'])) {
     $role_id         = $_POST['role_id']          ?: $row['role_id'];
     $aadhar_id_no    = $_POST['aadhar_id_no']     ?: $row['aadhar_id_no'];
     $role_name       = $_POST['role_name']        ?: $row['role_name'];
+    // Collect sidebar_index from POST
+    $sidebar_index = isset($_POST['sidebar_index']) ? json_encode($_POST['sidebar_index']) : json_encode([]);
 
     /* 3. File upload (optional) */
     $image = $row['user_image'];                        // default = old image
@@ -70,27 +72,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['user_id'])) {
     $newPwdPlain = trim($_POST['password'] ?? '');
     $updatePwd   = $newPwdPlain !== '';
 
-    if ($updatePwd) {
-        $newPwdHash = password_hash($newPwdPlain, PASSWORD_DEFAULT);
-        $sql  = "UPDATE users
-                   SET name=?, email=?, phone_no=?, storage_area_id=?,
-                       role_id=?, aadhar_id_no=?, user_image=?, password=? 
-                 WHERE user_id=?";
-        $stmt = $mysqli->prepare($sql);
-        $stmt->bind_param("sssiisssi",
-                          $name, $email, $phone_no, $storage_area_id,
-                          $role_id, $aadhar_id_no, $image,
-                          $newPwdHash, $user_id );
-    } else {
-        $sql  = "UPDATE users
-                   SET name=?, email=?, phone_no=?, storage_area_id=?,
-                       role_id=?, aadhar_id_no=?, user_image=?
-                 WHERE user_id=?";
-        $stmt = $mysqli->prepare($sql);
-        $stmt->bind_param("sssiissi",
-                          $name, $email, $phone_no, $storage_area_id,
-                          $role_id, $aadhar_id_no, $image, $user_id);
-    }
+if ($updatePwd) {
+    $newPwdHash = password_hash($newPwdPlain, PASSWORD_DEFAULT);
+    $sql  = "UPDATE users
+               SET name=?, email=?, phone_no=?, storage_area_id=?,
+                   role_id=?, aadhar_id_no=?, user_image=?, password=?, sidebar_index=?
+             WHERE user_id=?";
+    $stmt = $mysqli->prepare($sql);
+    $stmt->bind_param("sssiissssi",
+                      $name, $email, $phone_no, $storage_area_id,
+                      $role_id, $aadhar_id_no, $image,
+                      $newPwdHash, $sidebar_index, $user_id );
+} else {
+    $sql  = "UPDATE users
+               SET name=?, email=?, phone_no=?, storage_area_id=?,
+                   role_id=?, aadhar_id_no=?, user_image=?, sidebar_index=?
+             WHERE user_id=?";
+    $stmt = $mysqli->prepare($sql);
+    $stmt->bind_param("sssiisssi",
+                      $name, $email, $phone_no, $storage_area_id,
+                      $role_id, $aadhar_id_no, $image, $sidebar_index, $user_id);
+}
 
     /* 5. Execute exactly once */
     if (!$stmt->execute()) {
@@ -337,68 +339,68 @@ echo "<td><img src='../uploads/" . htmlspecialchars($row['user_image']) . "' alt
   <div id="adminAccessOptions" class="dropdown-menu p-3" style="width:100%; max-height: 200px; overflow-y: auto; display: none;">
 
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="dashboard" id="admin_dashboard">
-      <label class="form-check-label" for="admin_dashboard">Admin Dashboard</label>
+      <input class="form-check-input" type="checkbox" value="1" id="admin_dashboard" name="sidebar_index[]">
+      <label class="form-check-label" for="admin_dashboard">1. Admin Dashboard</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="members" id="admin_members">
-      <label class="form-check-label" for="admin_users">Add Member</label>
+      <input class="form-check-input" type="checkbox" value="2" id="admin_members" name="sidebar_index[]">
+      <label class="form-check-label" for="admin_members">2. Add Member</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="edit_n_view" id="edit_n_view">
-      <label class="form-check-label" for="admin_reports">Edit & View Member</label>
+      <input class="form-check-input" type="checkbox" value="3" id="edit_n_view" name="sidebar_index[]">
+      <label class="form-check-label" for="edit_n_view">3. Edit & View Member</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="create" id="create_order">
-      <label class="form-check-label" for="admin_reports">Create Order</label>
+      <input class="form-check-input" type="checkbox" value="4" id="create_order" name="sidebar_index[]">
+      <label class="form-check-label" for="create_order">4. Create Order</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="view" id="view_order">
-      <label class="form-check-label" for="admin_reports">View Order</label>
+      <input class="form-check-input" type="checkbox" value="5" id="view_order" name="sidebar_index[]">
+      <label class="form-check-label" for="view_order">5. View Order</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="estimate" id="view_estimate">
-      <label class="form-check-label" for="admin_reports">View Estimate</label>
+      <input class="form-check-input" type="checkbox" value="6" id="view_estimate" name="sidebar_index[]">
+      <label class="form-check-label" for="view_estimate">6. View Estimate</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="minus" id="minus_order">
-      <label class="form-check-label" for="admin_reports">Minus Stock Order</label>
+      <input class="form-check-input" type="checkbox" value="7" id="minus_order" name="sidebar_index[]">
+      <label class="form-check-label" for="minus_order">7. Minus Stock Order</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="delivery" id="assign_delivery">
-      <label class="form-check-label" for="admin_reports">Assign Delivery</label>
+      <input class="form-check-input" type="checkbox" value="8" id="assign_delivery" name="sidebar_index[]">
+      <label class="form-check-label" for="assign_delivery">8. Assign Delivery</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="createbill" id="create_bill">
-      <label class="form-check-label" for="admin_reports">Create Bill</label>
+      <input class="form-check-input" type="checkbox" value="9" id="create_bill" name="sidebar_index[]">
+      <label class="form-check-label" for="create_bill">9. Create Bill</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="custombill" id="custom_bill">
-      <label class="form-check-label" for="admin_reports">Custom Bill</label>
+      <input class="form-check-input" type="checkbox" value="10" id="custom_bill" name="sidebar_index[]">
+      <label class="form-check-label" for="custom_bill">10. Custom Bill</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="log" id="members_log">
-      <label class="form-check-label" for="admin_reports">Members Log</label>
+      <input class="form-check-input" type="checkbox" value="11" id="members_log" name="sidebar_index[]">
+      <label class="form-check-label" for="members_log">11. Members Log</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="bin" id="recycle_bin">
-      <label class="form-check-label" for="admin_reports">Recycle Bin</label>
+      <input class="form-check-input" type="checkbox" value="12" id="recycle_bin" name="sidebar_index[]">
+      <label class="form-check-label" for="recycle_bin">12. Recycle Bin</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="delete" id="delete_order">
-      <label class="form-check-label" for="admin_reports">Delete Order</label>
+      <input class="form-check-input" type="checkbox" value="13" id="delete_order" name="sidebar_index[]">
+      <label class="form-check-label" for="delete_order">13. Delete Order</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="ledger" id="cutomer_ledger">
-      <label class="form-check-label" for="admin_reports">Customer Ledger</label>
+      <input class="form-check-input" type="checkbox" value="14" id="cutomer_ledger" name="sidebar_index[]">
+      <label class="form-check-label" for="cutomer_ledger">14. Customer Ledger</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="ledger2" id="member_ledger">
-      <label class="form-check-label" for="admin_reports">Member Ledger</label>
+      <input class="form-check-input" type="checkbox" value="15" id="member_ledger" name="sidebar_index[]">
+      <label class="form-check-label" for="member_ledger">15. Member Ledger</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="payment" id="delivery_payment">
-      <label class="form-check-label" for="admin_reports">Delivery Payment</label>
+      <input class="form-check-input" type="checkbox" value="16" id="delivery_payment" name="sidebar_index[]">
+      <label class="form-check-label" for="delivery_payment">16. Delivery Payment</label>
     </div>
   </div>
 </div>
@@ -414,56 +416,56 @@ echo "<td><img src='../uploads/" . htmlspecialchars($row['user_image']) . "' alt
   <div id="storageAccessOptions" class="dropdown-menu p-3" style="width:100%; max-height: 200px; overflow-y: auto; display: none;">
 
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="product" id="product">
-      <label class="form-check-label" for="storage_1">Product</label>
+      <input class="form-check-input" type="checkbox" value="17" id="product" name="sidebar_index[]">
+      <label class="form-check-label" for="product">17. Product</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="transaction" id="transaction">
-      <label class="form-check-label" for="storage_2">Transaction</label>
+      <input class="form-check-input" type="checkbox" value="18" id="transaction" name="sidebar_index[]">
+      <label class="form-check-label" for="transaction">18. Transaction</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="stock" id="add_stock">
-      <label class="form-check-label" for="storage_3">Add Stock</label>
+      <input class="form-check-input" type="checkbox" value="19" id="add_stock" name="sidebar_index[]">
+      <label class="form-check-label" for="add_stock">19. Add Stock</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="stock2" id="minus_stock">
-      <label class="form-check-label" for="storage_3">Minus Stock</label>
+      <input class="form-check-input" type="checkbox" value="20" id="minus_stock" name="sidebar_index[]">
+      <label class="form-check-label" for="minus_stock">20. Minus Stock</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="addproduct" id="add_product">
-      <label class="form-check-label" for="storage_3">Add Product</label>
+      <input class="form-check-input" type="checkbox" value="21" id="add_product" name="sidebar_index[]">
+      <label class="form-check-label" for="add_product">21. Add Product</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="editproduct" id="edit_product">
-      <label class="form-check-label" for="storage_3">Edit Product</label>
+      <input class="form-check-input" type="checkbox" value="22" id="edit_product" name="sidebar_index[]">
+      <label class="form-check-label" for="edit_product">22. Edit Product</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="category" id="edit_category">
-      <label class="form-check-label" for="storage_3">Edit Category</label>
+      <input class="form-check-input" type="checkbox" value="23" id="edit_category" name="sidebar_index[]">
+      <label class="form-check-label" for="edit_category">23. Edit Category</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="supplier" id="edit_supplier">
-      <label class="form-check-label" for="storage_3">Edit Supplier</label>
+      <input class="form-check-input" type="checkbox" value="24" id="edit_supplier" name="sidebar_index[]">
+      <label class="form-check-label" for="edit_supplier">24. Edit Supplier</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="storage" id="edit_storage">
-      <label class="form-check-label" for="storage_3">Edit Storage Area</label>
+      <input class="form-check-input" type="checkbox" value="25" id="edit_storage" name="sidebar_index[]">
+      <label class="form-check-label" for="edit_storage">25. Edit Storage Area</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="stocktransfer" id="stock_transfer">
-      <label class="form-check-label" for="storage_3">Stock Transfer</label>
+      <input class="form-check-input" type="checkbox" value="26" id="stock_transfer" name="sidebar_index[]">
+      <label class="form-check-label" for="stock_transfer">26. Stock Transfer</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="excel" id="excel">
-      <label class="form-check-label" for="storage_3">Stock Update Excel</label>
+      <input class="form-check-input" type="checkbox" value="27" id="excel" name="sidebar_index[]">
+      <label class="form-check-label" for="excel">27. Stock Update Excel</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="report" id="total_stock_report">
-      <label class="form-check-label" for="storage_3">Total Stock Report</label>
+      <input class="form-check-input" type="checkbox" value="28" id="total_stock_report" name="sidebar_index[]">
+      <label class="form-check-label" for="total_stock_report">28. Total Stock Report</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="report2" id="low_stock_report">
-      <label class="form-check-label" for="storage_3">Stock Update Excel</label>
+      <input class="form-check-input" type="checkbox" value="29" id="low_stock_report" name="sidebar_index[]">
+      <label class="form-check-label" for="low_stock_report">29. Low Stock Report</label>
     </div>
     
   </div>

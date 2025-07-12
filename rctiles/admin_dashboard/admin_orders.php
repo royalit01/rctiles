@@ -48,6 +48,8 @@ if (!empty($date_filter)) {
 }
 $sql .= " ORDER BY o.order_date DESC LIMIT $limit OFFSET $offset";
 $result = $mysqli->query($sql);
+
+
 ?>
 
 <!DOCTYPE html>

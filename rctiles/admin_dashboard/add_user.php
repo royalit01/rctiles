@@ -53,14 +53,17 @@ if (isset($_FILES['user_image']) && $_FILES['user_image']['error'] == 0) {
             $storage_area_id = null; // Ensure no storage area is assigned if not a salesperson
         }
 
-        // Prepare SQL statement to insert user
-$stmt = $mysqli->prepare("INSERT INTO users (name, email, phone_no, aadhar_id_no, password, role_id, storage_area_id, user_image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        // Get sidebar_index array from POST and encode as JSON
+        $sidebar_index = isset($_POST['sidebar_index']) ? json_encode($_POST['sidebar_index']) : json_encode([]);
+
+        // Prepare SQL statement to insert user (add sidebar_index column)
+        $stmt = $mysqli->prepare("INSERT INTO users (name, email, phone_no, aadhar_id_no, password, role_id, storage_area_id, user_image, sidebar_index) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
         if (!$stmt) {
             throw new Exception("Prepare statement failed: " . $mysqli->error);
         }
 
-$stmt->bind_param("sssssiis", $name, $email, $phone, $aadhar, $password, $role_id, $storage_area_id, $user_image);
+        $stmt->bind_param("sssssiiss", $name, $email, $phone, $aadhar, $password, $role_id, $storage_area_id, $user_image, $sidebar_index);
 
         if (!$stmt->execute()) {
             throw new Exception("Execution failed: " . $stmt->error);
@@ -338,137 +341,69 @@ $storageResult = $mysqli->query($storageQuery);
     Admin Access
   </button>
   <div id="adminAccessOptions" class="dropdown-menu p-3" style="width:100%; max-height: 200px; overflow-y: auto; display: none;">
-
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="dashboard" id="admin_dashboard">
-      <label class="form-check-label" for="admin_dashboard">Admin Dashboard</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="members" id="admin_members">
-      <label class="form-check-label" for="admin_users">Add Member</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="edit_n_view" id="edit_n_view">
-      <label class="form-check-label" for="admin_reports">Edit & View Member</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="create" id="create_order">
-      <label class="form-check-label" for="admin_reports">Create Order</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="view" id="view_order">
-      <label class="form-check-label" for="admin_reports">View Order</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="estimate" id="view_estimate">
-      <label class="form-check-label" for="admin_reports">View Estimate</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="minus" id="minus_order">
-      <label class="form-check-label" for="admin_reports">Minus Stock Order</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="delivery" id="assign_delivery">
-      <label class="form-check-label" for="admin_reports">Assign Delivery</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="createbill" id="create_bill">
-      <label class="form-check-label" for="admin_reports">Create Bill</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="custombill" id="custom_bill">
-      <label class="form-check-label" for="admin_reports">Custom Bill</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="log" id="members_log">
-      <label class="form-check-label" for="admin_reports">Members Log</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="bin" id="recycle_bin">
-      <label class="form-check-label" for="admin_reports">Recycle Bin</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="delete" id="delete_order">
-      <label class="form-check-label" for="admin_reports">Delete Order</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="ledger" id="cutomer_ledger">
-      <label class="form-check-label" for="admin_reports">Customer Ledger</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="ledger2" id="member_ledger">
-      <label class="form-check-label" for="admin_reports">Member Ledger</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="payment" id="delivery_payment">
-      <label class="form-check-label" for="admin_reports">Delivery Payment</label>
-    </div>
+    <?php
+    // Define nav indexes for admin access
+    $adminNavIndexes = [
+      ['index' => 1, 'value' => 'dashboard', 'label' => 'Admin Dashboard'],
+      ['index' => 2, 'value' => 'members', 'label' => 'Add Member'],
+      ['index' => 3, 'value' => 'edit_n_view', 'label' => 'Edit & View Member'],
+      ['index' => 4, 'value' => 'create', 'label' => 'Create Order'],
+      ['index' => 5, 'value' => 'view', 'label' => 'View Order'],
+      ['index' => 6, 'value' => 'estimate', 'label' => 'View Estimate'],
+      ['index' => 7, 'value' => 'minus', 'label' => 'Minus Stock Order'],
+      ['index' => 8, 'value' => 'delivery', 'label' => 'Assign Delivery'],
+      ['index' => 9, 'value' => 'createbill', 'label' => 'Create Bill'],
+      ['index' => 10, 'value' => 'custombill', 'label' => 'Custom Bill'],
+      ['index' => 11, 'value' => 'log', 'label' => 'Members Log'],
+      ['index' => 12, 'value' => 'bin', 'label' => 'Recycle Bin'],
+      ['index' => 13, 'value' => 'delete', 'label' => 'Delete Order'],
+      ['index' => 14, 'value' => 'ledger', 'label' => 'Customer Ledger'],
+      ['index' => 15, 'value' => 'ledger2', 'label' => 'Member Ledger'],
+      ['index' => 16, 'value' => 'payment', 'label' => 'Delivery Payment'],
+    ];
+    foreach ($adminNavIndexes as $nav) {
+      echo '<div class="form-check">
+        <input class="form-check-input" type="checkbox" value="' . $nav['index'] . '" name="sidebar_index[]" id="admin_' . $nav['value'] . '">
+        <label class="form-check-label" for="admin_' . $nav['value'] . '">' . $nav['index'] . '. ' . $nav['label'] . '</label>
+      </div>';
+    }
+    ?>
   </div>
 </div>
 
 <!-- Storage Access -->
+
 <div class="mb-3 position-relative">
   <button type="button" class="btn btn-outline-primary w-100" id="storageAccessBtn">
     Storage Access
   </button>
   <div id="storageAccessOptions" class="dropdown-menu p-3" style="width:100%; max-height: 200px; overflow-y: auto; display: none;">
-
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="product" id="product">
-      <label class="form-check-label" for="storage_1">Product</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="transaction" id="transaction">
-      <label class="form-check-label" for="storage_2">Transaction</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="stock" id="add_stock">
-      <label class="form-check-label" for="storage_3">Add Stock</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="stock2" id="minus_stock">
-      <label class="form-check-label" for="storage_3">Minus Stock</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="addproduct" id="add_product">
-      <label class="form-check-label" for="storage_3">Add Product</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="editproduct" id="edit_product">
-      <label class="form-check-label" for="storage_3">Edit Product</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="category" id="edit_category">
-      <label class="form-check-label" for="storage_3">Edit Category</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="supplier" id="edit_supplier">
-      <label class="form-check-label" for="storage_3">Edit Supplier</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="storage" id="edit_storage">
-      <label class="form-check-label" for="storage_3">Edit Storage Area</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="stocktransfer" id="stock_transfer">
-      <label class="form-check-label" for="storage_3">Stock Transfer</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="excel" id="excel">
-      <label class="form-check-label" for="storage_3">Stock Update Excel</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="report" id="total_stock_report">
-      <label class="form-check-label" for="storage_3">Total Stock Report</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="report2" id="low_stock_report">
-      <label class="form-check-label" for="storage_3">Stock Update Excel</label>
-    </div>
-    
+    <?php
+    // Define nav indexes for storage access starting from 17
+    $storageNavIndexes = [
+      ['index' => 17, 'value' => 'product', 'label' => 'Product'],
+      ['index' => 18, 'value' => 'transaction', 'label' => 'Transaction'],
+      ['index' => 19, 'value' => 'stock', 'label' => 'Add Stock'],
+      ['index' => 20, 'value' => 'stock2', 'label' => 'Minus Stock'],
+      ['index' => 21, 'value' => 'addproduct', 'label' => 'Add Product'],
+      ['index' => 22, 'value' => 'editproduct', 'label' => 'Edit Product'],
+      ['index' => 23, 'value' => 'category', 'label' => 'Edit Category'],
+      ['index' => 24, 'value' => 'supplier', 'label' => 'Edit Supplier'],
+      ['index' => 25, 'value' => 'storage', 'label' => 'Edit Storage Area'],
+      ['index' => 26, 'value' => 'stocktransfer', 'label' => 'Stock Transfer'],
+      ['index' => 27, 'value' => 'excel', 'label' => 'Stock Update Excel'],
+      ['index' => 28, 'value' => 'report', 'label' => 'Total Stock Report'],
+      ['index' => 29, 'value' => 'report2', 'label' => 'Stock Update Excel'],
+    ];
+  foreach ($storageNavIndexes as $nav) {
+      echo '<div class="form-check">
+        <input class="form-check-input" type="checkbox" value="' . $nav['index'] . '" name="sidebar_index[]" id="storage_' . $nav['value'] . '">
+        <label class="form-check-label" for="storage_' . $nav['value'] . '">' . $nav['index'] . '. ' . $nav['label'] . '</label>
+      </div>';
+    }
+    ?>
   </div>
 </div>
-
 <!-- Delivery Access -->
 <div class="mb-3 position-relative">
   <button type="button" class="btn btn-outline-primary w-100" id="storageAccessBtn">

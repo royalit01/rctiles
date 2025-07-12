@@ -121,32 +121,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         
 // $products = json_decode($_POST['products'], true);
-$products = [
-    [
-        'id' => 101,
-        'name' => 'Test Tile',
-        'quantity' => 5,
-        'unitPrice' => 120.50,
-        'totalPrice' => 602.50,
-        'multiplier' => 1
-    ],
-    [
-        'id' => 102,
-        'name' => 'Sample Marble',
-        'quantity' => 2,
-        'unitPrice' => 300.00,
-        'totalPrice' => 600.00,
-        'multiplier' => 1
-    ]
-];
+
 
 foreach ($products as $p) {
 
     // minimal validation
     if (
         empty($p['id'])        || empty($p['name'])       ||
-        empty($p['quantity'])  || empty($p['unitPrice'])  ||
-        empty($p['totalPrice'])
+        empty($p['quantity'])  || empty($p['unitPrice'])
     ) {
         // skip bad rows but keep the transaction alive
         error_log('⚠️  BAD PRODUCT ROW: ' . print_r($p, true));
@@ -158,61 +140,63 @@ foreach ($products as $p) {
     $product_name      =         $p['name'];
     $qty               = (int)   $p['quantity'];
     $original_price    = (float) $p['unitPrice'];
-    $custom_price      = (float) $p['totalPrice'];
+    $custom_price      = (float) ($p['totalPrice'] ?? 0);
     $multiplier        = (int)   ($p['multiplier'] ?? 1);   // default 1
 
     echo "<pre>";
-echo "product_id: ";      var_dump($product_id);
-echo "product_name: ";    var_dump($product_name);
-echo "qty: ";             var_dump($qty);
-echo "original_price: ";  var_dump($original_price);
-echo "custom_price: ";    var_dump($custom_price);
-echo "multiplier: ";      var_dump($multiplier);
-echo "</pre>";
+    echo "product_id: ";      var_dump($product_id);
+    echo "product_name: ";    var_dump($product_name);
+    echo "qty: ";             var_dump($qty);
+    echo "original_price: ";  var_dump($original_price);
+    echo "custom_price: ";    var_dump($custom_price);
+    echo "multiplier: ";      var_dump($multiplier);
+    echo "</pre>";
+$user_id = $_SESSION['user_id'];
 
-    /* final query – 8 placeholders, 8 values */
-    // $stmt = $mysqli->prepare(
-    //     "INSERT INTO pending_orders
-    //      (order_id, customer_id, product_id, product_name,
-    //       quantity, original_price, custom_price, multiplier, approved)
-    //      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)"
-    // );
-$stmt = $mysqli->prepare(
-  "INSERT INTO pending_orders
-   (order_id, customer_id, product_id, product_name,
-    quantity, original_price, custom_price, multiplier, approved)
-   VALUES (?,?,?,?,?,?,?, ?,0)
-   ON DUPLICATE KEY UPDATE
-       quantity      = quantity + VALUES(quantity),
-       original_price= VALUES(original_price),
-       custom_price  = custom_price + VALUES(custom_price)"
-);
-    /*
-        i  i  i  s  i  d  d  i
-        |  |  |  |  |  |  |  |
-        └── order_id
-           └─ customer_id
-              └─ product_id
-                 └─ product_name
-                    └─ quantity
-                       └── original_price
-                          └── custom_price
-                             └── multiplier
-    */
-  
-$stmt->bind_param(
-    "iiisiddi",
-    $order_id,
-    $customer_id,
-    $product_id,
-    $product_name,
-    $qty,
-    $original_price,
-    $custom_price,
-    $multiplier
-);
+    // Insert into pending_orders
+    $stmt = $mysqli->prepare(
+      "INSERT INTO pending_orders
+       (order_id, customer_id, product_id, product_name,
+        quantity, original_price, custom_price, multiplier, approved)
+       VALUES (?,?,?,?,?,?,?, ?,0)
+       ON DUPLICATE KEY UPDATE
+           quantity      = quantity + VALUES(quantity),
+           original_price= VALUES(original_price),
+           custom_price  = custom_price + VALUES(custom_price)"
+    );
+    $stmt->bind_param(
+        "iiisiddi",
+        $order_id,
+        $customer_id,
+        $product_id,
+        $product_name,
+        $qty,
+        $original_price,
+        $custom_price,
+        $multiplier
+    );
     $stmt->execute();
     $stmt->close();
+
+    // Insert into pending_orders_estimate (new table)
+    $stmt2 = $mysqli->prepare(
+      "INSERT INTO pending_orders_estimate
+   (order_id, customer_id, product_id, product_name, quantity, unit_price, multiplier, user_id)
+   VALUES (?,?,?,?,?,?,?,?)"
+    );
+    $stmt2->bind_param(
+      "iiisidii",
+        $order_id,
+        $customer_id,
+        $product_id,
+        $product_name,
+        $qty,
+        $original_price, // this is unit_price
+        $multiplier,
+        $user_id
+    );
+    $stmt2->execute();
+    $stmt2->close();
 }
 
 

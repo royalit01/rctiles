@@ -33,20 +33,20 @@ $total_items = $count_result ? $count_result->fetch_assoc()['total'] : 0;
 $total_pages = $total_items > 0 ? ceil($total_items / $limit) : 1;
 
 // Base SQL query for data
-$sql = "SELECT DISTINCT o.order_id, c.name AS customer_name, c.phone_no, o.total_amount, 
-                (SELECT SUM(custom_price) FROM pending_orders WHERE order_id = o.order_id) AS custom_total,
-                po.approved, o.order_date
-        FROM orders o
-        JOIN customers c ON o.customer_id = c.customer_id
-        JOIN pending_orders po ON o.order_id = po.order_id
+// Fetch user name from users table
+$sql = "SELECT 
+            poe.order_id, 
+            c.name AS customer_name, 
+            u.name AS created_by_name
+        FROM pending_orders_estimate poe
+        LEFT JOIN customers c ON poe.customer_id = c.customer_id
+        LEFT JOIN users u ON poe.user_id = u.user_id
         WHERE 1=1";
-if ($status_filter !== 'all') {
-    $sql .= " AND po.approved = " . ($status_filter === 'approved' ? 1 : ($status_filter === 'rejected' ? -1 : 0));
-}
 if (!empty($date_filter)) {
-    $sql .= " AND DATE(o.order_date) = '$date_filter'";
+    $sql .= " AND DATE(poe.created_at) = '$date_filter'";
 }
-$sql .= " ORDER BY o.order_date DESC LIMIT $limit OFFSET $offset";
+$sql .= " GROUP BY poe.order_id, c.name, u.name
+           ORDER BY poe.created_at DESC LIMIT $limit OFFSET $offset";
 $result = $mysqli->query($sql);
 
 
@@ -170,7 +170,7 @@ $result = $mysqli->query($sql);
             max-height: 400px;
             overflow-y: auto;
         }
-    </style>   
+    </style>
 </head>
 <body class="sb-nav-fixed">
     <div id="layoutSidenav_content">
@@ -185,48 +185,33 @@ $result = $mysqli->query($sql);
                         <table class="table table-bordered table-hover">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Customer</th>
-                                    <th>Created Through</th>
-                                    <th>Status</th>
+                                    
+                                    <th>Customer Name</th>
+                                    <th>Created By</th>
+                                    
+                                    
+                                    
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php while ($row = $result->fetch_assoc()): ?>
-                                    <tr id="orderRow-<?= $row['order_id'] ?>">
-                                        <td><?= htmlspecialchars($row['customer_name']) ?></td>
-                                        <td><?= htmlspecialchars($row['phone_no']) ?></td>
-                                        
+                                <tr>
+                                    <td><?= htmlspecialchars($row['customer_name']) ?></td>
+                                    <td><?= htmlspecialchars($row['created_by_name']) ?></td>
+                                 
+                                    <td>
+                                        <button class="btn btn-info btn-sm" onclick="viewProducts(<?= $row['order_id'] ?>)">
+                                            <i class="fas fa-eye"></i>
 
-                                        <td>
-                                            <?php if ($row['approved'] == 0): ?>
-                                                <span class="badge bg-warning">Pending</span>
-                                            <?php elseif ($row['approved'] == 1): ?>
-                                                <span class="badge bg-success">Approved</span>
-                                            <?php elseif ($row['approved'] == -1): ?>
-                                                <span class="badge bg-danger">Rejected</span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex flex-wrap gap-2">
-                                                <button class="btn btn-info btn-sm" onclick="viewProducts(<?= $row['order_id'] ?>)">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <?php if ($row['approved'] == 0): ?>
-                                                    <button class="btn btn-success btn-sm approve-btn" onclick="approveOrder(<?= $row['order_id'] ?>, this)">
-                                                        <i class="fas fa-check"></i> Create
-                                                    </button>
-                                                    <button class="btn btn-danger btn-sm reject-btn" onclick="rejectOrder(<?= $row['order_id'] ?>, this)">
-                                                        <i class="fas fa-times"></i> Delete
-                                                    </button>
-                                                <?php endif; ?>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                        </button>
+                                        
+                                    </td>
+                                </tr>
                                 <?php endwhile; ?>
                             </tbody>
                         </table>
-                        <!-- Pagination controls -->
+                        <!-- Pagination controls
                         <nav aria-label="Page navigation">
                             <ul class="pagination justify-content-center mt-3">
                                 <?php 
@@ -256,58 +241,11 @@ $result = $mysqli->query($sql);
                                     </li>
                                 <?php endif; ?>
                             </ul>
-                        </nav>
+                        </nav> -->
                         <!-- End Pagination controls -->
                     </div>
 
-                    <!-- Mobile Card View -->
-                    <?php 
-                    $result->data_seek(0);
-                    while ($row = $result->fetch_assoc()): ?>
-                        <div class="mobile-card">
-                            <div class="card-row">
-                                <span class="card-label">Customer:</span>
-                                <span class="card-value"><?= htmlspecialchars($row['customer_name']) ?></span>
-                            </div>
-                            <div class="card-row">
-                                <span class="card-label">Phone:</span>
-                                <span class="card-value"><?= htmlspecialchars($row['phone_no']) ?></span>
-                            </div>
-                            <div class="card-row">
-                                <span class="card-label">Original Price:</span>
-                                <span class="card-value">₹<?= number_format($row['total_amount'], 2) ?></span>
-                            </div>
-                            <div class="card-row">
-                                <span class="card-label">Custom Price:</span>
-                                <span class="card-value">₹<?= number_format($row['custom_total'], 2) ?></span>
-                            </div>
-                            <div class="card-row">
-                                <span class="card-label">Status:</span>
-                                <span class="card-value">
-                                    <?php if ($row['approved'] == 0): ?>
-                                        <span class="badge bg-warning">Pending</span>
-                                    <?php elseif ($row['approved'] == 1): ?>
-                                        <span class="badge bg-success">Approved</span>
-                                    <?php elseif ($row['approved'] == -1): ?>
-                                        <span class="badge bg-danger">Rejected</span>
-                                    <?php endif; ?>
-                                </span>
-                            </div>
-                            <div class="card-actions">
-                                <button class="btn btn-info btn-sm btn-sm-block" onclick="viewProducts(<?= $row['order_id'] ?>)">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <?php if ($row['approved'] == 0): ?>
-                                    <button class="btn btn-success btn-sm btn-sm-block" onclick="approveOrder(<?= $row['order_id'] ?>, this)">
-                                        <i class="fas fa-check"></i> Approve
-                                    </button>
-                                    <button class="btn btn-danger btn-sm btn-sm-block" onclick="rejectOrder(<?= $row['order_id'] ?>, this)">
-                                        <i class="fas fa-times"></i> Reject
-                                    </button>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    <?php endwhile; ?>
+                   
                 </div>
             </div>
         </main>
@@ -328,12 +266,13 @@ $result = $mysqli->query($sql);
                                 <tr>
                                     <th>Product Name</th>
                                     <th>Quantity</th>
-                                    <th>Original Price</th>
-                                    <th>Custom Price</th>
+                                    <th> Price</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody id="productDetails"></tbody>
                         </table>
+                        <button type="button" id="continueBtn">  Continue </button>
                     </div>
                 </div>
             </div>
@@ -342,6 +281,7 @@ $result = $mysqli->query($sql);
 
     <script>
         function viewProducts(orderId) {
+            window.currentOrderId = orderId; // <-- Add this line!
             $.ajax({
                 url: 'fetch_order_products.php',
                 type: 'GET',
@@ -352,6 +292,40 @@ $result = $mysqli->query($sql);
                 }
             });
         }
+
+        document.getElementById('continueBtn').addEventListener('click', function() {
+    // Get the order ID (you can store it in a hidden field or JS variable when opening the modal)
+    var orderId = window.currentOrderId; // Set this when you open the modal
+
+    // Collect product data from the modal table
+    var products = [];
+    $('#productDetails tr').each(function() {
+        var productName = $(this).find('td').eq(0).text();
+        var quantity = $(this).find('td').eq(1).text();
+        var price = $(this).find('td').eq(2).text();
+        var multiplier = $(this).find('td').eq(3).text();
+        products.push({
+            product_name: productName,
+            quantity: quantity,
+            price: price,
+            multiplier: multiplier
+        });
+    });
+
+    // Send data to continue_order.php via POST
+    $.ajax({
+        url: 'continue_order.php',
+        type: 'POST',
+        data: {
+            order_id: orderId,
+            products: JSON.stringify(products)
+        },
+        success: function(response) {
+            // Optionally redirect or show a message
+            window.location.href = 'continue_order.php?order_id=' + orderId;
+        }
+    });
+});
 
         function approveOrder(orderId, button) {
             if (!confirm("Are you sure you want to approve this order?")) return;
