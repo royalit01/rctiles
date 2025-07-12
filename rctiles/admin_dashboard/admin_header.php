@@ -84,6 +84,10 @@ if(!isset($_SESSION['user_id']) || $_SESSION['role_id'] != 1) {
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 View Order
                             </a>
+                            <a class="nav-link" href="estimate.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                View Estimate
+                            </a>
                             <a class="nav-link" href="minus_order_stock.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Minus Order Stock
