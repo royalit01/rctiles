@@ -1,7 +1,12 @@
 <?php
-session_start();
-include "../db_connect.php";
-if (!isset($_SESSION['user_id']) || $_SESSION['role_id']!=4){header("Location: ../login.php");exit;}
+
+if (session_status() == PHP_SESSION_NONE) {
+    session_start(); // Start the session if not already started
+}
+
+require_once "../db_connect.php";
+
+if (!isset($_SESSION['user_id'])  ){header("Location: ../login.php");exit;}
 $uid = (int)$_SESSION['user_id'];
 
 $res = $mysqli->query("

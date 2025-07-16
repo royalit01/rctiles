@@ -7,7 +7,7 @@ session_start();
 include "../db_connect.php";
 
 /* 1.  allow only role_id = 4 */
-if (!isset($_SESSION['user_id']) || $_SESSION['role_id'] != 4) {
+if (!isset($_SESSION['user_id']) || $_SESSION['role_id'] != 1) {
     header("Location: ../login.php");
     exit;
 }

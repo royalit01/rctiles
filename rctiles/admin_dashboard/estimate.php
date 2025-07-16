@@ -34,19 +34,32 @@ $total_pages = $total_items > 0 ? ceil($total_items / $limit) : 1;
 
 // Base SQL query for data
 // Fetch user name from users table
+
+// Fetch all required fields from pending_orders
+// Remove user join and created_by_name since po.user_id does not exist
 $sql = "SELECT 
-            poe.order_id, 
-            c.name AS customer_name, 
-            u.name AS created_by_name
-        FROM pending_orders_estimate poe
-        LEFT JOIN customers c ON poe.customer_id = c.customer_id
-        LEFT JOIN users u ON poe.user_id = u.user_id
-        WHERE 1=1";
+    po.id,
+    po.order_id,
+    po.customer_id,
+    po.product_id,
+    po.product_name,
+    po.quantity,
+    po.original_price,
+    po.custom_price,
+    po.approved,
+    po.stock_subtracted,
+    po.created_at,
+    po.multiplier,
+    c.name AS customer_name,
+    u.name AS created_by_name
+FROM pending_orders po
+LEFT JOIN customers c ON po.customer_id = c.customer_id
+LEFT JOIN users u ON po.user_id = u.user_id
+WHERE 1=1";
 if (!empty($date_filter)) {
-    $sql .= " AND DATE(poe.created_at) = '$date_filter'";
+    $sql .= " AND DATE(po.created_at) = '$date_filter'";
 }
-$sql .= " GROUP BY poe.order_id, c.name, u.name
-           ORDER BY poe.created_at DESC LIMIT $limit OFFSET $offset";
+$sql .= " ORDER BY po.created_at DESC LIMIT $limit OFFSET $offset";
 $result = $mysqli->query($sql);
 
 
@@ -272,6 +285,7 @@ $result = $mysqli->query($sql);
                             </thead>
                             <tbody id="productDetails"></tbody>
                         </table>
+                        
                         <button type="button" id="continueBtn">  Continue </button>
                     </div>
                 </div>

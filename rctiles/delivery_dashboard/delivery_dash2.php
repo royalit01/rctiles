@@ -14,9 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_delivered'])) {
   }
   $row = $mysqli->query("SELECT amount_remaining FROM delivery_orders WHERE delivery_id = $deliveryId")->fetch_assoc();
   if ($row && floatval($row['amount_remaining']) <= 0) {
-    $mysqli->query("UPDATE delivery_orders SET item_delivered = 1, status = 'Completed' WHERE delivery_id = $deliveryId");
-  } else {
-    $mysqli->query("UPDATE delivery_orders SET item_delivered = 1 WHERE delivery_id = $deliveryId");
+    $mysqli->query("UPDATE delivery_orders SET status = 'Completed', delivered_at = NOW() WHERE delivery_id = $deliveryId");
   }
   header("Location: " . $_SERVER['REQUEST_URI']);
   exit;
@@ -25,8 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_delivered'])) {
 include "delivery_header.php"; 
 include "../db_connect.php";
 
-$pendingOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.address, o.final_amount AS total_amount, o.rent_amount, do.delivery_id, do.amount_remaining, do.amount_paid FROM delivery_orders do JOIN orders o ON do.order_id = o.order_id JOIN customers c ON o.customer_id = c.customer_id WHERE (do.status = 'Assigned' OR do.status = 'Partially Paid') AND do.item_delivered = 0");
-$deliveredOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.address FROM delivery_orders do JOIN orders o ON do.order_id = o.order_id JOIN customers c ON o.customer_id = c.customer_id WHERE  do.item_delivered = 1");
+$pendingOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.address, o.final_amount AS total_amount, o.rent_amount, do.delivery_id, do.amount_remaining, do.amount_paid FROM delivery_orders do JOIN orders o ON do.order_id = o.order_id JOIN customers c ON o.customer_id = c.customer_id WHERE do.status != 'Completed'");
+$deliveredOrders = $mysqli->query("SELECT o.order_id, c.name, c.phone_no, c.address FROM delivery_orders do JOIN orders o ON do.order_id = o.order_id JOIN customers c ON o.customer_id = c.customer_id WHERE do.status = 'Completed'");
 
 ?>
 <!DOCTYPE html>

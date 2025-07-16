@@ -19,7 +19,7 @@ if (isset($_POST['order_id'])) {
     $order_id = '';
 }
 $order_id_int = is_numeric($order_id) ? (int)$order_id : 0;
-$stmt = $mysqli->prepare("SELECT product_name, quantity, original_price, custom_price FROM pending_orders WHERE order_id = ?");
+$stmt = $mysqli->prepare("SELECT product_id, product_name, quantity, original_price, custom_price FROM pending_orders WHERE order_id = ?");
 $stmt->bind_param("i", $order_id_int);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -27,6 +27,32 @@ while ($row = $result->fetch_assoc()) {
     $products[] = $row;
 }
 $stmt->close();
+
+// Fetch customer details using order_id
+$customer = [
+    'name' => '',
+    'phone_no' => '',
+    'city' => '',
+    'address' => ''
+];
+if ($order_id_int > 0) {
+    $stmt = $mysqli->prepare("SELECT c.name, c.phone_no, c.city, c.address
+                              FROM orders o
+                              JOIN customers c ON o.customer_id = c.customer_id
+                              WHERE o.order_id = ?");
+    $stmt->bind_param("i", $order_id_int);
+    $stmt->execute();
+    $stmt->bind_result($name, $phone_no, $city, $address);
+    if ($stmt->fetch()) {
+        $customer = [
+            'name' => $name,
+            'phone_no' => $phone_no,
+            'city' => $city,
+            'address' => $address
+        ];
+    }
+    $stmt->close();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -46,8 +72,217 @@ $stmt->close();
     <script>
 window.productsFromPHP = <?php echo json_encode($products ?? []); ?>;
 
+// Initialize selectedProductsData from productsFromPHP
+let selectedProductsData = { "0": { wall: [], floor: [] } };
+if (window.productsFromPHP && window.productsFromPHP.length > 0) {
+    selectedProductsData["0"].wall = window.productsFromPHP.map((product) => ({
+        id: product.product_id, // use real product_id from DB
+        name: product.product_name,
+        quantity: parseInt(product.quantity) || 1,
+        unitPrice: parseFloat(product.custom_price ?? product.original_price) || 0,
+        totalPrice: (parseInt(product.quantity) || 1) * (parseFloat(product.custom_price ?? product.original_price) || 0),
+        currentTotalPrice: (parseInt(product.quantity) || 1) * (parseFloat(product.custom_price ?? product.original_price) || 0),
+        originalTotalPrice: (parseInt(product.quantity) || 1) * (parseFloat(product.original_price) || 0)
+    }));
+}
 document.addEventListener('DOMContentLoaded', function() {
     updateSummary();
+});
+
+function updateTotalAmount() {
+    let total = 0;
+    document.querySelectorAll('.final-price').forEach(cell => {
+        // Extract the price from the text content (removing the ₹ symbol)
+        total += parseFloat(cell.getAttribute("data-current-price")) || 0;
+    });
+    document.getElementById("totalAmount").textContent = `₹${total.toFixed(2)}`;
+    document.getElementById("finalAmountPaid").value = total.toFixed(2);
+    document.getElementById("final_price").value = total.toFixed(2);
+}
+
+const submitBtn = document.querySelector('#orderForm button[type="submit"]');
+if (submitBtn) {
+    submitBtn.type = "button";
+    submitBtn.id = "openConfirmModalBtn";
+}
+
+function applyFinalPrice() {
+    let finalAmountInput = document.getElementById("finalAmountPaid");
+    let finalAmount = parseFloat(finalAmountInput.value) || 0;
+
+    document.getElementById("final_price").value = finalAmount;
+    let totalAmount = parseFloat(document.getElementById("totalAmount").textContent.replace("₹", "")) || 0;
+
+    if (finalAmount > totalAmount || finalAmount <= 0) {
+        console.warn("Invalid final amount. Discount not applied.");
+        return;
+    }
+
+    let discount = totalAmount - finalAmount;
+    let allProducts = document.querySelectorAll(".final-price");
+
+    // Calculate total original amount from data attributes
+    let totalOriginalAmount = 0;
+    allProducts.forEach(row => {
+        totalOriginalAmount += parseFloat(row.getAttribute("data-original-price")) || 0;
+    });
+
+    if (allProducts.length === 0 || totalOriginalAmount <= 0) {
+        return;
+    }
+
+    let remainingDiscount = discount;
+    let lastIndex = allProducts.length - 1;
+
+    allProducts.forEach((row, index) => {
+        let originalPrice = parseFloat(row.getAttribute("data-original-price")) || 0;
+        let discountShare = (originalPrice / totalOriginalAmount) * discount;
+
+        if (index === lastIndex) {
+            discountShare = remainingDiscount;
+        }
+
+        let newPrice = Math.max(originalPrice - discountShare, 0);
+        row.textContent = `₹${newPrice.toFixed(2)}`;
+        row.setAttribute("data-current-price", newPrice.toFixed(2));
+
+        // Update product data in the data structure if needed
+        const productId = row.getAttribute("data-id");
+        if (productId) {
+            Object.values(selectedProductsData).forEach(section => {
+                [...section.wall, ...section.floor].forEach(product => {
+                    if (product.id == productId) {
+                        product.currentTotalPrice = newPrice;
+                    }
+                });
+            });
+        }
+
+        remainingDiscount -= discountShare;
+    });
+
+    // Don't update the finalAmountPaid input, but do update the hidden field
+    document.getElementById("final_price").value = finalAmount;
+    updateGrandAmount();
+}// Add this at the top of your <script> block or before any usage
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    // Intercept the submit button to show the confirmation modal
+    const submitBtn = document.querySelector('#orderForm button[type="submit"]');
+    if (submitBtn) {
+        submitBtn.type = "button";
+        submitBtn.id = "openConfirmModalBtn";
+    }
+
+    // Show confirmation modal on submit button click
+    document.getElementById('openConfirmModalBtn').addEventListener('click', function() {
+        // Optionally, you can run validation here before showing the modal
+        var confirmModal = new bootstrap.Modal(document.getElementById('confirmSubmitModal'));
+        confirmModal.show();
+    });
+
+    // On confirm, trigger the form submit handler
+    document.getElementById('confirmSubmitBtn').addEventListener('click', function() {
+        document.getElementById('orderForm').dispatchEvent(new Event('submit', {cancelable: true, bubbles: true}));
+    });
+
+    // Main form submit handler
+    document.getElementById("orderForm").addEventListener("submit", function(event) {
+        // Prevent default form submission
+        event.preventDefault();
+
+        console.log("Form submission initiated");
+
+        // Validate final amount
+        let finalAmount = parseFloat(document.getElementById("finalAmountPaid").value) || 0;
+        if (finalAmount <= 0) {
+            alert("Final amount must be greater than 0");
+            return;
+        }
+
+        // Check if we have any products selected
+        let hasProducts = false;
+        let productsArray = [];
+
+        // Build products array from all detail sections
+        Object.entries(selectedProductsData).forEach(([sectionId, section]) => {
+            console.log("Section ID:", sectionId, "Section Data:", section);
+            let detailGroup = document.querySelector(`[data-section-id="${sectionId}"]`);
+            console.log("Detail Group for section", sectionId, ":", detailGroup);
+            let multiplier = parseInt(detailGroup?.querySelector(".multiply-order")?.value) || 1;
+            console.log("Multiplier for section", sectionId, ":", multiplier);
+
+            // Process both wall and floor products
+            ['wall', 'floor'].forEach(type => {
+                console.log("Processing type:", type, "for section", sectionId);
+                if (section[type] && section[type].length > 0) {
+                    console.log("Found products for type", type, ":", section[type]);
+                    hasProducts = true;
+
+                    section[type].forEach(product => {
+                        // Find the corresponding row in the summary table using data-index
+                        let row = document.querySelector(`.final-price[data-index="${product.id}"]`)?.closest('tr');
+                        let quantity = 1;
+                        let customPrice = 0;
+                        let finalPrice = 0;
+
+                        if (row) {
+                            // Get the latest quantity and custom price from the inputs
+                            quantity = parseInt(row.querySelector('.product-quantity')?.value) || product.quantity;
+                            customPrice = parseFloat(row.querySelector('.fixed-price-input')?.value) || product.unitPrice;
+                            finalPrice = parseFloat(row.querySelector('.final-price')?.getAttribute('data-current-price')) || (quantity * customPrice);
+                        } else {
+                            // fallback to product object
+                            quantity = product.quantity;
+                            customPrice = product.unitPrice;
+                            finalPrice = product.totalPrice;
+                        }
+
+                        let productObj = {
+                            id: product.id,
+                            name: product.name,
+                            quantity: quantity,
+                            unitPrice: customPrice, // this is custom_price
+                            totalPrice: finalPrice, // this is final_price
+                            multiplier: multiplier
+                        };
+                        console.log("Pushing product to productsArray:", productObj);
+                        productsArray.push(productObj);
+                    });
+                } else {
+                    console.log("No products found for type", type, "in section", sectionId);
+                }
+            });
+        });
+
+        if (!hasProducts) {
+            alert("No products selected. Please add at least one product.");
+            return;
+        }
+
+        // Remove any previously added hidden inputs
+        document.querySelectorAll(".hidden-product-input").forEach(input => input.remove());
+
+        // Add products as a hidden input
+        let productsInput = document.createElement("input");
+        productsInput.type = "hidden";
+        productsInput.name = "products";
+        productsInput.className = "hidden-product-input";
+        productsInput.value = JSON.stringify(productsArray);
+        this.appendChild(productsInput);
+
+        // Verify form data before submission
+        const formData = new FormData(this);
+        console.log("FormData contents:");
+        for (let [key, value] of formData.entries()) {
+            console.log(key, value);
+        }
+
+        // Actually submit the form now (bypass this handler) after 5 minutes
+        this.submit(); 
+    });
+
 });
 
 function updateSummary() {
@@ -76,6 +311,8 @@ function updateSummary() {
     document.getElementById("totalAmount").textContent = `₹${totalAmount.toFixed(2)}`;
     document.getElementById("finalAmountPaid").value = totalAmount.toFixed(2);
     document.getElementById("final_price").value = totalAmount.toFixed(2);
+    updateGrandAmount(); // <-- Add this line
+
 }
 
 function updateRowTotal(input) {
@@ -98,8 +335,34 @@ function updateRowTotal(input) {
     document.getElementById('totalAmount').textContent = '₹' + total.toFixed(2);
     document.getElementById('finalAmountPaid').value = total.toFixed(2);
     document.getElementById('final_price').value = total.toFixed(2);
-    if (typeof applyFinalPrice === 'function') applyFinalPrice();
+    applyFinalPrice();
+        updateGrandAmount(); // <-- Add this line
+
 }
+
+
+  function updateGrandAmount() {
+    let finalAmount = parseFloat(document.getElementById('finalAmountPaid').value) || 0;
+    let rentAmount = parseFloat(document.getElementById('RentAmount').value) || 0;
+    let returnAmount = parseFloat(document.getElementById('returnAmount').value) || 0;
+    let grandAmount = finalAmount + rentAmount - returnAmount;
+    document.getElementById('grandAmountPaid').value = grandAmount;
+    document.getElementById('totalAmount').textContent = finalAmount ? `₹${finalAmount.toFixed(2)}` : '₹0.00';
+    console.log('finalAmount:', finalAmount);
+console.log('rentAmount:', rentAmount);
+console.log('returnAmount:', returnAmount);
+console.log('grandAmount:', grandAmount);
+}
+
+// ...existing code...
+window.updateFinalAndRentFromGrand = function() {
+    let grand = parseFloat(document.getElementById('grandAmountPaid').value) || 0;
+    let rent = parseFloat(document.getElementById('RentAmount').value) || 0;
+    let final = grand - rent;
+    document.getElementById('finalAmountPaid').value = final.toFixed(2);
+    applyFinalPrice();
+};
+// ...existing code...
 
     </script>
     <style>
@@ -189,7 +452,58 @@ function updateRowTotal(input) {
                                         </tfoot>
                                     </table>
 </div>
+  <div class="mb-3">
 
+    <form id="orderForm" method="POST" action="submit_order.php">
+        <input type="hidden" name="order_id" value="<?= htmlspecialchars($order_id) ?>">
+
+<!-- Pre-filled customer fields -->
+<div class="row mb-3">
+  <div class="col-md-6 mb-2">
+    <label for="customer_name" class="form-label"><strong>Customer Name</strong></label>
+    <input type="text" class="form-control" id="customer_name" name="customer_name" required
+           value="<?= htmlspecialchars($customer['name']) ?>">
+  </div>
+  <div class="col-md-6 mb-2">
+    <label for="phone_no" class="form-label"><strong>Phone Number</strong></label>
+    <input type="text" class="form-control" id="phone_no" name="phone_no" required
+           value="<?= htmlspecialchars($customer['phone_no']) ?>">
+  </div>
+  <div class="col-md-6 mb-2">
+    <label for="city" class="form-label"><strong>City</strong></label>
+    <input type="text" class="form-control" id="city" name="city" required
+           value="<?= htmlspecialchars($customer['city']) ?>">
+  </div>
+  <div class="col-md-6 mb-2">
+    <label for="address" class="form-label"><strong>Address</strong></label>
+    <input type="text" class="form-control" id="address" name="address" required
+           value="<?= htmlspecialchars($customer['address']) ?>">
+  </div>
+</div>
+
+<label for="returnAmount" class="form-label"><strong>Return Amount (₹):</strong></label>
+<input type="text" class="form-control" id="returnAmount" name="return_amount"
+    placeholder="Enter return amount"
+    oninput="this.value = this.value.replace(/[^0-9.]/g, ''); applyFinalPrice(); updateGrandAmount();">
+
+                                    <label for="finalAmountPaid" class="form-label"><strong>Final Amount Paid (₹):</strong></label>
+<input type="text" class="form-control" id="finalAmountPaid" name="final_amount"
+                                        placeholder="Enter final amount"
+                                        oninput="this.value = this.value.replace(/[^0-9.]/g, ''); applyFinalPrice(); updateGrandAmount();">
+
+                                    <label for="RentAmount" class="form-label"><strong>Freight Paid (₹):</strong></label>
+                                    <input type="text" class="form-control" id="RentAmount" name="rent_amount"
+                                     placeholder="Enter rent amount" value="0"
+                                     oninput="this.value = this.value.replace(/[^0-9.]/g, ''); applyFinalPrice(); updateGrandAmount();">
+ 
+                                     <label for="grandAmountPaid" class="form-label"><strong>Grand Amount Paid (₹):</strong></label>
+                                     <input type="text" class="form-control" id="grandAmountPaid" name="grand_amount_paid" 
+                                         oninput="this.value = this.value.replace(/[^0-9.]/g, ''); updateFinalAndRentFromGrand();">
+                                    <input type="hidden" name="final_price" id="final_price">
+                                    <button type="submit" class="btn btn-success">Submit Order</button>
+
+                                    </form>
+                                </div>
                     
                 </div>
             </div>
@@ -206,7 +520,23 @@ function updateRowTotal(input) {
 
 <!-- 🔹 Bill Container (Hidden Initially) -->
 <!-- Full-Screen Bill Modal -->
-
+<div class="modal fade" id="confirmSubmitModal" tabindex="-1" aria-labelledby="confirmSubmitModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmSubmitModalLabel">Confirm Submission</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to submit this order?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-success" id="confirmSubmitBtn">Yes, Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- ✅ Ensure the modal is placed before closing body tag -->
 </body>
 </html>

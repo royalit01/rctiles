@@ -6,8 +6,9 @@
 -- Generation Time: May 25, 2025 at 11:28 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+-- Create database command
+-- Create database command
+CREATE DATABASE `u997998014_rc_ceramic` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 

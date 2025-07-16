@@ -1,6 +1,14 @@
 <?php
-require_once '../db_connect.php';
+if (session_status() == PHP_SESSION_NONE) {
+    session_start(); // Start the session if not already started
+}
 
+if(!isset($_SESSION['user_id']) || $_SESSION['role_id'] != 1) {
+    header("Location: ../login.php");
+    exit;
+}
+
+include '../db_connect.php';
 function json_exit($ok, $msg, $extra = []) {
     header('Content-Type: application/json');
     echo json_encode($extra + ['ok' => $ok, 'msg' => $msg]);

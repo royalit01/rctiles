@@ -16,7 +16,12 @@ include "../db_connect.php";
 $userId = $_SESSION['user_id'];
 $userQuery = $mysqli->query("SELECT sidebar_index FROM users WHERE user_id = $userId");
 $userRow = $userQuery->fetch_assoc();
-$allowedIndexes = json_decode($userRow['sidebar_index'], true) ?? [];
+$allowedIndexes = json_decode($userRow['sidebar_index'], true);
+
+// Ensure $allowedIndexes is always an array
+if (!is_array($allowedIndexes)) {
+    $allowedIndexes = [$userRow['sidebar_index']];
+}
 
 // Helper function to show nav link only if allowed
 function showNav($index, $html, $allowedIndexes) {
@@ -64,7 +69,7 @@ function showNav($index, $html, $allowedIndexes) {
     showNav(1, '
         <a class="nav-link" href="admin_dashboard.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-            1. Admin Dashboard
+            Admin Dashboard
         </a>
     ', $allowedIndexes);
 
@@ -72,7 +77,7 @@ function showNav($index, $html, $allowedIndexes) {
     showNav(2, '
         <a class="nav-link" href="../Storage Dashboard/Product.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-            2. Storage Dashboard
+            Storage Dashboard
         </a>
     ', $allowedIndexes);
 
@@ -80,7 +85,7 @@ function showNav($index, $html, $allowedIndexes) {
     showNav(3, '
         <a class="nav-link" href="add_user.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-            3. Add Member
+            Add Member
         </a>
     ', $allowedIndexes);
 
@@ -88,7 +93,7 @@ function showNav($index, $html, $allowedIndexes) {
     showNav(4, '
         <a class="nav-link" href="edit_user.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-            4. Edit & View Member
+            Edit & View Member
         </a>
     ', $allowedIndexes);
 
@@ -96,7 +101,7 @@ function showNav($index, $html, $allowedIndexes) {
     showNav(5, '
         <a class="nav-link" href="new_order.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-            5. Create Order
+            Create Order
         </a>
     ', $allowedIndexes);
 
@@ -104,7 +109,7 @@ function showNav($index, $html, $allowedIndexes) {
     showNav(6, '
         <a class="nav-link" href="admin_orders.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-            6. View Order
+            View Order
         </a>
     ', $allowedIndexes);
 
@@ -112,7 +117,7 @@ function showNav($index, $html, $allowedIndexes) {
     showNav(7, '
         <a class="nav-link" href="estimate.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-            7. View Estimate
+            View Estimate
         </a>
     ', $allowedIndexes);
 
@@ -120,7 +125,7 @@ function showNav($index, $html, $allowedIndexes) {
     showNav(8, '
         <a class="nav-link" href="minus_order_stock.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-            8. Minus Order Stock
+            Minus Order Stock
         </a>
     ', $allowedIndexes);
 
@@ -128,7 +133,7 @@ function showNav($index, $html, $allowedIndexes) {
     showNav(9, '
         <a class="nav-link" href="assign_delivery.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-            9. Assign Delivery
+            Assign Delivery
         </a>
     ', $allowedIndexes);
 
@@ -136,7 +141,7 @@ function showNav($index, $html, $allowedIndexes) {
     showNav(10, '
         <a class="nav-link" href="approved_orders.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-            10. Create Bill
+            Create Bill
         </a>
     ', $allowedIndexes);
 
@@ -144,7 +149,7 @@ function showNav($index, $html, $allowedIndexes) {
     showNav(11, '
         <a class="nav-link" href="customBill.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-            11. Custom Bill
+            Custom Bill
         </a>
     ', $allowedIndexes);
 
@@ -152,7 +157,7 @@ function showNav($index, $html, $allowedIndexes) {
     showNav(12, '
         <a class="nav-link" href="member_log.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-            12. Members Log
+            Members Log
         </a>
     ', $allowedIndexes);
 
@@ -160,7 +165,7 @@ function showNav($index, $html, $allowedIndexes) {
     showNav(13, '
         <a class="nav-link" href="../Storage Dashboard/Transaction.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-            13. Storage Log
+            Storage Log
         </a>
     ', $allowedIndexes);
 
@@ -168,7 +173,7 @@ function showNav($index, $html, $allowedIndexes) {
     showNav(14, '
         <a class="nav-link" href="../Storage Dashboard/Report.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-            14. View Stock
+            View Stock
         </a>
     ', $allowedIndexes);
 
@@ -176,7 +181,7 @@ function showNav($index, $html, $allowedIndexes) {
     showNav(15, '
         <a class="nav-link" href="../Storage Dashboard/Low_Stock.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-            15. Low Stock 
+            Low Stock
         </a>
     ', $allowedIndexes);
 
@@ -184,7 +189,7 @@ function showNav($index, $html, $allowedIndexes) {
     showNav(16, '
         <a class="nav-link" href="recycle_bin.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-            16. Recycle Bin
+            Recycle Bin
         </a>
     ', $allowedIndexes);
 
@@ -192,7 +197,7 @@ function showNav($index, $html, $allowedIndexes) {
     showNav(17, '
         <a class="nav-link" href="delete_orders.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-            17. Delete Orders
+            Delete Orders
         </a>
     ', $allowedIndexes);
 
@@ -200,7 +205,7 @@ function showNav($index, $html, $allowedIndexes) {
     showNav(18, '
         <a class="nav-link" href="../Storage Dashboard/Low_Stock_Report.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-            18. Low Stock Report
+            Low Stock Report
         </a>
     ', $allowedIndexes);
 
@@ -208,7 +213,7 @@ function showNav($index, $html, $allowedIndexes) {
     showNav(19, '
         <a class="nav-link" href="customer_ledger.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-            19. Customer Ledger
+            Customer Ledger
         </a>
     ', $allowedIndexes);
 
@@ -216,7 +221,7 @@ function showNav($index, $html, $allowedIndexes) {
     showNav(20, '
         <a class="nav-link" href="member_ledger.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-            20. Member Ledger
+            Member Ledger
         </a>
     ', $allowedIndexes);
 
@@ -224,13 +229,24 @@ function showNav($index, $html, $allowedIndexes) {
     showNav(21, '
         <a class="nav-link" href="delivery_payment.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-            21. Delivery Payment
+            Delivery Payment
         </a>
     ', $allowedIndexes);
     ?>
                     <div class="sb-sidenav-footer">
                         <div class="small">Logged in as:</div>
-                        <!-- <?= $_SESSION['role_name'] ?> -->
+                        <?php
+                        // Fetch role name from roles table
+                        $roleName = '';
+                        if (isset($_SESSION['role_id'])) {
+                            $roleId = (int)$_SESSION['role_id'];
+                            $roleRes = $mysqli->query("SELECT role_name FROM roles WHERE role_id = $roleId");
+                            if ($roleRes && $roleRow = $roleRes->fetch_assoc()) {
+                                $roleName = htmlspecialchars($roleRow['role_name']);
+                            }
+                        }
+                        echo $roleName;
+                        ?>
                     </div>
                 </nav>
             </div>

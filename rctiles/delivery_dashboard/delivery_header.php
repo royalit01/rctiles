@@ -1,3 +1,30 @@
+
+<?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+if(!isset($_SESSION['user_id'])) {
+    header("Location: ../login.php");
+    exit;
+}
+
+// Fetch sidebar_index for this user
+include_once "../db_connect.php";
+$userId = $_SESSION['user_id'];
+$userQuery = $mysqli->query("SELECT sidebar_index FROM users WHERE user_id = $userId");
+$userRow = $userQuery->fetch_assoc();
+$allowedIndexes = json_decode($userRow['sidebar_index'], true);
+if (!is_array($allowedIndexes)) {
+    $allowedIndexes = [$userRow['sidebar_index']];
+}
+// Helper function to show nav link only if allowed
+function showNav($index, $html, $allowedIndexes) {
+    if (in_array((string)$index, $allowedIndexes)) {
+        echo str_replace('{INDEX}', $index, $html);
+    }
+}
+?>
+
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <style>
@@ -193,18 +220,39 @@
             <div class="sb-sidenav-menu">
                 <div class="nav">
                     <div class="sb-sidenav-menu-heading">Dashboard</div>
-                    <a class="nav-link" href="delivery_dashboard.php">
-                        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                        live order List
-                    </a>
-                    <a class="nav-link" href="my_income.php">
-                        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                        Total Income
-                    </a>
-                    <a class="nav-link" href="my_ledger.php">
-                        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                        My Ledger
-                    </a>
+                    <?php
+                    // 22. Delivery Dashboard
+                    showNav(30, '
+                        <a class="nav-link" href="delivery_dash2.php">
+                            <div class="sb-nav-link-icon"><i class="fas fa-truck"></i></div>
+                            Delivery Dashboard
+                        </a>
+                    ', $allowedIndexes);
+
+                    // 23. Live Order List
+                    showNav(31, '
+                        <a class="nav-link" href="delivery_dashboard.php">
+                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            Live Order List
+                        </a>
+                    ', $allowedIndexes);
+
+                    // 24. Total Income
+                    showNav(32, '
+                        <a class="nav-link" href="my_income.php">
+                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            Total Income
+                        </a>
+                    ', $allowedIndexes);
+
+                    // 25. My Ledger
+                    showNav(33, '
+                        <a class="nav-link" href="my_ledger.php">
+                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            My Ledger
+                        </a>
+                    ', $allowedIndexes);
+                    ?>
                 </div>
             </div>
             <div class="sb-sidenav-footer">
