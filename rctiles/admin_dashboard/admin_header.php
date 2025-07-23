@@ -64,7 +64,12 @@ function showNav($index, $html, $allowedIndexes) {
                 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                     <div class="sb-sidenav-menu">
                         <div class="nav">
+           
+                        
     <?php
+
+    if ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2) {
+    echo '                            <div class="sb-sidenav-menu-heading">Dashboard</div>';
     // 1. Admin Dashboard
     showNav(1, '
         <a class="nav-link" href="admin_dashboard.php">
@@ -72,54 +77,67 @@ function showNav($index, $html, $allowedIndexes) {
             Admin Dashboard
         </a>
     ', $allowedIndexes);
-
-    // 2. Storage Dashboard
-    showNav(2, '
-        <a class="nav-link" href="../Storage Dashboard/Product.php">
+  echo '<a class="nav-link" href="../Storage Dashboard/Product.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
             Storage Dashboard
-        </a>
-    ', $allowedIndexes);
+        </a>';
+        }
+    
 
-    // 3. Add Member
-    showNav(3, '
+         if ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2) {
+    echo '<div class="sb-sidenav-menu-heading">Members</div>';
+  
+    // 2. Add Member
+    showNav(2, '
         <a class="nav-link" href="add_user.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
             Add Member
         </a>
     ', $allowedIndexes);
 
-    // 4. Edit & View Member
-    showNav(4, '
+    // 3. Edit & View Member
+    showNav(3, '
         <a class="nav-link" href="edit_user.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
             Edit & View Member
         </a>
     ', $allowedIndexes);
+   }
 
-    // 5. Create Order
-    showNav(5, '
-        <a class="nav-link" href="new_order.php">
+     if ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2) {
+    echo '<div class="sb-sidenav-menu-heading">Orders</div>';
+  
+    // 4. Create Estimate Order
+    showNav(4, '
+        <a class="nav-link" href="create_estimate.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
             Create Order
         </a>
     ', $allowedIndexes);
 
-    // 6. View Order
-    showNav(6, '
+    // 5. View Order
+    showNav(5, '
         <a class="nav-link" href="admin_orders.php">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
             View Order
         </a>
     ', $allowedIndexes);
+    
+    // // 6. create Order
+    // showNav(6, '
+    //         <a class="nav-link" href="new_order.php">
+    //         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+    //        Create Order
+    //     </a>
+    // ', $allowedIndexes);
 
     // 7. View Estimate
-    showNav(7, '
-        <a class="nav-link" href="estimate.php">
-            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-            View Estimate
-        </a>
-    ', $allowedIndexes);
+    // showNav(7, '
+    //     <a class="nav-link" href="estimate.php">
+    //         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+    //         View Estimate
+    //     </a>
+    // ', $allowedIndexes);
 
     // 8. Minus Order Stock
     showNav(8, '
@@ -152,6 +170,11 @@ function showNav($index, $html, $allowedIndexes) {
             Custom Bill
         </a>
     ', $allowedIndexes);
+  }
+
+     if ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2) {
+    echo '<div class="sb-sidenav-menu-heading">Log</div>';
+  
 
     // 12. Members Log
     showNav(12, '
@@ -168,6 +191,10 @@ function showNav($index, $html, $allowedIndexes) {
             Storage Log
         </a>
     ', $allowedIndexes);
+   }
+     if ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2) {
+    echo '<div class="sb-sidenav-menu-heading">Inventory</div>';
+  
 
     // 14. View Stock
     showNav(14, '
@@ -184,7 +211,11 @@ function showNav($index, $html, $allowedIndexes) {
             Low Stock
         </a>
     ', $allowedIndexes);
+       }
 
+        if ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2) {
+    echo '<div class="sb-sidenav-menu-heading">others</div>';
+  
     // 16. Recycle Bin
     showNav(16, '
         <a class="nav-link" href="recycle_bin.php">
@@ -200,6 +231,10 @@ function showNav($index, $html, $allowedIndexes) {
             Delete Orders
         </a>
     ', $allowedIndexes);
+  }
+     if ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2) {
+    echo '<div class="sb-sidenav-menu-heading">Report</div>';
+  
 
     // 18. Low Stock Report
     showNav(18, '
@@ -232,6 +267,7 @@ function showNav($index, $html, $allowedIndexes) {
             Delivery Payment
         </a>
     ', $allowedIndexes);
+  }
     ?>
                     <div class="sb-sidenav-footer">
                         <div class="small">Logged in as:</div>

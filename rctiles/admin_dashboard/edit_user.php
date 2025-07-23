@@ -330,16 +330,8 @@ if (!empty($password)) {
                                             </div>
 
                                             <!-- Admin Access -->
-<div class="mb-3 position-relative">
-
-<div class="d-flex justify-content-center">
-<button type="button" class="btn btn-outline-primary w-auto" id="adminAccessBtn">
-    Admin Access
-  </button>
-</div>
-  <div id="adminAccessOptions" class="dropdown-menu p-3" style="width:100%; max-height: 200px; overflow-y: auto; display: none;">
-
-<?php
+<div class="mb-3 position-relative " style="margin: 10px; align-items: center; justify-content: center; justify-space:between;">
+  <?php
 // Prepare sidebar_index array for pre-checking checkboxes
 $sidebar_index_arr = [];
 if (isset($edit_row['sidebar_index'])) {
@@ -349,69 +341,110 @@ if (isset($edit_row['sidebar_index'])) {
     }
 }
 ?>
+
+<div class="d-flex justify-content-center mb-3">
+    <button type="button" class="btn btn-outline-primary w-100" id="adminAccessBtn">
+        Admin Access
+    </button>
+</div>
+
+<!-- <div class="d-flex justify-content-center">
+<button type="button" class="btn btn-outline-primary w-100" id="adminAccessBtn">
+    Admin Access
+  </button>
+</div> -->
+  <div id="adminAccessOptions" class="dropdown-menu p-3" style="width:100%; max-height: 200px; overflow-y: auto; display: none;">
+
+
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="1" id="admin_dashboard" name="sidebar_index[]" <?php if(in_array("1", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="admin_dashboard">1. Admin Dashboard</label>
+    
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="1" id="admin_dashboard" name="sidebar_index[]" <?php if(in_array("2", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="admin_dashboard">Admin Dashboard</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="2" id="admin_members" name="sidebar_index[]" <?php if(in_array("2", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="admin_members">2. Add Member</label>
+      <input class="form-check-input" type="checkbox" value="2" id="storage_dashboard" name="sidebar_index[]" <?php if(in_array("3", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="storage_dashboard">Storage Dashboard</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="3" id="edit_n_view" name="sidebar_index[]" <?php if(in_array("3", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="edit_n_view">3. Edit & View Member</label>
+      <input class="form-check-input" type="checkbox" value="3" id="add_member" name="sidebar_index[]" <?php if(in_array("4", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="add_member">Add Member</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="4" id="create_order" name="sidebar_index[]" <?php if(in_array("4", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="create_order">4. Create Order</label>
+      <input class="form-check-input" type="checkbox" value="4" id="edit_view_member" name="sidebar_index[]" <?php if(in_array("5", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="edit_view_member">Edit & View Member</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="5" id="view_order" name="sidebar_index[]" <?php if(in_array("5", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="view_order">5. View Order</label>
+      <input class="form-check-input" type="checkbox" value="5" id="create_order" name="sidebar_index[]" <?php if(in_array("6", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="create_order">Create Order</label>
+    </div>
+    <!-- <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="6" id="create_estimate_order" name="sidebar_index[]" <?php if(in_array("1", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="create_estimate_order">Create Estimate Order</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="6" id="view_estimate" name="sidebar_index[]" <?php if(in_array("6", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="view_estimate">6. View Estimate</label>
+      <input class="form-check-input" type="checkbox" value="7" id="view_order" name="sidebar_index[]" <?php if(in_array("7", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="view_order">View Order</label>
+    </div> -->
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="8" id="view_estimate" name="sidebar_index[]" <?php if(in_array("8", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="view_estimate">View Estimate</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="7" id="minus_order" name="sidebar_index[]" <?php if(in_array("7", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="minus_order">7. Minus Stock Order</label>
+      <input class="form-check-input" type="checkbox" value="9" id="minus_order_stock" name="sidebar_index[]" <?php if(in_array("9", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="minus_order_stock">Minus Order Stock</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="8" id="assign_delivery" name="sidebar_index[]" <?php if(in_array("8", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="assign_delivery">8. Assign Delivery</label>
+      <input class="form-check-input" type="checkbox" value="10" id="assign_delivery" name="sidebar_index[]" <?php if(in_array("10", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="assign_delivery">Assign Delivery</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="9" id="create_bill" name="sidebar_index[]" <?php if(in_array("9", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="create_bill">9. Create Bill</label>
+      <input class="form-check-input" type="checkbox" value="11" id="create_bill" name="sidebar_index[]" <?php if(in_array("11", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="create_bill">Create Bill</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="10" id="custom_bill" name="sidebar_index[]" <?php if(in_array("10", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="custom_bill">10. Custom Bill</label>
+      <input class="form-check-input" type="checkbox" value="12" id="custom_bill" name="sidebar_index[]" <?php if(in_array("12", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="custom_bill">Custom Bill</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="11" id="members_log" name="sidebar_index[]" <?php if(in_array("11", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="members_log">11. Members Log</label>
+      <input class="form-check-input" type="checkbox" value="13" id="members_log" name="sidebar_index[]" <?php if(in_array("13", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="members_log">Members Log</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="12" id="recycle_bin" name="sidebar_index[]" <?php if(in_array("12", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="recycle_bin">12. Recycle Bin</label>
+      <input class="form-check-input" type="checkbox" value="14" id="storage_log" name="sidebar_index[]" <?php if(in_array("14", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="storage_log">Storage Log</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="13" id="delete_order" name="sidebar_index[]" <?php if(in_array("13", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="delete_order">13. Delete Order</label>
+      <input class="form-check-input" type="checkbox" value="15" id="view_stock" name="sidebar_index[]" <?php if(in_array("15", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="view_stock">View Stock</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="14" id="cutomer_ledger" name="sidebar_index[]" <?php if(in_array("14", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="cutomer_ledger">14. Customer Ledger</label>
+      <input class="form-check-input" type="checkbox" value="16" id="low_stock" name="sidebar_index[]" <?php if(in_array("16", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="low_stock">Low Stock</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="15" id="member_ledger" name="sidebar_index[]" <?php if(in_array("15", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="member_ledger">15. Member Ledger</label>
+      <input class="form-check-input" type="checkbox" value="17" id="recycle_bin" name="sidebar_index[]" <?php if(in_array("17", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="recycle_bin">Recycle Bin</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="16" id="delivery_payment" name="sidebar_index[]" <?php if(in_array("16", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="delivery_payment">16. Delivery Payment</label>
+      <input class="form-check-input" type="checkbox" value="18" id="delete_orders" name="sidebar_index[]" <?php if(in_array("18", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="delete_orders">Delete Orders</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="19" id="low_stock_report" name="sidebar_index[]" <?php if(in_array("19", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="low_stock_report">Low Stock Report</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="20" id="customer_ledger" name="sidebar_index[]" <?php if(in_array("20", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="customer_ledger">Customer Ledger</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="21" id="member_ledger" name="sidebar_index[]" <?php if(in_array("21", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="member_ledger">Member Ledger</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="22" id="delivery_payment" name="sidebar_index[]" <?php if(in_array("22", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="delivery_payment">Delivery Payment</label>
     </div>
   </div>
 </div>
@@ -419,64 +452,63 @@ if (isset($edit_row['sidebar_index'])) {
 <!-- Storage Access -->
 <div class="mb-3 position-relative">
   
-<div class="d-flex justify-content-center">
-<button type="button" class="btn btn-outline-primary w-auto" id="storageAccessBtn">
-    Storage Access
-  </button>
+<div class="d-flex justify-content-center mb-3">
+    <button type="button" class="btn btn-outline-primary w-100" id="storageAccessBtn">
+        Storage Access
+    </button>
 </div>
   <div id="storageAccessOptions" class="dropdown-menu p-3" style="width:100%; max-height: 200px; overflow-y: auto; display: none;">
-
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="17" id="product" name="sidebar_index[]" <?php if(in_array("17", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="product">17. Product</label>
+      <input class="form-check-input" type="checkbox" value="23" id="product" name="sidebar_index[]" <?php if(in_array("23", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="product">23. Product</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="18" id="transaction" name="sidebar_index[]" <?php if(in_array("18", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="transaction">18. Transaction</label>
+      <input class="form-check-input" type="checkbox" value="24" id="transaction" name="sidebar_index[]" <?php if(in_array("24", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="transaction">24. Transaction</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="19" id="add_stock" name="sidebar_index[]" <?php if(in_array("19", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="add_stock">19. Add Stock</label>
+      <input class="form-check-input" type="checkbox" value="25" id="add_stock" name="sidebar_index[]" <?php if(in_array("25", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="add_stock">25. Add Stock</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="20" id="minus_stock" name="sidebar_index[]" <?php if(in_array("20", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="minus_stock">20. Minus Stock</label>
+      <input class="form-check-input" type="checkbox" value="26" id="minus_stock" name="sidebar_index[]" <?php if(in_array("26", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="minus_stock">26. Minus Stock</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="21" id="add_product" name="sidebar_index[]" <?php if(in_array("21", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="add_product">21. Add Product</label>
+      <input class="form-check-input" type="checkbox" value="27" id="add_product" name="sidebar_index[]" <?php if(in_array("27", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="add_product">27. Add Product</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="22" id="edit_product" name="sidebar_index[]" <?php if(in_array("22", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="edit_product">22. Edit Product</label>
+      <input class="form-check-input" type="checkbox" value="28" id="edit_product" name="sidebar_index[]" <?php if(in_array("28", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="edit_product">28. Edit Product</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="23" id="edit_category" name="sidebar_index[]" <?php if(in_array("23", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="edit_category">23. Edit Category</label>
+      <input class="form-check-input" type="checkbox" value="29" id="edit_category" name="sidebar_index[]" <?php if(in_array("29", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="edit_category">29. Edit Category</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="24" id="edit_supplier" name="sidebar_index[]" <?php if(in_array("24", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="edit_supplier">24. Edit Supplier</label>
+      <input class="form-check-input" type="checkbox" value="30" id="edit_supplier" name="sidebar_index[]" <?php if(in_array("30", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="edit_supplier">30. Edit Supplier</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="25" id="edit_storage" name="sidebar_index[]" <?php if(in_array("25", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="edit_storage">25. Edit Storage Area</label>
+      <input class="form-check-input" type="checkbox" value="31" id="edit_storage" name="sidebar_index[]" <?php if(in_array("31", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="edit_storage">31. Edit Storage Area</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="26" id="stock_transfer" name="sidebar_index[]" <?php if(in_array("26", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="stock_transfer">26. Stock Transfer</label>
+      <input class="form-check-input" type="checkbox" value="32" id="stock_transfer" name="sidebar_index[]" <?php if(in_array("32", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="stock_transfer">32. Stock Transfer</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="27" id="excel" name="sidebar_index[]" <?php if(in_array("27", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="excel">27. Stock Update Excel</label>
+      <input class="form-check-input" type="checkbox" value="33" id="excel" name="sidebar_index[]" <?php if(in_array("33", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="excel">33. Stock Update Excel</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="28" id="total_stock_report" name="sidebar_index[]" <?php if(in_array("28", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="total_stock_report">28. Total Stock Report</label>
+      <input class="form-check-input" type="checkbox" value="34" id="total_stock_report" name="sidebar_index[]" <?php if(in_array("34", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="total_stock_report">34. Total Stock Report</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="29" id="low_stock_report" name="sidebar_index[]" <?php if(in_array("29", $sidebar_index_arr)) echo 'checked'; ?>>
-      <label class="form-check-label" for="low_stock_report">29. Low Stock Report</label>
+      <input class="form-check-input" type="checkbox" value="35" id="low_stock_report" name="sidebar_index[]" <?php if(in_array("35", $sidebar_index_arr)) echo 'checked'; ?>>
+      <label class="form-check-label" for="low_stock_report">35. Low Stock Report</label>
     </div>
     
   </div>
@@ -486,25 +518,25 @@ if (isset($edit_row['sidebar_index'])) {
 <!-- Delivery Access -->
 <div class="mb-3 position-relative">
   <div class="d-flex justify-content-center">
-    <button type="button" class="btn btn-outline-primary w-auto" id="deliveryAccessBtn">
+    <button type="button" class="btn btn-outline-primary w-100" id="deliveryAccessBtn">
       Delivery Access
     </button>
   </div>
   <div id="deliveryAccessOptions" class="dropdown-menu p-3" style="width:100%; max-height: 200px; overflow-y: auto; display: none;">
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="30" id="dash1" name="sidebar_index[]" <?php if(in_array("30", $sidebar_index_arr)) echo 'checked'; ?>>
+      <input class="form-check-input" type="checkbox" value="36" id="dash1" name="sidebar_index[]" <?php if(in_array("36", $sidebar_index_arr)) echo 'checked'; ?>>
       <label class="form-check-label" for="dash1">Delivery Dashboard</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="31" id="dash2" name="sidebar_index[]" <?php if(in_array("31", $sidebar_index_arr)) echo 'checked'; ?>>
+      <input class="form-check-input" type="checkbox" value="37" id="dash2" name="sidebar_index[]" <?php if(in_array("37", $sidebar_index_arr)) echo 'checked'; ?>>
       <label class="form-check-label" for="dash2">Live Order List</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="32" id="dash3" name="sidebar_index[]" <?php if(in_array("32", $sidebar_index_arr)) echo 'checked'; ?>>
+      <input class="form-check-input" type="checkbox" value="38" id="dash3" name="sidebar_index[]" <?php if(in_array("38", $sidebar_index_arr)) echo 'checked'; ?>>
       <label class="form-check-label" for="dash3">Total Income</label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="33" id="dash4" name="sidebar_index[]" <?php if(in_array("33", $sidebar_index_arr)) echo 'checked'; ?>>
+      <input class="form-check-input" type="checkbox" value="39" id="dash4" name="sidebar_index[]" <?php if(in_array("39", $sidebar_index_arr)) echo 'checked'; ?>>
       <label class="form-check-label" for="dash4">My Ledger</label>
     </div>
   </div>
@@ -512,7 +544,7 @@ if (isset($edit_row['sidebar_index'])) {
 
 
 
-                                            <button type="submit" class="btn btn-primary">Save changes</button>
+                                            <button type="submit" class="btn btn-outline-primary w-auto m-6">Save changes</button>
                                         </form>
                                     </div>
                                 </div>

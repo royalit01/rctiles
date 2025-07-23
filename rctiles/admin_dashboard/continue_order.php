@@ -207,38 +207,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Build products array from all detail sections
         Object.entries(selectedProductsData).forEach(([sectionId, section]) => {
-            console.log("Section ID:", sectionId, "Section Data:", section);
+            // Always get the latest values from the summary table inputs
+            let multiplier = 1;
             let detailGroup = document.querySelector(`[data-section-id="${sectionId}"]`);
-            console.log("Detail Group for section", sectionId, ":", detailGroup);
-            let multiplier = parseInt(detailGroup?.querySelector(".multiply-order")?.value) || 1;
-            console.log("Multiplier for section", sectionId, ":", multiplier);
+            if (detailGroup) {
+                multiplier = parseInt(detailGroup.querySelector(".multiply-order")?.value) || 1;
+            }
 
-            // Process both wall and floor products
             ['wall', 'floor'].forEach(type => {
-                console.log("Processing type:", type, "for section", sectionId);
                 if (section[type] && section[type].length > 0) {
-                    console.log("Found products for type", type, ":", section[type]);
                     hasProducts = true;
-
-                    section[type].forEach(product => {
-                        // Find the corresponding row in the summary table using data-index
-                        let row = document.querySelector(`.final-price[data-index="${product.id}"]`)?.closest('tr');
-                        let quantity = 1;
-                        let customPrice = 0;
-                        let finalPrice = 0;
-
+                    section[type].forEach((product, idx) => {
+                        // Find the corresponding row in the summary table using data-index (use index, not id)
+                        let row = document.querySelector(`.product-quantity[data-index="${idx}"]`)?.closest('tr');
+                        let quantity = product.quantity;
+                        let customPrice = product.unitPrice;
+                        let finalPrice = product.totalPrice;
                         if (row) {
                             // Get the latest quantity and custom price from the inputs
                             quantity = parseInt(row.querySelector('.product-quantity')?.value) || product.quantity;
                             customPrice = parseFloat(row.querySelector('.fixed-price-input')?.value) || product.unitPrice;
                             finalPrice = parseFloat(row.querySelector('.final-price')?.getAttribute('data-current-price')) || (quantity * customPrice);
-                        } else {
-                            // fallback to product object
-                            quantity = product.quantity;
-                            customPrice = product.unitPrice;
-                            finalPrice = product.totalPrice;
                         }
-
                         let productObj = {
                             id: product.id,
                             name: product.name,
@@ -247,11 +237,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             totalPrice: finalPrice, // this is final_price
                             multiplier: multiplier
                         };
-                        console.log("Pushing product to productsArray:", productObj);
                         productsArray.push(productObj);
                     });
-                } else {
-                    console.log("No products found for type", type, "in section", sectionId);
                 }
             });
         });
@@ -279,8 +266,9 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log(key, value);
         }
 
-        // Actually submit the form now (bypass this handler) after 5 minutes
-        this.submit(); 
+ 
+    this.submit();
+
     });
 
 });
@@ -454,7 +442,7 @@ window.updateFinalAndRentFromGrand = function() {
 </div>
   <div class="mb-3">
 
-    <form id="orderForm" method="POST" action="submit_order.php">
+    <form id="orderForm" method="POST" action="submit_order_estimate.php">
         <input type="hidden" name="order_id" value="<?= htmlspecialchars($order_id) ?>">
 
 <!-- Pre-filled customer fields -->

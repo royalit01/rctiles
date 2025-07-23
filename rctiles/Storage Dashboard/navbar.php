@@ -10,9 +10,21 @@ if (!isset($_SESSION['user_id'])) {
 }
 include "../db_connect.php";
 $userId = $_SESSION['user_id'];
-$userQuery = $mysqli->query("SELECT sidebar_index FROM users WHERE user_id = $userId");
+
+// Fetch sidebar_index and role_id from users table
+$userQuery = $mysqli->query("SELECT sidebar_index, role_id FROM users WHERE user_id = $userId");
 $userRow = $userQuery->fetch_assoc();
 $allowedIndexes = json_decode($userRow['sidebar_index'], true) ?? [];
+$roleId = $userRow['role_id'];
+
+// Fetch role_name from roles table
+$roleName = '';
+if ($roleId) {
+    $roleQuery = $mysqli->query("SELECT role_name FROM roles WHERE role_id = $roleId");
+    if ($roleQuery && $roleRow = $roleQuery->fetch_assoc()) {
+        $roleName = $roleRow['role_name'];
+    }
+}
 
 // Helper function to show nav link only if allowed
 function showNav($index, $html, $allowedIndexes) {
@@ -66,104 +78,127 @@ function showNav($index, $html, $allowedIndexes) {
 showNav(22, '
     <a class="nav-link" href="../admin_dashboard/admin_dashboard.php">
         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-        22. Admin Dashboard
+       Admin Dashboard
     </a>
 ', $allowedIndexes);
+
+ if ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2) {
+    echo '<div class="sb-sidenav-menu-heading">Main Dashboard</div>';
+  
 // 23. Product
 showNav(23, '
     <a class="nav-link" href="Product.php">
         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-        23. Product
+         Product
     </a>
 ', $allowedIndexes);
 // 24. Transaction
 showNav(24, '
     <a class="nav-link" href="Transaction.php">
         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-        24. Transaction
+      Transaction
     </a>
 ', $allowedIndexes);
 // 25. Add Stock
 showNav(25, '
     <a class="nav-link" href="Add_Stock.php">
         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-        25. Add Stock
+        Add Stock
     </a>
 ', $allowedIndexes);
 // 26. Minus Stock
 showNav(26, '
     <a class="nav-link" href="Minus_Stock.php">
         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-        26. Minus Stock
+       Minus Stock
     </a>
 ', $allowedIndexes);
 // 27. Add Product
 showNav(27, '
     <a class="nav-link" href="Add_Product.php">
         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-        27. Add Product
+       Add Product
     </a>
 ', $allowedIndexes);
+ }
+
+
+  if ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2) {
+    echo '<div class="sb-sidenav-menu-heading">Edit Options</div>';
+  
 // 28. Edit Product
 showNav(28, '
     <a class="nav-link collapsed" href="Edit_Product.php">
         <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-        28. Edit Product
+     Edit Product
     </a>
 ', $allowedIndexes);
 // 29. Edit Category
 showNav(29, '
     <a class="nav-link collapsed" href="Edit_Category.php">
         <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-        29. Edit Category
+        Edit Category
     </a>
 ', $allowedIndexes);
 // 30. Edit Supplier
 showNav(30, '
     <a class="nav-link collapsed" href="Edit_Supplier.php">
         <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-        30. Edit Supplier
+       Edit Supplier
     </a>
 ', $allowedIndexes);
 // 31. Edit Storage Area
 showNav(31, '
     <a class="nav-link collapsed" href="Edit_Storage_Area.php">
         <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-        31. Edit Storage Area
+       Edit Storage Area
     </a>
 ', $allowedIndexes);
+
+  }
+
+   if ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2) {
+    echo '<div class="sb-sidenav-menu-heading">Advance Edit Options</div>';
+  
 // 32. Stock Transfer
 showNav(32, '
     <a class="nav-link collapsed" href="Stock_Transfer.php">
         <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-        32. Stock Transfer
+        Stock Transfer
     </a>
 ', $allowedIndexes);
 // 33. Stock Update Excel
 showNav(33, '
     <a class="nav-link collapsed" href="Stock_Update_Excel.php">
         <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-        33. Stock Update Excel
+        Stock Update Excel
     </a>
 ', $allowedIndexes);
+   }
+
+
+    if ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2) {
+    echo '<div class="sb-sidenav-menu-heading">Report</div>';
+  
 // 34. Total Stock Report
 showNav(34, '
     <a class="nav-link collapsed" href="Report.php">
         <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-        34. Total Stock Report
+       Total Stock Report
     </a>
 ', $allowedIndexes);
 // 35. Low Stock Report
 showNav(35, '
     <a class="nav-link collapsed" href="Low_Stock_Report.php">
         <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-        35. Low Stock Report
+         Low Stock Report
     </a>
 ', $allowedIndexes);
+    }
 ?>
 
                           
-<?php
+<!-- <?php
 if ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2) {
     echo '<div class="sb-sidenav-menu-heading">Edit Options</div>';
     showNav(28, '
@@ -191,9 +226,9 @@ if ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2) {
         </a>
     ', $allowedIndexes);
 }
-?>
+?> -->
 
-<?php
+<!-- <?php
 if ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2) {
     echo '<div class="sb-sidenav-menu-heading">Advance Edit Options</div>';
     showNav(32, '
@@ -209,8 +244,8 @@ if ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2) {
         </a>
     ', $allowedIndexes);
 }
-?>
-<?php
+?> -->
+<!-- <?php
 if ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2) {
     echo '<div class="sb-sidenav-menu-heading">Report</div>';
     showNav(34, '
@@ -226,10 +261,10 @@ if ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2) {
         </a>
     ', $allowedIndexes);
 }
-?>
+?> -->
                     <div class="sb-sidenav-footer">
                         <div class="small">Logged in as:</div>
-                        <?= $_SESSION['role_name'] ?>
+                        <?= htmlspecialchars($roleName) ?>
                     </div>
                 </nav>
             </div>

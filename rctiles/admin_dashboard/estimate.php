@@ -279,7 +279,7 @@ $result = $mysqli->query($sql);
                                 <tr>
                                     <th>Product Name</th>
                                     <th>Quantity</th>
-                                    <th> Price</th>
+                                    <th>Fixed Price</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -295,17 +295,51 @@ $result = $mysqli->query($sql);
 
     <script>
         function viewProducts(orderId) {
-            window.currentOrderId = orderId; // <-- Add this line!
+            window.currentOrderId = orderId;
             $.ajax({
                 url: 'fetch_order_products.php',
                 type: 'GET',
                 data: { order_id: orderId },
                 success: function(response) {
-                    $('#productDetails').html(response);
+                    // Add delete button to each row in the response
+                    var $table = $('<table><tbody>' + response + '</tbody></table>');
+                    $table.find('tr').each(function() {
+                        // Only add if not already present
+                        if ($(this).find('.delete-product-btn').length === 0 && $(this).find('td').length > 0) {
+                            $(this).find('td:last').append(' <button type="button" class="btn btn-danger btn-sm delete-product-btn"><i class="fas fa-trash"></i> Delete</button>');
+                        }
+                    });
+                    $('#productDetails').html($table.find('tbody').html());
                     $('#productModal').modal('show');
                 }
             });
         }
+        // Delegate click event for delete button in product modal
+        $(document).on('click', '.delete-product-btn', function() {
+            var $row = $(this).closest('tr');
+            var productName = $row.find('td').eq(0).text();
+            var orderId = window.currentOrderId;
+            if (!confirm('Are you sure you want to delete this product from the order?')) return;
+            $.ajax({
+                url: 'delete_pending_order.php',
+                type: 'POST',
+                data: {
+                    order_id: orderId,
+                    product_name: productName
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        $row.remove();
+                    } else {
+                        alert('Failed to delete product: ' + (response.error || 'Unknown error'));
+                    }
+                },
+                error: function() {
+                    alert('Failed to delete product due to server error.');
+                }
+            });
+        });
 
         document.getElementById('continueBtn').addEventListener('click', function() {
     // Get the order ID (you can store it in a hidden field or JS variable when opening the modal)

@@ -62,6 +62,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         json_exit(true, 'Saved');
     }
 
+    if ($action === 'add_credit') {
+        $deliveryId = (int)$_POST['delivery_id'];
+        $amt = (float)$_POST['amount'];
+        $remarks = trim($_POST['remarks'] ?? '');
+
+        if ($amt <= 0) json_exit(false, 'Amount must be >0');
+
+        // Log credit as negative payment (optional: you can use a separate table if you want)
+        $stmt = $mysqli->prepare("INSERT INTO delivery_payments (delivery_id, amount_paid, remarks) VALUES (?, ?, ?)");
+        $negAmt = -1 * abs($amt);
+        $stmt->bind_param('ids', $deliveryId, $negAmt, $remarks);
+        $stmt->execute();
+
+        // Increase amount_remaining and decrease amount_paid (but not below 0)
+        $stmt2 = $mysqli->prepare("UPDATE delivery_orders
+            SET amount_paid = GREATEST(amount_paid - ?, 0),
+                amount_remaining = amount_remaining + ?,
+                status = IF(amount_remaining + ? <= 0, 'Completed', 'Partially Paid')
+            WHERE delivery_id = ?");
+        $stmt2->bind_param('dddi', $amt, $amt, $amt, $deliveryId);
+        $stmt2->execute();
+
+        json_exit(true, 'Money added to remaining amount');
+    }
+
     json_exit(false, 'Unknown action');
 }
 
@@ -159,7 +184,24 @@ $payments = $mysqli->query("SELECT * FROM delivery_payments WHERE delivery_id = 
             <input type="text" name="remarks" class="form-control" placeholder="Optional">
         </div>
         <div class="col-auto">
-            <button type="submit" class="btn btn-success">Add</button>
+            <button type="submit" class="btn btn-success">Debit</button>
+        </div>
+    </form>
+
+    <!-- Add Credit Button/Form -->
+    <form id="creditForm" class="row g-2 align-items-end mb-3">
+        <input type="hidden" name="action" value="add_credit">
+        <input type="hidden" name="delivery_id" value="<?= $deliveryId ?>">
+        <div class="col-auto">
+            <label class="form-label small">Amount</label>
+            <input type="number" step="0.01" name="amount" class="form-control" required>
+        </div>
+        <div class="col-auto flex-grow-1">
+            <label class="form-label small">Remarks</label>
+            <input type="text" name="remarks" class="form-control" placeholder="Optional">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-warning">Credit</button>
         </div>
     </form>
 
@@ -231,6 +273,18 @@ $('#confirmAddPaymentBtn').on('click', function() {
     postJ(payFormData).done(r => {
         if (r.ok) {
             // Reload modal content (assumes #deliveryModal .modal-content exists)
+            $('#deliveryModal .modal-content').load('delivery_detail.php', { delivery_id: <?= $deliveryId ?> });
+        } else {
+            alert(r.msg);
+        }
+    }).fail(() => alert('Error'));
+});
+
+// Credit form handler (no confirmation modal)
+$('#creditForm').on('submit', function(e) {
+    e.preventDefault();
+    postJ($(this).serialize()).done(r => {
+        if (r.ok) {
             $('#deliveryModal .modal-content').load('delivery_detail.php', { delivery_id: <?= $deliveryId ?> });
         } else {
             alert(r.msg);
