@@ -79,21 +79,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $product_ids = [];
         foreach ($products as $p) {
             if (
-                empty($p['id']) || empty($p['name']) ||
+                empty($p['name']) ||
                 empty($p['quantity']) || empty($p['unitPrice'])
             ) {
                 continue;
             }
 
-            $product_id = (int)$p['id'];
+            $product_id = (int)($p['id'] ?? 0);
             $product_ids[] = $product_id;
             $product_name = $p['name'];
             $qty = (int)$p['quantity'];
             $original_price = (float)$p['unitPrice'];
-            $custom_price = (float)($p['totalPrice'] ?? 0);
+            $custom_price = (float)($p['totalPrice'] ?? ($qty * $original_price));
             $multiplier = (int)($p['multiplier'] ?? 1);
 
-            // Only update existing row, do not insert new
+            // Check if product exists in pending_orders
             $stmt = $mysqli->prepare("SELECT COUNT(*) FROM pending_orders WHERE order_id = ? AND product_id = ?");
             $stmt->bind_param("ii", $order_id, $product_id);
             $stmt->execute();
@@ -102,18 +102,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->close();
 
             if ($exists) {
+                // Update existing product
                 $stmt = $mysqli->prepare(
-                    "UPDATE pending_orders SET customer_id = ?, product_name = ?, quantity = ?,  custom_price = ?, multiplier = ? WHERE order_id = ? AND product_id = ?"
+                    "UPDATE pending_orders SET customer_id = ?, product_name = ?, quantity = ?, original_price = ?, custom_price = ?, multiplier = ? WHERE order_id = ? AND product_id = ?"
                 );
                 $stmt->bind_param(
-                    "isiddii",
+                    "isiddiii",
                     $customer_id,
                     $product_name,
                     $qty,
+                    $original_price,
                     $custom_price,
                     $multiplier,
                     $order_id,
                     $product_id
+                );
+                $stmt->execute();
+                $stmt->close();
+            } else {
+                // Insert new product
+                $stmt = $mysqli->prepare(
+                    "INSERT INTO pending_orders (order_id, customer_id, product_id, product_name, quantity, original_price, custom_price, multiplier, approved) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)"
+                );
+                $stmt->bind_param(
+                    "iiisiddi",
+                    $order_id,
+                    $customer_id,
+                    $product_id,
+                    $product_name,
+                    $qty,
+                    $original_price,
+                    $custom_price,
+                    $multiplier
                 );
                 $stmt->execute();
                 $stmt->close();

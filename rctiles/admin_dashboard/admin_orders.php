@@ -222,8 +222,7 @@ $result = $mysqli->query($sql);
                                         <td><?= htmlspecialchars($row['customer_name']) ?></td>
                                         <td><?= htmlspecialchars($row['phone_no']) ?></td>
                                         <td>₹<?= number_format($row['total_amount'], 2) ?></td>
-                                                                                <td>₹<?= number_format($row['custom_total'], 2) ?></td>
-
+                                        <td>₹<?= number_format($row['custom_total'], 2) ?></td>
                                         <td>
                                             <?php if ($row['approved'] == 0): ?>
                                                 <span class="badge bg-warning">Pending</span>
@@ -239,6 +238,9 @@ $result = $mysqli->query($sql);
                                                     <i class="fas fa-eye"></i> View
                                                 </button>
                                                 <?php if ($row['approved'] == 0): ?>
+                                                    <button class="btn btn-warning btn-sm" onclick="editOrder(<?= $row['order_id'] ?>)">
+                                                        <i class="fas fa-edit"></i> Edit
+                                                    </button>
                                                     <button class="btn btn-success btn-sm approve-btn" onclick="approveOrder(<?= $row['order_id'] ?>, this)">
                                                         <i class="fas fa-check"></i> Approve
                                                     </button>
@@ -489,6 +491,10 @@ $result = $mysqli->query($sql);
                 }
             });
         }
+
+        function editOrder(orderId){
+    window.location.href = 'continue_order.php?order_id=' + orderId;
+}
     </script>
     <script src="../js/scripts.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>

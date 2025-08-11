@@ -21,20 +21,27 @@ if (!$mysqli) {
 $categoryId = isset($_GET['category_id']) ? intval($_GET['category_id']) : 0;
 $totalArea = isset($_GET['total_area']) ? floatval($_GET['total_area']) : 0;
 
-if ($categoryId <= 0 || $totalArea <= 0) {
-    die(json_encode(["error" => "Invalid category or area"]));
+// Allow fetching products without category filter (for Add Products modal)
+if (empty($_GET['category_id']) && $totalArea >= 0) {
+    // Fetch all products when no category is specified
+    $query = "SELECT product_id, product_name, description, area, price, product_image FROM products WHERE status = 'Active'";
+    $stmt = $mysqli->prepare($query);
+} elseif ($categoryId > 0) {
+    // Fetch products by category
+    $query = "SELECT product_id, product_name, description, area, price, product_image FROM products WHERE category_id = ? AND status = 'Active'";
+    $stmt = $mysqli->prepare($query);
+    if (!$stmt) {
+        die(json_encode(["error" => "SQL Prepare Error: " . $mysqli->error]));
+    }
+    $stmt->bind_param("i", $categoryId);
+} else {
+    die(json_encode(["error" => "Invalid parameters"]));
 }
-
-// Query to fetch products
-$query = "SELECT product_id, product_name, description, area,price, product_image FROM products WHERE category_id = ? AND status = 'Active'";
-
-$stmt = $mysqli->prepare($query);
 
 if (!$stmt) {
     die(json_encode(["error" => "SQL Prepare Error: " . $mysqli->error]));
 }
 
-$stmt->bind_param("i", $categoryId);
 $stmt->execute();
 $result = $stmt->get_result();
 
