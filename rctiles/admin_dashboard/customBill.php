@@ -68,7 +68,7 @@ if ($stmt = $mysqli->prepare("SELECT category_id, category_name FROM category"))
     </head>
     
     <body class="sb-nav-fixed">
-        <?php include "admin_header.php";  ?>
+    <?php include "../templates/admin_header.php";  ?>
             <!-- ---------------------------- -->
 
             <div id="layoutSidenav_content">

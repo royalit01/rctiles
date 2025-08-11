@@ -126,7 +126,7 @@ if ($count_result && $row2 = $count_result->fetch_assoc()) {
   </style>
     </head>
     <body class="sb-nav-fixed">
-        <?php include "admin_header.php";  ?>
+  <?php include "../templates/admin_header.php";  ?>
           <div id="layoutSidenav_content">
                 <main>
 <div class="card border-0 shadow rounded-3 my-4 p-4 bg-white mx-4 mx-md-auto" style="max-width: 990px; min-height: 550px;">

@@ -6,7 +6,7 @@ if(!isset($_SESSION['user_id']) || $_SESSION['role_id'] != 1) {
     header("Location: ../login.php");
     exit;
 }
-include "admin_header.php";
+include "../templates/admin_header.php";
 include '../db_connect.php';
 
 // Initialize filter variables
@@ -235,7 +235,7 @@ $result = $mysqli->query($sql);
                                         </td>
                                         <td>
                                             <div class="d-flex flex-wrap gap-2">
-                                                <button class="btn btn-info btn-sm" onclick="viewProducts(<?= $row['order_id'] ?>)">
+                                                <button class="btn btn-info btn-sm" onclick="viewProducts(<?= $row['order_id'] ?>, <?= (int)$row['approved'] ?>)">
                                                     <i class="fas fa-eye"></i> View
                                                 </button>
                                                 <?php if ($row['approved'] == 0): ?>
@@ -320,7 +320,7 @@ $result = $mysqli->query($sql);
                                 </span>
                             </div>
                             <div class="card-actions">
-                                <button class="btn btn-info btn-sm btn-sm-block" onclick="viewProducts(<?= $row['order_id'] ?>)">
+                                <button class="btn btn-info btn-sm btn-sm-block" onclick="viewProducts(<?= $row['order_id'] ?>, <?= (int)$row['approved'] ?>)">
                                     <i class="fas fa-eye"></i> View Products
                                 </button>
                                 <?php if ($row['approved'] == 0): ?>
@@ -361,7 +361,7 @@ $result = $mysqli->query($sql);
                             </thead>
                             <tbody id="productDetails"></tbody>
                         </table>
-                                                <button type="button" id="continueBtn">  Continue </button>
+                                                <button type="button" id="continueBtn" style="display:none;">  Continue </button>
 
                     </div>
                 </div>
@@ -370,23 +370,20 @@ $result = $mysqli->query($sql);
     </div>
 
     <script>
-          function viewProducts(orderId) {
+        function viewProducts(orderId, isApproved) {
             window.currentOrderId = orderId;
             $.ajax({
                 url: 'fetch_order_products.php',
                 type: 'GET',
                 data: { order_id: orderId },
                 success: function(response) {
-                    // Add delete button to the Actions column of each row in the response
                     var $table = $('<table><tbody>' + response + '</tbody></table>');
                     $table.find('tr').each(function() {
                         var $tds = $(this).find('td');
-                        // Ensure there are 5 columns (last is Actions)
                         while ($tds.length < 5) {
                             $(this).append('<td></td>');
                             $tds = $(this).find('td');
                         }
-                        // Only add if not already present
                         var $actionsTd = $tds.last();
                         if ($actionsTd.find('.delete-product-btn').length === 0 && $tds.length > 0) {
                             $actionsTd.append(' <button type="button" class="btn btn-danger btn-sm delete-product-btn"><i class="fas fa-trash"></i> Delete</button>');
@@ -394,6 +391,21 @@ $result = $mysqli->query($sql);
                     });
                     $('#productDetails').html($table.find('tbody').html());
                     $('#productModal').modal('show');
+
+                    // Show or hide the Continue button based on approval
+                    if (isApproved) {
+                        $('#continueBtn').hide();
+                        // Replace Actions column with 'NA' for all rows
+                        $('#productDetails tr').each(function() {
+                            var $tds = $(this).find('td');
+                            if ($tds.length >= 5) {
+                                $tds.eq(4).html('<span class="text-muted">N/Ac</span>');
+                            }
+                        });
+                    } else {
+                        $('#continueBtn').show();
+                        $('#productDetails').find('.edit-product-btn, .delete-product-btn').prop('disabled', false).removeClass('disabled').show();
+                    }
                 }
             });
         }

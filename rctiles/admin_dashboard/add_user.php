@@ -253,7 +253,7 @@ $storageResult = $mysqli->query($storageQuery);
 </style>
     </head>
     <body class="sb-nav-fixed">
-        <?php include "admin_header.php";  ?>
+  <?php include "../templates/admin_header.php";  ?>
             <div id="layoutSidenav_content">
                 <main>
                     <div class="card border-0 shadow rounded-3 p-4 bg-white  mx-auto" style="max-width: 900px;">

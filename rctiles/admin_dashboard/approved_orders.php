@@ -106,7 +106,7 @@ $total_pages = ceil($total_rows / $limit);
 </head>
 
 <body class="sb-nav-fixed">
-    <?php include "admin_header.php"; ?>
+    <?php include "../templates/admin_header.php"; ?>
     <div id="layoutSidenav_content">
         <main>
             <div class="container-box">

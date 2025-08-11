@@ -330,7 +330,7 @@ $sumTotal = $sumPaid = $sumPend = 0;
 </style>
 </head>
 <body class="sb-nav-fixed">
-<?php include "admin_header.php"; ?>
+<?php include "../templates/admin_header.php"; ?>
 
 <div id="layoutSidenav_content">
 
